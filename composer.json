@@ -1,0 +1,67 @@
+{
+    "name": "yongcheng/zento-test",
+    "description": "A zento framework base on Laravel",
+    "keywords": ["laravel", "zento"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yongcheng.chen",
+            "email": "yongcheng.chen@live.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "illuminate/routing": "5.5.x|5.6.x|5.7.x",
+        "illuminate/session": "5.5.x|5.6.x|5.7.x",
+        "illuminate/support": "5.5.x|5.6.x|5.7.x"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zento\\Framework\\": "src/"
+        },
+        "files": [
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Zento\\Kernel\\Providers\\KernelProvider"
+            ],
+            "aliases": {
+                "PackageManager": "Zento\\Kernel\\Facades\\PackageManager",
+                "EventsManager": "Zento\\Kernel\\Facades\\EventsManager",
+                "Debugger": "Zento\\Kernel\\Facades\\Debugger"
+            },
+            "zento": {
+                "Zento_Kernel":{
+                    "version" : "0.0.1",
+                    "commands" : [
+                        "\\Zento\\Kernel\\PackageManager\\Console\\Commands\\MakePackage",
+                        "\\Zento\\Kernel\\PackageManager\\Console\\Commands\\EnablePackage",
+                        "\\Zento\\Kernel\\PackageManager\\Console\\Commands\\DisablePackage"
+                    ]
+                },
+                "Zento_ThemeManager": {
+                    "version" : "0.0.1",
+                    "providers" : [
+                        "\\Zento\\ThemeManager\\Providers\\ThemeManagerServiceProvider"
+                    ]
+                },
+                "Zento_UrlRewriter": {
+                    "version" : "0.0.1",
+                    "providers" : [
+                        "Zento\\UrlRewriter\\Providers\\UrlRewriterServiceProvider"
+                    ]
+                }
+            }
+        }
+    },
+    "require-dev": {
+        "illuminate/framework": "5.5.x"
+    }
+}

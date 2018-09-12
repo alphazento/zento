@@ -1,0 +1,24 @@
+<?php
+namespace Zento\Kernel;
+
+class Consts  {
+    // const ZENTO_KERNEL_VERSION = 'init';
+    const ZENTO_KERNEL_PACKAGE_NAME = 'Zento_Kernel';
+    const MY_PACKAGES_ROOT_FOLDER = 'mypackages';
+    const PACKAGE_COMPOSER_FILE = 'composer.json';
+
+    //define a package's folders
+    const PACKAGE_CONFIG_FOLDER = 'config';
+    const PACKAGE_ASSETS_FOLDER = 'resources' . DIRECTORY_SEPARATOR . 'public';
+    const PACKAGE_SETUP_DATABASE_FOLDER = 'setup' . DIRECTORY_SEPARATOR . 'database';
+    const PACKAGE_VIEWS_FOLDER = 'resources' . DIRECTORY_SEPARATOR . 'views';
+    const PACKAGE_ROUTE_FILE = 'routes.php';
+
+    const PACKAGE_ASSEMBLY_FILE = 'assembly.php';
+    //CACHE KEYS
+    const CACHE_KEY_PREFIX = 'zento.';
+    const CACHE_KEY_PACKAGES = self::CACHE_KEY_PREFIX . 'packages';
+    const CACHE_KEY_PACKAGE_ASSEMBLY = self::CACHE_KEY_PREFIX . 'packages.assembly';
+    const CACHE_KEY_ENABLED_PACKAGES = self::CACHE_KEY_PREFIX . 'packages.enabled';
+    const CACHE_KEY_EVENTS_LISTENERS = self::CACHE_KEY_PREFIX . 'events.listeners';
+}

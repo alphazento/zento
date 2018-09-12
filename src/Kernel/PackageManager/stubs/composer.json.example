@@ -1,0 +1,23 @@
+{
+    "name": "vendor/samplepackage",
+    "description": "vendor's package",
+    "extra": {
+        "laravel": {
+            "providers": [
+            ],
+            "aliases": {
+            },
+            "zento": {
+                "Vendor_SamplePackage":{
+                    "providers": [
+                    ],
+                    "aliases": {
+                    },
+                    "version" : "0.0.1",
+                    "commands" : [
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,9 @@
+<?php
+//Please change this file name as routes.php
+//please define your moudle's route rules here
+
+// Route::group(['middleware' => ['web']], function () {
+//     Route::get('/', function () {
+//         return view('base.welcome');
+//     });
+// });
