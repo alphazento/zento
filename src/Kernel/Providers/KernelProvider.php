@@ -36,9 +36,9 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
             'new_column1', ['char', 32], false);
             \Zento\Kernel\TestModel::listDynaColumns();
         $collection = \Zento\Kernel\TestModel::where('id', 1)->withDyn('new_column')->first();
-        echo '<pre>';
+        // echo '<pre>';
 
-        var_dump($collection->new_column);die;
+        // var_dump($collection->new_column);die;
     }
     /**
      * Get the config path
