@@ -28,22 +28,22 @@ It extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#pac
                     "version" : "0.0.1", //package version
                     "commands" : [
                     ],
-                    "middlewares":{},
+                    "middlewares" : {},
                     "middlewaregroup": [
-                        "GROUPNAME":{
-                            "main":[
+                        "GROUPNAME" : {
+                            "main" : [
                             ],
-                            "pre":[
+                            "pre" : [
                             ],
-                            "post":[
+                            "post" : [
                             ],
                         },
                     ],
-                    "listeners":[
-                        "EVENT-CLASS-NAME" :{
-                            10:"OBSERVER-CLASS-NAME"
+                    "listeners" : {
+                        "EVENT-CLASS-NAME" : {
+                            "10":"OBSERVER-CLASS-NAME"
                         }
-                    ],
+                    },
                 }
             }
         }
