@@ -29,7 +29,7 @@ It extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#pac
                     "commands" : [
                     ],
                     "middlewares" : {},
-                    "middlewaregroup": [
+                    "middlewaregroup": {
                         "GROUPNAME" : {
                             "main" : [
                             ],
@@ -38,7 +38,7 @@ It extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#pac
                             "post" : [
                             ],
                         },
-                    ],
+                    },
                     "listeners" : {
                         "EVENT-CLASS-NAME" : {
                             "10":"OBSERVER-CLASS-NAME"
