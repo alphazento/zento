@@ -18,11 +18,11 @@ class ArtisanSubscriber
     public function subscribe()
     {
         Event::listen(
-            'Illuminate\Console\Events\ArtisanStarting', 
+            'Illuminate\Console\Events\CommandFinished', 
             function ($event) {
-                $artisan = $event->artisan;
-                $accessor = self::bindAccessor($artisan);
-                $accessor($artisan, 'laravel', new AlternativeConsoleApplication($artisan->getLaravel()));
+                if ($event->command === 'package:discover') {
+                    (new Commands\PackageDiscoverCommandRunAfter($event->input, $event->output))->discoverMyPackages();
+                }         
             }
         );
     }

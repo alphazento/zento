@@ -13,38 +13,47 @@ use Log;
 
 trait TraitLogger {
   protected function info($message, array $context =[]) {
-        Log::mark(static::class)->info($message, $context);
+    $context['mark'] = static::class;
+    Log::info($message, $context);
   }
 
   protected function notice($message, array $context =[]) {
-      Log::mark(static::class)->notice($message, $context);
+    $context['mark'] = static::class;
+    Log::notice($message, $context);
   }
 
   protected function warning($message, array $context =[]) {
-      Log::mark(static::class)->warning($message, $context);
+    $context['mark'] = static::class;
+    Log::warning($message, $context);
   }
 
   protected function debug($message, array $context =[]) {
-      Log::mark(static::class)->debug($message, $context);
+    $context['mark'] = static::class;
+    Log::debug($message, $context);
   }
 
   protected function dump($message, array $context =[]) {
-      Log::mark(static::class)->dump($message, $context);
+    $context['mark'] = static::class;
+    Log::dump($message, $context);
   }
 
   protected function error($message, array $context =[]) {
-      Log::mark(static::class)->error($message, $context);
+    $context['mark'] = static::class;
+    Log::error($message, $context);
   }
 
   protected function alert($message, array $context =[]) {
-      Log::mark(static::class)->alert($message, $context);
+    $context['mark'] = static::class;
+    Log::alert($message, $context);
   }
 
   protected function critical($message, array $context =[]) {
-      Log::mark(static::class)->critical($message, $context);
+    $context['mark'] = static::class;
+    Log::critical($message, $context);
   }
   
   protected function emergency($message, array $context =[]) {
-      Log::mark(static::class)->emergency($message, $context);
+    $context['mark'] = static::class;
+    Log::emergency($message, $context);
   }
 }

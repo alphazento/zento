@@ -13,7 +13,6 @@ namespace Zento\Kernel\PackageManager\Console\Commands;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Log;
 
 class Base extends Command
 {
@@ -30,24 +29,5 @@ class Base extends Command
     {
         $method = method_exists($this, 'handle') ? 'handle' : 'fire';
         return $this->laravel->call([$this, $method]);
-    }
-
-    public function line($string, $style = null, $verbosity = null) {
-        Log::mark(static::class, true);
-        switch($style) {
-          case 'comment':
-            Log::notice($string);
-            break;
-          case 'info':
-            Log::info($string);
-            break;
-          case 'warning':
-            Log::warning($string);
-            break;
-          case 'error':
-            Log::error($string);
-            break;
-        }
-        return parent::line($string, $style, $verbosity);
     }
 }

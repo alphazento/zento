@@ -15,7 +15,6 @@ use DB;
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
         $this->app->register(DebuggerServiceProvider::class);
-        $this->app->register(LogServiceProvider::class);
         $this->app->register(EventsServiceProvider::class);
         $this->app->register(DynaColumnFactoryProvider::class);
         $this->app->register(PackageManagerServiceProvider::class);

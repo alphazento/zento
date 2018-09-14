@@ -15,8 +15,6 @@ class ConfigServiceProvider extends \Illuminate\Support\ServiceProvider
 
     /**
      * replace the config service.
-     *
-     * @return \Illuminate\Log\Writer
      */
     public function replaceConfigService()
     {
