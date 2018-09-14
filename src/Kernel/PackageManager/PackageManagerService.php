@@ -145,7 +145,7 @@ class PackageManagerService extends MyPackageDiscover {
                 foreach ($assembly['middlewares'] as $middleware => $classOrClasses) {
                     if (is_array($classOrClasses) && count($classOrClasses)) {
                         if (isset($classOrClasses['main']) && count($classOrClasses['main'])) {
-                            $app['main']->middlewareGroup($middleware, $classOrClasses['main']);
+                            $app['router']->middlewareGroup($middleware, $classOrClasses['main']);
                         }
                         if (isset($classOrClasses['pre']) && count($classOrClasses['pre'])) {
                             foreach($classOrClasses['pre'] as $class) {

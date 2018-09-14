@@ -1,9 +1,11 @@
 ## Introduction
-This is a package to provide a solution of modularity your Laravel project with Laravel.
+This is a package to provide a solution of modularity your Laravel project with Laravel framework.
 
-It can enable/disable your package dynamicly by changing your database setting.
+It help you to extend your package into your Laravel project by just configurate some key concepts such as **Provider, Middleware, Middleware Group, Command Line, Route, Theme package, Listener**. And it also create a new folder as **mypackages**, you can create your private package in this folder by using **artisan make:package**.
 
-It extends Laravel Package Discovery feature by adding "zento" section to "extra"->"laravel" section of your package's composer.json file.
+### I. Package Development
+#### Package Discover Add Automount
+It extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#package-discovery) feature by adding "zento" section to "extra"->"laravel" section of your package's composer.json file. A classic Zento package you would like to config:
 
 ```json
     "extra": {
@@ -48,196 +50,120 @@ It extends Laravel Package Discovery feature by adding "zento" section to "extra
     },
 ```
 
-As a alphazento package, 
 
-
-### Benefits 
-#### 1. Use LaBooster you can easy develop and manage a module, and realy easy to reuse it in other project.
-
-In your module, you only need to focus the module's service provider, middleware, middlewaregroup, and console commands.
-
-And also you also can easy config the routes which you want to expose to the application from the module.
-
-#### 2. Easy Database Migration management
-
-Just put database Migration files into module's sub-folder 'database/{version}', and run command 'artisan module:up {modulename}',
-and it will parse the database version and migrate database.
-
-#### 3. Laravel commands 'make:*' extened.
-
-When you try to make a model, and you type in "artisan make:model test", it will prompt availabe module list, to ask you attach it to the module.
-
-
-### How to install
-composer require
-
-### Create a Laravel application
-
-composer create-project --prefer-dist laravel/laravel laravelapp
-
-### Config your project
-
-#### module name
-Module name is case sensitive and it composed by two parts:Organization and ModuleName.
-
-And using underscore to join Organization and ModuleName.
-
-
-##### 1. Create a folder for your modules.(eg. modules)
-
-    laravelapp_base_path/modules
-
-
-##### 2. Edit your Laravel project composer.json psr-4 node, add 
- It should looks like below:
-        "psr-0": {
-            "": "modules/"
-        }
-
-##### 3. Edit your Laravel project "config/app.php", add "Yong\LaBooster\Providers\Root::class" to providers
-
-##### 4. if your moduels folder name is not modules, you should add 'modules_path' => 'modules', to config/app.php
-
-
-#### Create a module
-##### 1. create a new module by running command:
-```shell
-    artisan make:module Organization_ModuleName
+#### MyPackage Folder Structure
+As Memtioned before you can create your package by running command:
 ```
-    It will create sub folders in this path:
-
-```shell
-    laravelapp_base_path/modules/Organization/ModuleName
+    artisan make:package VendorName_PackageName
 ```
+Then it will pre-create a folder in the path: **projectroot/mypackages/VendorName/PackageName**
 
-
-##### 2. Package folders structure
-    Now you may find under the folder laravelapp_base_path/modules/Organization/ModuleName we've pre-created many folders and files.
-    You can edit these folders and files to develop your module.
 ```shell
-root@a89b06c30e0a:/var/www/html/modules/Organization/ModuleName# tree
+/mypackages/{VendorName/{PackageName# tree
 .
 |-- Console
 |   `-- Commands                     //put your console command class files here
+|
 |-- Http
 |   |-- Controllers                  //put your Controllers class files here
 |   `-- Middleware                   //put your middleware class files here
+|
 |-- Model                            //put your Model class files here
+|
 |-- Providers                        //put your ServiceProvider class files here
 |   `-- Facades
+|
 |-- Services                         //put your real service class files here
-|-- config
-|   `-- settings.php                 //Your module configs
+|
+|-- Events                          //Put event class and listener class here
+|   |-- Listeners                   
+|
 |-- database                         //database migration management here
+|   |-- 0.0.1                        //version number
+|       |-- 01_create_sample_table1.php
+|   |-- 0.0.2                        //version number
+|       |-- 01_create_sample_table2.php
+|
 |-- resources                        //everything about frontend,please put here
 |   |-- public
 |   |   |-- css
 |   |   |-- font
 |   |   |-- images
 |   |   `-- js
-|   `-- views                        //your views. Please use it by: view('organization_module.'), with your module name organization_module prefix.
+|   `-- views                        //your views. Please use it by: view('VendorName.'), with your VendorName_PackageName prefix.
+|
+|-- composer.json                   //Config extra/laravel/zento setting here
+|
 `-- routes.php.example               //Please change it as "routes.php" if you want to use routes.
-
 ```
 
-##### 3. Create database migration file
-    Go to database folder, and make a subfolder '0.0.1'(which is the module's new version).
-    And create a file with name "01_create_test_table.php".
 
-##### 4. Edit module config
-    Module config file is located in config/settings.php
-    ***Please do not change the location and the file name***
-    And the setting.php is inited from template. It should looks like:
-
-```php
-    <?php
-return [
-    'version'=>'0.0.1',
-    'module'=>[
-        'theme'=> false, //true,false,or name of inheritance's theme module
-        'providers'=>[],
-        'middlewares'=>[],
-        'middlewaregroup' => [
-            'groupname' => [
-                'replace' => [
-                    //if has replace, it will ignore prepend and after
-                ],
-                'prepend' => [
-                ],
-                'after' => [
-                ],
-              ],
-        ],
-        'commands'=>[],
-        'aliases'=>[],
-        ],
-    ];
-```
-    
-    Based on your module's details, fill the array.
-
-##### 5. Define the routes.php to add your routes
-
-##### 6. Implements models, controllers and middlewares
-
-##### 7. Define view and use view
-    Go to folder resources/views, you can add your self view. For example, I add a folder pages and a view name home.blade.php
+### II. Usage 
+#### 1 Command Lines
+This package extends some command lines:
+##### 1) package:enable       
 ```shell
-    resources/views/pages/home.blade.php
+    artisan package:enable VendorName_PackageName
 ```
-    and when I use the view, just call it with module name prefix.
-```php
-    view('organization_module.pages.home');
-```
+It will register the package to the system, so it's provider, middleware, middlewaregroup, command lines and event listeners will be registered, then you can use these resources.
 
-* 7. Enable a module by running command:
+If a Zento package is not registered, those resource(list above) will not able to be used. But of cause you still can use it's classes.
+
+##### 2) package:disable      
+Disable package.(but it's classes still can be used.
 ```shell
-    artisan module:up Organization_ModuleName
+    artisan package:disable VendorName_PackageName
 ```
 
-
-Now the module is ready for use.
-
-## Installation
-
-##### Install via composer
+##### 3) package:discover
+This command line is provide from original Laravel, but we extend it to discover the packages that you created in **mypackages**. 
+And it also merge and cache configuration items in your package's **composer.json** file.
 ```shell
-    composer require alphazento/zento
+    artisan package:discover
 ```
+##### 4) listener:list
+Zento Kernel has extended original Laravel Event/Listener. Original Laravel Event's Listener doesnpt support control listener call sequency, but many time your listener must be called by a special sequency.
+By running command:
+```shell
+    artisan listener:list
+```
+It will list your package listening to events and these listeners calling sequency.
 
 
-## Features
-#### 1. Dynamic Column
-    Zento Kernel package bring dynamic column feature to Eloqument. You can easily extends attributes to an exist eloqument without change model's database table.
+#### 2. Extends Features
+##### 1). Dynamic Column
+Zento Kernel package bring dynamic column feature to Eloqument. You can easily extends attributes to an exist eloqument without change model's database table.
 
-    Dynamic Column has two type, single for attribute only has one value, option for attribe has multiple option values.
+Dynamic Column has two types:
+###### single 
+attribute only has a value
+###### option
+attribe has multiple option values.
 
-##### 1)  Create a dynamic column for a model
-    DynaColumnFactory::createRelationShipORM($modelClassName, $dynamicColumnName, $optionArray, $isSingleOrOptions)
+###### Create a dynamic column for a model
+DynaColumnFactory::createRelationShipORM($modelClassName, $dynamicColumnName, $optionArray, $isSingleOrOptions)
 
-    By calling this function, it will generate a dynamic column table for the model.
-    DynaColumnFactory::createRelationShipORM(\namespace\class::class, 
-        'attribute', ['char', 32], true);
+By calling this function, it will generate a dynamic column table for the model.
+DynaColumnFactory::createRelationShipORM(\namespace\class::class, 
+    'attribute', ['char', 32], true);
 
-##### 2) Extend withDyn and withDyns to retrieve dynamic columns
+###### Extend withDyn and withDyns to retrieve dynamic columns
     You can use withDyn(single), or withDyns(option)
     
     $collection = \Zento\Kernel\TestModel::where('id', 1)->withDyn('new_column')->first();
-##### 3) listDynaColumns
+###### listDynaColumns
     This function will list all dynamic columns for an exists model
 
-##### 4) how to use
+###### Example
     by addting trait
         
-
 #### 2. config extends
+This package also extends original Laravel config feature. The original config only load config from config's folder. With this extends, we create a table in database.
+
+So when you try to get a config value, it will try to use default config(which get from config folder), if there's not configuration item and it will try to get from database.
+
+It also provider interface for you to change config engine. That means you can define your own config logic instead of the default one which store in database.
 
 ## Log extends
 
 ## event extends
-
-## command lines
-
-## package folder struct
-
-##
