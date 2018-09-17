@@ -1,11 +1,52 @@
-## Introduction
+# Introduction
 This is a package to provide a solution of modularity your Laravel project with Laravel framework.
 
-It help you to extend your package into your Laravel project by just configurate some key concepts such as **Provider, Middleware, Middleware Group, Command Line, Route, Theme package, Listener**. And it also create a new folder as **mypackages**, you can create your private package in this folder by using **artisan make:package**.
+It includes three sub-packages: **Kernel, ThemeManager, UrlRewriter**.
+These three packages only **"Kernel"** is mantorary enabled, UrlRewriter and ThemeManager you can enable or disable it base on your project requirement.
 
-### I. Package Development
-#### Package Discover Add Automount
-It extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#package-discovery) feature by adding "zento" section to "extra"->"laravel" section of your package's composer.json file. A classic Zento package you would like to config:
+#### Kernel Package
+**Kernel** package extends package management feature to Laravel project by just configurate some key concepts such as **Provider, Middleware, Middleware Group, Command Line, Route, Theme package, Listener**.
+
+It provides a folder **mypackages** as private package codebase, you can create your private package in this folder by using **artisan make:package**.
+
+And this package also provides some useful features: 
+1) Config system which can connect to DB(or you can define your config extension)
+2) Dynamic Column, Sequency Event and Listeners.
+
+By running command to enable this package:
+```
+php artisan package:enable Zento/Kernel
+```
+
+#### ThemeManager
+By running command to enable this package:
+```
+php artisan package:enable Zento/ThemeManager
+```
+
+#### UrlRewriter
+
+UrlRewriter provides a url rewrite management for laravel. You can connect a static url to your laravel route.
+
+When the package is enabled, it will create a new table 'url_rewrite_rules' where you can manage your url rewrites.
+
+By running command to enable this package:
+```
+php artisan package:enable Zento/UrlRewriter
+```
+
+# Installation
+Please install it via composer:
+
+```shell
+composer require alphazento/zento:dev-master
+```
+
+## I. Package Development
+Alphazento/Zento extends Laravel Package Discover and also provides a new **"mypackage"** folder in project root path. This folder will also be discovered by **"package:discover"** and you can put your private code base in here.
+
+### Package Discover
+This package extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#package-discovery) feature by adding "zento" section to "extra"->"laravel" section of your package's composer.json file. A classic Zento package you would like to config:
 
 ```json
     "extra": {
@@ -51,8 +92,8 @@ It extends Laravel [Package Discovery](https://laravel.com/docs/5.6/packages#pac
 ```
 
 
-#### MyPackage Folder Structure
-As Memtioned before you can create your package by running command:
+### MyPackage Folder Structure
+You can create your package by running command:
 ```
     artisan make:package VendorName_PackageName
 ```
@@ -97,11 +138,12 @@ Then it will pre-create a folder in the path: **projectroot/mypackages/VendorNam
 `-- routes.php.example               //Please change it as "routes.php" if you want to use routes.
 ```
 
-
-### II. Usage 
-#### 1 Command Lines
+## II. Usage 
+### 1 Command Lines
 This package extends some command lines:
-##### 1) package:enable       
+#### 1) make:package
+
+#### 2) package:enable
 ```shell
     artisan package:enable VendorName_PackageName
 ```
@@ -109,19 +151,19 @@ It will register the package to the system, so it's provider, middleware, middle
 
 If a Zento package is not registered, those resource(list above) will not able to be used. But of cause you still can use it's classes.
 
-##### 2) package:disable      
+#### 2) package:disable      
 Disable package.(but it's classes still can be used.
 ```shell
     artisan package:disable VendorName_PackageName
 ```
 
-##### 3) package:discover
+#### 3) package:discover
 This command line is provide from original Laravel, but we extend it to discover the packages that you created in **mypackages**. 
 And it also merge and cache configuration items in your package's **composer.json** file.
 ```shell
     artisan package:discover
 ```
-##### 4) listeners
+#### 4) listeners
 Zento Kernel has extended original Laravel Event/Listener. Original Laravel Event's Listener doesnpt support control listener call sequency, but many time your listener must be called by a special sequency.
 By running command:
 ```shell
@@ -130,31 +172,31 @@ By running command:
 It will list your package listening to events and these listeners calling sequency.
 
 
-#### 2. Extends Features
-##### 1). Dynamic Column
+### 2. Extends Features
+#### 1). Dynamic Column
 Zento Kernel package bring dynamic column feature to Eloqument. You can easily extends attributes to an exist eloqument without change model's database table.
 
 Dynamic Column has two types:
-###### single 
+##### single 
 attribute only has a value
-###### option
+##### option
 attribe has multiple option values.
 
-###### Create a dynamic column for a model
+##### Create a dynamic column for a model
 DynaColumnFactory::createRelationShipORM($modelClassName, $dynamicColumnName, $optionArray, $isSingleOrOptions)
 
 By calling this function, it will generate a dynamic column table for the model.
 DynaColumnFactory::createRelationShipORM(\namespace\class::class, 
     'attribute', ['char', 32], true);
 
-###### Extend withDyn and withDyns to retrieve dynamic columns
+##### Extend withDyn and withDyns to retrieve dynamic columns
     You can use withDyn(single), or withDyns(option)
     
     $collection = \Zento\Kernel\TestModel::where('id', 1)->withDyn('new_column')->first();
-###### listDynaColumns
+##### listDynaColumns
     This function will list all dynamic columns for an exists model
 
-###### How to use it
+##### How to use it
 If you want your Eloquemnt Model has ability of dynamic columns, you may do so using the Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\DynamicColumnAbility trait. This trait is imported by default on hasOneDyn, hasManyDyns functions and they work with Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Builder to provide withDyn and withDyns:
 
 ```php
@@ -172,13 +214,13 @@ TestModel::listDynaColumns();       //list all dynamic columns
 $collection = TestModel::where('id', 1)->withDyn('new_column')->withDyns('new_column1')->first();
 ```
 
-##### 2). Config extends
+#### 2). Config extends
 This package also extends original Laravel config feature. The original config only load config from config's folder. With this extends, we create a table in database.
 
 So when you try to get a config value, it will try to use default config(which get from config folder), if there's not configuration item and it will try to get from database.
 
 It also provider interface for you to change config engine. That means you can define your own config logic instead of the default one which store in database.
 
-##### 3). event extends
+#### 3). event extends
 
 This package extends event and listener
