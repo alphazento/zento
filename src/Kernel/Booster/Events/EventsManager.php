@@ -37,10 +37,7 @@ class EventsManager {
                 $this->eventListeners[$key] = $elements;
             }
         }
-    }
-
-    public function addSubscriber($subscriber) {
-        $this->subscribe[] = $subscriber;
+        Cache::forever(Consts::CACHE_KEY_RAW_EVENTS_LISTENERS, $this->eventListeners);
     }
 
     public function prepareEventListeners() {
@@ -56,5 +53,9 @@ class EventsManager {
             Cache::forever(Consts::CACHE_KEY_EVENTS_LISTENERS, $this->parsedEventListeners);
         }
         return $this->parsedEventListeners;
+    }
+
+    public function getRawListeners() {
+        return Cache::get(Consts::CACHE_KEY_RAW_EVENTS_LISTENERS);
     }
 }

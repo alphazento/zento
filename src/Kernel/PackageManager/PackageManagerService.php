@@ -102,7 +102,8 @@ class PackageManagerService extends MyPackageDiscover {
                 "commands" => [
                     '\Zento\Kernel\PackageManager\Console\Commands\MakePackage',
                     '\Zento\Kernel\PackageManager\Console\Commands\EnablePackage',
-                    '\Zento\Kernel\PackageManager\Console\Commands\DisablePackage'
+                    '\Zento\Kernel\PackageManager\Console\Commands\DisablePackage',
+                    '\Zento\Kernel\Booster\Events\Command\ListListener'
                 ]
             ],
             $serviceProvider);
@@ -135,7 +136,7 @@ class PackageManagerService extends MyPackageDiscover {
         }
 
         if (isset($assembly['listeners']) && !EventsManager::isCached()) {
-            EventsManager::addEventsListener($assembly['listeners']);
+            EventsManager::addEventListeners($assembly['listeners']);
         }
 
         //register routes
