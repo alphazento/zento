@@ -121,11 +121,11 @@ And it also merge and cache configuration items in your package's **composer.jso
 ```shell
     artisan package:discover
 ```
-##### 4) listener:list
+##### 4) listeners
 Zento Kernel has extended original Laravel Event/Listener. Original Laravel Event's Listener doesnpt support control listener call sequency, but many time your listener must be called by a special sequency.
 By running command:
 ```shell
-    artisan listener:list
+    artisan listeners
 ```
 It will list your package listening to events and these listeners calling sequency.
 
@@ -154,10 +154,25 @@ DynaColumnFactory::createRelationShipORM(\namespace\class::class,
 ###### listDynaColumns
     This function will list all dynamic columns for an exists model
 
-###### Example
-    by addting trait
-        
-##### 2). config extends
+###### How to use it
+If you want your Eloquemnt Model has ability of dynamic columns, you may do so using the Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\DynamicColumnAbility trait. This trait is imported by default on hasOneDyn, hasManyDyns functions and they work with Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Builder to provide withDyn and withDyns:
+
+```php
+class TestModel extends \Illuminate\Database\Eloquent\Model {
+    use \Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\DynamicColumnAbility;
+}
+
+DynaColumnFactory::createRelationShipORM(TestModel::class, 
+            'new_column', ['char', 32], true);
+DynaColumnFactory::createRelationShipORM(TestModel::class, 
+'new_column1', ['char', 32], false);
+
+TestModel::listDynaColumns();       //list all dynamic columns
+
+$collection = TestModel::where('id', 1)->withDyn('new_column')->withDyns('new_column1')->first();
+```
+
+##### 2). Config extends
 This package also extends original Laravel config feature. The original config only load config from config's folder. With this extends, we create a table in database.
 
 So when you try to get a config value, it will try to use default config(which get from config folder), if there's not configuration item and it will try to get from database.
@@ -165,3 +180,5 @@ So when you try to get a config value, it will try to use default config(which g
 It also provider interface for you to change config engine. That means you can define your own config logic instead of the default one which store in database.
 
 ##### 3). event extends
+
+This package extends event and listener
