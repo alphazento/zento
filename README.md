@@ -157,13 +157,11 @@ DynaColumnFactory::createRelationShipORM(\namespace\class::class,
 ###### Example
     by addting trait
         
-#### 2. config extends
+##### 2). config extends
 This package also extends original Laravel config feature. The original config only load config from config's folder. With this extends, we create a table in database.
 
 So when you try to get a config value, it will try to use default config(which get from config folder), if there's not configuration item and it will try to get from database.
 
 It also provider interface for you to change config engine. That means you can define your own config logic instead of the default one which store in database.
 
-## Log extends
-
-## event extends
+##### 3). event extends
