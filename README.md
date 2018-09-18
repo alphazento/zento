@@ -66,7 +66,7 @@ This package extends Laravel [Package Discovery](https://laravel.com/docs/5.6/pa
                 "Vendor_SamplePackage":{
                 "providers": [
                 ],
-                "version" : "0.0.1", //package version
+                "version" : "0.0.1",
                 "commands" : [
                 ],
                 "middlewares" : {},
