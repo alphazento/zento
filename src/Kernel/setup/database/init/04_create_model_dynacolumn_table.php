@@ -12,13 +12,15 @@ class CreateModelDynacolumnTable extends Migration
      */
     public function up()
     {
-        Schema::create('model_dynacolumns', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('dynacolumn', 255);
-            $table->string('model', 255);  //product,category...
-            $table->boolean('single')->default(1);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('model_dynacolumns')) {
+            Schema::create('model_dynacolumns', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('dynacolumn', 255);
+                $table->string('model', 255);  //product,category...
+                $table->boolean('single')->default(1);
+                $table->timestamps();
+            });
+        }
     }
 
     /**

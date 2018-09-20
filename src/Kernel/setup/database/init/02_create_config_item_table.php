@@ -12,15 +12,17 @@ class CreateConfigItemTable extends Migration
      */
     public function up()
     {
-        Schema::create('config_items', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->string('group', 10)->default('global')->index();
-            $table->string('key', 255)->index();
-            $table->text('value');
-            $table->timestamps();
-            $table->unique(['group', 'key']);
-        });
+        if (!Schema::hasTable('config_items')) {
+            Schema::create('config_items', function (Blueprint $table) {
+                $table->engine = 'InnoDB';
+                $table->increments('id');
+                $table->string('group', 10)->default('global')->index();
+                $table->string('key', 255)->index();
+                $table->text('value');
+                $table->timestamps();
+                // $table->unique(['group', 'key']);
+            });
+        }
     }
 
     /**
