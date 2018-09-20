@@ -21,7 +21,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     /**
      * direct join single type dynacolumn
      *
-     * @param [type] $columnName
+     * @param string $columnName
      * @return void
      */
     public function joinDyn($columnName) {
@@ -38,8 +38,8 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     /**
      * with single type dynacolumn
      *
-     * @param [type] $columnName
-     * @return void
+     * @param string $columnName
+     * @return $this
      */
     public function withDyn($columnName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
@@ -51,14 +51,22 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     /**
      * with option type dynacolumn
      *
-     * @param [type] $columnName
-     * @return void
+     * @param string $columnName
+     * @return $this
      */
     public function withDyns($columnName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
         $this->dyn_eagerLoad[$columnName] = 2;
         return $this;
+    }
+
+    /**
+     * Undocumented function
+     * @return $this
+     */
+    public function withDynSet() {
+
     }
 
     /**

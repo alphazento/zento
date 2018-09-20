@@ -122,5 +122,9 @@ class Factory {
                     ->on($parent->getTable());
             });
         }
+
+        if (config('dynacolumn_management')) {
+
+        }
     }
 }
