@@ -8,7 +8,7 @@
  * @author      Yongcheng Chen tony@tonercity.com.au
  */
 
-namespace Zento\Kernel\Booster\Events\Command;
+namespace Zento\Kernel\Booster\Events\Commands;
 
 use Closure;
 use Registry;

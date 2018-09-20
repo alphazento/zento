@@ -18,9 +18,14 @@ class BaseEvent
 
     protected $channelName;
 
-    public function __construct($channelName = 'none') {
+    /**
+     * set channel if going to use channel to broadcast
+     *
+     * @param string $channelName
+     * @return void
+     */
+    public function setChannel($channelName = 'none') {
         $this->channelName = $channelName;
-        $this->xRays = [];
     }
 
     /**
@@ -30,7 +35,11 @@ class BaseEvent
      * @return $this
      */
     public function addXRay($listener) {
-        $this->xRays[] = $listener;
+        if ($this->xRays == null) {
+            $this->xRays = [$listener];
+        } else {
+            $this->xRays[] = $listener;
+        }
         return $this;
     }
 

@@ -96,7 +96,6 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
             #$path = '/var/www/test/vendor/composer/autoload_classmap.php';
             $classes = require_once($path);
             foreach($classes as $className => $classPath) {
-                // echo $className . PHP_EOL;
                 if (mb_strpos($className, "Zento\\") === 0) {
                     $parts = explode("\\", $className);
                     $nameParts = [array_shift($parts)]; 
