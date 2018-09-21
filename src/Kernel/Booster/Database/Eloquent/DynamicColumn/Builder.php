@@ -2,13 +2,16 @@
 namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn;
 
 use DB;
-use Illuminate\Database\Eloquent\Model;
 use Zento\Kernel\Facades\DynaColumnFactory;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\ModelDynacolumn;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\DynacolumnSet;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $append_columns;
     protected $dyn_eagerLoad;
+    protected $_withDynSet;
 
     public function __construct(\Illuminate\Database\Eloquent\Builder $builder) {
         $this->query = $builder->getQuery();
@@ -16,6 +19,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->eagerLoad = $builder->getEagerLoads();
         $this->append_columns = [];
         $this->dyn_eagerLoad = [];
+        $this->_withDynSet = false;
     }
 
     /**
@@ -44,7 +48,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     public function withDyn($columnName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
-        $this->dyn_eagerLoad[$columnName] = 1;
+        $this->dyn_eagerLoad[$columnName] = 1;      //1 means single
         return $this;
     }
 
@@ -57,16 +61,43 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     public function withDyns($columnName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
-        $this->dyn_eagerLoad[$columnName] = 2;
+        $this->dyn_eagerLoad[$columnName] = 2;     //2 means options
         return $this;
     }
 
     /**
-     * Undocumented function
+     * load dynacolumn set
      * @return $this
      */
     public function withDynSet() {
+        $this->_withDynSet = true;
+        $this->with(['dynacolumnset.dynacolumns']);
+        return $this;
+    }
 
+    
+    /**
+     * Eager load the relationships for the models.
+     *
+     * @param  array  $models
+     * @return array
+     */
+    public function eagerLoadRelations(array $models)
+    {
+        if ($this->_withDynSet) {
+            $collection = ModelDynacolumn::select('dynacolumn', 'single')
+                ->where('model', $this->getModel()->getTable())
+                ->get()
+                ->toArray();
+            foreach($collection as $item) {
+                if ($item['single']) {
+                    $this->withDyn($item['dynacolumn']);
+                } else {
+                    $this->withDyns($item['dynacolumn']);
+                }
+            }
+        }
+        return parent::eagerLoadRelations($models);
     }
 
     /**

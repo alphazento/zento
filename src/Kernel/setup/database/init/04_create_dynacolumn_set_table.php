@@ -17,7 +17,6 @@ class CreateDynacolumnSetTable extends Migration
                 $table->increments('id');
                 $table->string('name', 255);
                 $table->string('model', 255);  //product,category...
-                // $table->text('dynacolumns')->nullable();
                 $table->timestamps();
             });
         }

@@ -3,6 +3,9 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn;
 
 use Zento\Kernel\Facades\DynaColumnFactory;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Builder;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\ModelDynacolumn;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\DynacolumnSet;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\DynacolumnSetDynacolumn;
 
 trait DynamicColumnAbility
 {
@@ -48,7 +51,7 @@ trait DynamicColumnAbility
     {
         $instance = new ORM\OptionDynaColumn();
         $instance->setConnection($this->getConnectionName());
-        $instance->setTable(DynaColumnFactory::getTable($this, $columnName));
+        $instance->setTable(DynaColumnFactory::getTable($this, $columnName, false));
 
         $foreignKey = $foreignKey ?: $this->getForeignKey();
 
@@ -66,5 +69,9 @@ trait DynamicColumnAbility
      */
     public static function listDynaColumns() {
         (new \Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Schema\Mysql)->listDynaColumns(new static);
+    }
+
+    public function dynacolumnset() {
+        return $this->hasOne(DynacolumnSet::class, 'id', 'dynacolumn_set_id');
     }
 }

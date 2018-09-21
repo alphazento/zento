@@ -1,45 +1,11 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
 
-class Relationship {
-    protected $_isSingle = true;
-    protected $model;
-    protected $parent;
-    
-    /**
-     * Undocumented function
-     *
-     * @param Model $parent
-     * @param string $model
-     * @param boolean $isSingle
-     */
-    public function __construct($parent, $table, $isSingle) {
-        $this->parent = $parent;
-        $this->table = $table;
-        $this->_isSingle = $isSingle;
-    }
-
-    public function isSingle() {
-        return $this->_isSingle;
-    }
-
-    /**
-     * create a new Model instance, set connection and table name
-     *
-     * @param Model $parent
-     * @return Model Dyna Column instance
-     */
-    protected function makeModel($parent = null) {
-        $model = $this->_isSingle ? (new ORM\SingleDynaColumn()) : (new ORM\OptionDynaColumn());
-        $model->setConnection(($parent ?? $this->parent)->getConnectionName());
-        $model->setTable($this->table);
-        return $model;
-    }
-
+class Single extends Base {
     /**
      * find a Model instance by parent's key
      *
@@ -70,10 +36,12 @@ class Relationship {
      * @return Model
      */
     public function new($value, $parent = null) {
-        $model = $this->makeModel();
-        $model->foreignkey = ($parent ?? $this->parent)->getKey();
-        $model->value = $value;
-        $model->save();
+        // $model = $this->makeModel();
+        // $model->foreignkey = ($parent ?? $this->parent)->getKey();
+        // $model->value = $value;
+        // $model->save();
+        // return $model;
+        return $this->update($value, $parent);
     }
 
     /**
@@ -88,6 +56,7 @@ class Relationship {
         $model->foreignkey = ($parent ?? $this->parent)->getKey();
         $model->value = $value;
         $model->save();
+        return $model;
     }
 
     /**

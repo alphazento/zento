@@ -17,8 +17,12 @@ class PackageMigrator {
 
         $version  = isset($assembly['version']) ? $assembly['version'] : '0';
         
-        if ($version == $packageConfig->version) {
+        if ($version != $packageConfig->version) {
             $this->warning("There's no new version found.");
+            $file = PackageManager::packagePath($packageName, ['setup', 'up.php']);
+            if (file_exists($file)) {
+                require_once($file);
+            }
             return true;
         }
 

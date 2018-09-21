@@ -7,6 +7,9 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\ModelDynacolumn;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship\Single as SingleRelationship;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship\Option as OptionRelationship;
 
 class Factory {
 
@@ -86,7 +89,7 @@ class Factory {
     protected function retrieveRelationship(Model $parent, $columnName, $single) {
         $table = $this->getTable($parent, $columnName, $single);
         if (!isset($this->cache[$table])) {
-            $this->cache[$table] = new Relationship($parent, $columnName, $single);
+            $this->cache[$table] = ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
         }
         return $this->cache[$table];
     }
@@ -106,7 +109,7 @@ class Factory {
         } else {
             $parent = $parentClassOrModel;
         }
-        $tableName = $this->getTable($parent, $columnName);
+        $tableName = $this->getTable($parent, $columnName, $single);
         if (!Schema::hasTable($tableName)) {
             Schema::create($tableName, function (Blueprint $table) use ($parent, $valueDes, $single) {
                 $table->increments('id');
@@ -121,10 +124,15 @@ class Factory {
                     ->references($parent->getKeyname())
                     ->on($parent->getTable());
             });
-        }
 
-        if (config('dynacolumn_management')) {
-
+            if (true || config('dynacolumn_management')) {
+                $modelcolumn = ModelDynacolumn::firstOrNew([
+                    'model' => $parent->getTable(),
+                    'dynacolumn' => $columnName
+                ]);
+                $modelcolumn->single = $single;
+                $modelcolumn->save();
+            }
         }
     }
 }
