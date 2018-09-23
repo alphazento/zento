@@ -17,7 +17,7 @@ class PackageMigrator {
 
         $version  = isset($assembly['version']) ? $assembly['version'] : '0';
         
-        if ($version != $packageConfig->version) {
+        if ($version === $packageConfig->version) {
             $this->warning("There's no new version found.");
             $file = PackageManager::packagePath($packageName, ['setup', 'up.php']);
             if (file_exists($file)) {
@@ -67,7 +67,10 @@ class PackageMigrator {
             $dbMigrations[] = $instance;
             try {
                 $instance->up();
+                echo $className . ' up...' . PHP_EOL;
             } catch (\Exception $e) {
+                echo $e->getMessage(). PHP_EOL;
+                echo $className . ' up fail. rollback...' . PHP_EOL;
                 $this->error($e->getMessage());
                 foreach($dbMigrations as $instance) {
                     $instance->down();
