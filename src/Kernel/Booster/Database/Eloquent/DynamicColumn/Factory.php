@@ -88,6 +88,7 @@ class Factory {
      */
     protected function retrieveRelationship(Model $parent, $columnName, $single) {
         $table = $this->getTable($parent, $columnName, $single);
+        return  ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
         if (!isset($this->cache[$table])) {
             $this->cache[$table] = ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
         }
