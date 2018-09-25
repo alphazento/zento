@@ -104,7 +104,7 @@ class Factory {
      * @param boolean $single
      * @return void
      */
-    public function createRelationShipORM($parentClassOrModel, $columnName, $valueDes, $single = true) {
+    public function createRelationShipORM($parentClassOrModel, $columnName, $valueDes, $single = true, $defaultValue = '') {
         if (is_string($parentClassOrModel) && class_exists($parentClassOrModel)) {
             $parent = new $parentClassOrModel();
         } else {
@@ -129,7 +129,9 @@ class Factory {
             if (true || config('dynacolumn_management')) {
                 $modelcolumn = ModelDynacolumn::firstOrNew([
                     'model' => $parent->getTable(),
-                    'dynacolumn' => $columnName
+                    'dynacolumn' => $columnName,
+                    'col_type' => $valueDes[0],
+                    'default_value' => $defaultValue
                 ]);
                 $modelcolumn->single = $single;
                 $modelcolumn->save();
