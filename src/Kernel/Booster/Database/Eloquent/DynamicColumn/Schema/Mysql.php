@@ -83,9 +83,14 @@ class Mysql {
             case 'time':
             case 'timestamp':
             case 'date':
-            case 'dateTime':
             case 'float':
                 return $table->{$type}($columnName);
+                break;
+            case 'dateTime':
+            case 'datetime':
+                return $table->dateTime($columnName);
+            case 'varchar':
+                return $table->string($columnName);
                 break;
             case 'char':
             case 'string':
