@@ -189,14 +189,14 @@ By calling this function, it will generate a dynamic Attribute table for the mod
 DanamicAttributeFactory::createRelationShipORM(\namespace\class::class,
 'attribute', ['char', 32], true);
 
-##### Extend withSingleDynamicAttribute and withOptionDynamicAttribute to retrieve dynamic attribute
-You can use withSingleDynamicAttribute(single), or withOptionDynamicAttribute(option)
-$collection = \Zento\Kernel\TestModel::where('id', 1)->withSingleDynamicAttribute('new_column')->first();
+##### Extend withDynamicSingleAttribute and withDynamicOptionAttribute to retrieve dynamic attribute
+You can use withDynamicSingleAttribute(single), or withDynamicOptionAttribute(option)
+$collection = \Zento\Kernel\TestModel::where('id', 1)->withDynamicSingleAttribute('new_column')->first();
 ##### listDynamicAttributes
 This function will list all dynamic attributes for an exists model
 
 ##### How to use it
-If you want your Eloquemnt Model has ability of dynamic Attributes, you may do so using the Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\DynamicAttributeAbility trait. This trait is imported by default on hasOneDyn, hasManyDyns functions and they work with Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Builder to provide withSingleDynamicAttribute and withOptionDynamicAttribute:
+If you want your Eloquemnt Model has ability of dynamic Attributes, you may do so using the Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\DynamicAttributeAbility trait. This trait is imported by default on hasOneDyn, hasManyDyns functions and they work with Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Builder to provide withDynamicSingleAttribute and withDynamicOptionAttribute:
 
 ```php
 class TestModel extends \Illuminate\Database\Eloquent\Model {
@@ -210,7 +210,7 @@ DanamicAttributeFactory::createRelationShipORM(TestModel::class,
 
 TestModel::listDynamicAttributes(); //list all dynamic Attributes
 
-$collection = TestModel::where('id', 1)->withSingleDynamicAttribute('new_column')->withOptionDynamicAttribute('new_column1')->first();
+$collection = TestModel::where('id', 1)->withDynamicSingleAttribute('new_column')->withDynamicOptionAttribute('new_column1')->first();
 ```
 
 #### 2). Config extends

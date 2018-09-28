@@ -4,7 +4,7 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\OptionDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\DynamicOptionAttribute;
 
 class Option extends Base {
     protected $items;
@@ -36,7 +36,7 @@ class Option extends Base {
         $this->items = [];
         foreach($all as $row) {
             $key = md5(strtolower($row->value));
-            $model = new OptionDynamicAttribute();
+            $model = new DynamicOptionAttribute();
             $model->setRawAttributes((array)$row, true);
             $model->exists = true;
             $this->items[$key] = $model;

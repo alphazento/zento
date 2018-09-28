@@ -29,7 +29,7 @@ trait DynamicAttributeAbility
      */
     public function hasOneDyn($attributeName, $foreignKey = 'foreignKey', $localKey = null)
     {
-        $instance =new ORM\SingleDynamicAttribute();
+        $instance =new ORM\DynamicSingleAttribute();
         $instance->setConnection($this->getConnectionName());
         $instance->setTable(DanamicAttributeFactory::getTable($this, $attributeName));
         
@@ -49,7 +49,7 @@ trait DynamicAttributeAbility
      */
     public function hasManyDyns($attributeName, $foreignKey = 'foreignKey', $localKey = null)
     {
-        $instance = new ORM\OptionDynamicAttribute();
+        $instance = new ORM\DynamicOptionAttribute();
         $instance->setConnection($this->getConnectionName());
         $instance->setTable(DanamicAttributeFactory::getTable($this, $attributeName, false));
 

@@ -63,8 +63,8 @@ class Factory {
      * @param string $attributeName
      * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
      */
-    public function withSingleDynamicAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
-        return (new Builder($builder))->withSingleDynamicAttribute($attributeName);
+    public function withDynamicSingleAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
+        return (new Builder($builder))->withDynamicSingleAttribute($attributeName);
     }
 
     /**
@@ -74,8 +74,8 @@ class Factory {
      * @param string $attributeName
      * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
      */
-    public function withOptionDynamicAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
-        return (new Builder($builder))->withOptionDynamicAttribute($attributeName);
+    public function withDynamicOptionAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
+        return (new Builder($builder))->withDynamicOptionAttribute($attributeName);
     }
 
     /**

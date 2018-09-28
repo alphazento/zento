@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $append_columns;
     protected $dyn_eagerLoad;
-    protected $_withOptionDynamicAttributeet;
+    protected $_withDynamicOptionAttributeet;
 
     public function __construct(\Illuminate\Database\Eloquent\Builder $builder) {
         $this->query = $builder->getQuery();
@@ -19,7 +19,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->eagerLoad = $builder->getEagerLoads();
         $this->append_columns = [];
         $this->dyn_eagerLoad = [];
-        $this->_withOptionDynamicAttributeet = false;
+        $this->_withDynamicOptionAttributeet = false;
     }
 
     /**
@@ -45,7 +45,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @param string $attributeName
      * @return $this
      */
-    public function withSingleDynamicAttribute($attributeName) {
+    public function withDynamicSingleAttribute($attributeName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
         $this->dyn_eagerLoad[$attributeName] = 1;      //1 means single
@@ -58,7 +58,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @param string $attributeName
      * @return $this
      */
-    public function withOptionDynamicAttribute($attributeName) {
+    public function withDynamicOptionAttribute($attributeName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
         $this->dyn_eagerLoad[$attributeName] = 2;     //2 means options
@@ -69,8 +69,8 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * load dynamicattribute set
      * @return $this
      */
-    public function withOptionDynamicAttributeet() {
-        $this->_withOptionDynamicAttributeet = true;
+    public function withDynamicOptionAttributeet() {
+        $this->_withDynamicOptionAttributeet = true;
         $this->with(['attributeset.attributes']);
         return $this;
     }
@@ -84,16 +84,16 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function eagerLoadRelations(array $models)
     {
-        if ($this->_withOptionDynamicAttributeet) {
+        if ($this->_withDynamicOptionAttributeet) {
             $collection = ModelDynamicAttribute::select('attribute', 'single')
                 ->where('model', $this->getModel()->getTable())
                 ->get()
                 ->toArray();
             foreach($collection as $item) {
                 if ($item['single']) {
-                    $this->withSingleDynamicAttribute($item['attribute']);
+                    $this->withDynamicSingleAttribute($item['attribute']);
                 } else {
-                    $this->withOptionDynamicAttribute($item['attribute']);
+                    $this->withDynamicOptionAttribute($item['attribute']);
                 }
             }
         }
