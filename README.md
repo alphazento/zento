@@ -11,7 +11,7 @@ It provides a folder **mypackages** as private package codebase, you can create 
 
 And this package also provides some useful features:
 1) Config system which can connect to DB(or you can define your config extension)
-2) Dynamic Column, Event and Sequence Listeners.
+2) Dynamic Attribute, Event and Sequence Listeners.
 
 By running command to enable this package:
 ```
@@ -173,44 +173,44 @@ It will list your package listening to events and these listeners calling Sequen
 
 
 ### 2. Extends Features
-#### 1). Dynamic Column
-Zento Kernel package bring dynamic column feature to Eloqument. You can easily extends attributes to an exist eloqument without change model's database table.
+#### 1). Dynamic Attribute
+Zento Kernel package bring dynamic Attribute feature to Eloqument. You can easily extends attributes to an exist eloqument without change model's database table.
 
-Dynamic Column has two types:
+Dynamic Attribute has two types:
 ##### single
 attribute only has a value
 ##### option
 attribe has multiple option values.
 
-##### Create a dynamic column for a model
-DynaColumnFactory::createRelationShipORM($modelClassName, $dynamicColumnName, $optionArray, $isSingleOrOptions)
+##### Create a dynamic Attribute for a model
+DanamicAttributeFactory::createRelationShipORM($modelClassName, $dynamicAttributeName, $optionArray, $isSingleOrOptions)
 
-By calling this function, it will generate a dynamic column table for the model.
-DynaColumnFactory::createRelationShipORM(\namespace\class::class,
+By calling this function, it will generate a dynamic Attribute table for the model.
+DanamicAttributeFactory::createRelationShipORM(\namespace\class::class,
 'attribute', ['char', 32], true);
 
-##### Extend withDyn and withDyns to retrieve dynamic columns
-You can use withDyn(single), or withDyns(option)
-$collection = \Zento\Kernel\TestModel::where('id', 1)->withDyn('new_column')->first();
-##### listDynaColumns
-This function will list all dynamic columns for an exists model
+##### Extend withSingleDynamicAttribute and withOptionDynamicAttribute to retrieve dynamic attribute
+You can use withSingleDynamicAttribute(single), or withOptionDynamicAttribute(option)
+$collection = \Zento\Kernel\TestModel::where('id', 1)->withSingleDynamicAttribute('new_column')->first();
+##### listDynamicAttributes
+This function will list all dynamic attributes for an exists model
 
 ##### How to use it
-If you want your Eloquemnt Model has ability of dynamic columns, you may do so using the Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\DynamicColumnAbility trait. This trait is imported by default on hasOneDyn, hasManyDyns functions and they work with Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Builder to provide withDyn and withDyns:
+If you want your Eloquemnt Model has ability of dynamic Attributes, you may do so using the Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\DynamicAttributeAbility trait. This trait is imported by default on hasOneDyn, hasManyDyns functions and they work with Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Builder to provide withSingleDynamicAttribute and withOptionDynamicAttribute:
 
 ```php
 class TestModel extends \Illuminate\Database\Eloquent\Model {
-use \Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\DynamicColumnAbility;
+use \Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\DynamicAttributeAbility;
 }
 
-DynaColumnFactory::createRelationShipORM(TestModel::class,
+DanamicAttributeFactory::createRelationShipORM(TestModel::class,
 'new_column', ['char', 32], true);
-DynaColumnFactory::createRelationShipORM(TestModel::class,
+DanamicAttributeFactory::createRelationShipORM(TestModel::class,
 'new_column1', ['char', 32], false);
 
-TestModel::listDynaColumns(); //list all dynamic columns
+TestModel::listDynamicAttributes(); //list all dynamic Attributes
 
-$collection = TestModel::where('id', 1)->withDyn('new_column')->withDyns('new_column1')->first();
+$collection = TestModel::where('id', 1)->withSingleDynamicAttribute('new_column')->withOptionDynamicAttribute('new_column1')->first();
 ```
 
 #### 2). Config extends

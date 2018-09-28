@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Schema;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Schema;
 
 use DB;
 use Illuminate\Support\Str;
@@ -33,7 +33,7 @@ class Mysql {
     }
 
     /**
-     * create parent key column in dynamic column table
+     * create parent key column in dynamic Attribute table
      *
      * @param Blueprint $table
      * @param string $type
@@ -67,7 +67,7 @@ class Mysql {
         }
     }
 
-    public function addValueColumne(Blueprint $table, $type, ...$params) {
+    public function addValueColumn(Blueprint $table, $type, ...$params) {
         $columnName = 'value';
         switch($type) {
             case 'tinyInteger':
@@ -103,7 +103,7 @@ class Mysql {
         }
     }
 
-    public function listDynaColumns(Model $parent) {
+    public function listDynamicAttributes(Model $parent) {
         $parentTable = $parent->getTable(); 
         $collection = DB::connection($parent->getConnectionName())
             ->select(sprintf("SHOW Tables like '%s_dyn", $parentTable) . "%'");

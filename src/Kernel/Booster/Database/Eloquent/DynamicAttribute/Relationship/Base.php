@@ -1,10 +1,10 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\SingleDynaColumn;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\OptionDynaColumn;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\SingleDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\OptionDynamicAttribute;
 
 class Base {
     protected $model;
@@ -27,10 +27,10 @@ class Base {
      * create a new Model instance, set connection and table name
      *
      * @param Model $parent
-     * @return Model Dyna Column instance
+     * @return Model Dyna Attribute instance
      */
     protected function makeModel($parent = null) {
-        $model = $this->isSingle() ? (new SingleDynaColumn()) : (new OptionDynaColumn());
+        $model = $this->isSingle() ? (new SingleDynamicAttribute()) : (new OptionDynamicAttribute());
         $model->setConnection(($parent ?? $this->parent)->getConnectionName());
         $model->setTable($this->table);
         return $model;

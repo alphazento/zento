@@ -1,10 +1,10 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\OptionDynaColumn;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\OptionDynamicAttribute;
 
 class Option extends Base {
     protected $items;
@@ -36,7 +36,7 @@ class Option extends Base {
         $this->items = [];
         foreach($all as $row) {
             $key = md5(strtolower($row->value));
-            $model = new OptionDynaColumn();
+            $model = new OptionDynamicAttribute();
             $model->setRawAttributes((array)$row, true);
             $model->exists = true;
             $this->items[$key] = $model;
@@ -47,7 +47,7 @@ class Option extends Base {
     /**
      * find a Model instance by parent's key
      *
-     * @return Model Dyna Column instance
+     * @return Model Dyna Attribute instance
      */
     protected function findModel($value = null) {
         $key = md5(strtolower($value));
@@ -55,9 +55,9 @@ class Option extends Base {
     }
 
     /**
-     * add a new dynacolumn value
+     * add a new dynamic attribute value
      *
-     * @param string $columnName
+     * @param string $value
      * @return Model
      */
     public function new($value) {
@@ -71,9 +71,9 @@ class Option extends Base {
     }
 
     /**
-     * update a dynacolumn value
+     * update a dynamic attribute value
      *
-     * @param string $columnName
+     * @param string $value
      * @return void
      */
     public function update($oldValue, $newValue) {
@@ -93,7 +93,7 @@ class Option extends Base {
     }
 
     /**
-     * delete a dynacolumn value
+     * delete a dynamic attribute value
      *
      * @param Model $parent
      * @return void

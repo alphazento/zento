@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -31,10 +31,10 @@ class Relationship {
      * create a new Model instance, set connection and table name
      *
      * @param Model $parent
-     * @return Model Dyna Column instance
+     * @return Model Dyna Attribute instance
      */
     protected function makeModel($parent = null) {
-        $model = $this->_isSingle ? (new ORM\SingleDynaColumn()) : (new ORM\OptionDynaColumn());
+        $model = $this->_isSingle ? (new ORM\SingleDynamicAttribute()) : (new ORM\OptionDynamicAttribute());
         $model->setConnection(($parent ?? $this->parent)->getConnectionName());
         $model->setTable($this->table);
         return $model;
@@ -44,7 +44,7 @@ class Relationship {
      * find a Model instance by parent's key
      *
      * @param Model $parent
-     * @return Model Dyna Column instance
+     * @return Model Dyna Attribute instance
      */
     protected function findModel($parent = null) {
         $row = DB::connection(($parent ?? $this->parent)->getConnectionName())
@@ -63,9 +63,9 @@ class Relationship {
     }
 
     /**
-     * add a new dynacolumn value
+     * add a new dynamic attribute value
      *
-     * @param string $columnName
+     * @param string $value
      * @param Model $parent
      * @return Model
      */
@@ -77,9 +77,9 @@ class Relationship {
     }
 
     /**
-     * update a dynacolumn value
+     * update a dynamic attribute value
      *
-     * @param string $columnName
+     * @param string $value
      * @param Model $parent
      * @return void
      */
@@ -91,7 +91,7 @@ class Relationship {
     }
 
     /**
-     * delete a dynacolumn value
+     * delete a dynamic attribute value
      *
      * @param Model $parent
      * @return void

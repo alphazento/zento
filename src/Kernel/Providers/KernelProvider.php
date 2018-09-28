@@ -10,13 +10,13 @@
 
 namespace Zento\Kernel\Providers;
 
-use Zento\Kernel\Facades\DynaColumnFactory;
+use Zento\Kernel\Facades\DanamicAttributeFactory;
 use DB;
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
         $this->app->register(DebuggerServiceProvider::class);
         $this->app->register(EventsServiceProvider::class);
-        $this->app->register(DynaColumnFactoryProvider::class);
+        $this->app->register(DanamicAttributeFactoryProvider::class);
         $this->app->register(PackageManagerServiceProvider::class);
         $this->app->register(ConfigServiceProvider::class);
     }
@@ -25,25 +25,25 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
         $configPath = __DIR__ . '/../../../config/zento.php';
         $this->publishes([$configPath => $this->getConfigPath()], 'config');
 
-        // DynaColumnFactory::createRelationShipORM(\Zento\Kernel\Booster\Config\ConfigInDB\ORMModel\ConfigItem::class, 
+        // DanamicAttributeFactory::createRelationShipORM(\Zento\Kernel\Booster\Config\ConfigInDB\ORMModel\ConfigItem::class, 
         //     'tcol', ['char', 32], true);
-        // // $collection = DynaColumnFactory::withDynaColumn(\Zento\Kernel\Booster\Config\ConfigInDB\ORMModel\ConfigItem::where('key', 'test'),
+        // // $collection = DanamicAttributeFactory::withSingleDynamicAttribute(\Zento\Kernel\Booster\Config\ConfigInDB\ORMModel\ConfigItem::where('key', 'test'),
         // //     'new_column')->get();
-        // DynaColumnFactory::createRelationShipORM(\Zento\Kernel\TestModel::class, 
+        // DanamicAttributeFactory::createRelationShipORM(\Zento\Kernel\TestModel::class, 
         //     'new_column', ['char', 32], true);
-        // DynaColumnFactory::createRelationShipORM(\Zento\Kernel\TestModel::class, 
+        // DanamicAttributeFactory::createRelationShipORM(\Zento\Kernel\TestModel::class, 
         //     'new_column1', ['char', 32], false);
 
-        // \Zento\Kernel\TestModel::listDynaColumns();
-        // $collection = \Zento\Kernel\TestModel::where('id', 1)->withDyn('new_column')->withDyns('new_column1')->first();
-        // // $collection = \Zento\Kernel\TestModel::where('id', 2)->withDyn('new_column')->first();
+        // \Zento\Kernel\TestModel::listDynamicAttributes();
+        // $collection = \Zento\Kernel\TestModel::where('id', 1)->withSingleDynamicAttribute('new_column')->withOptionDynamicAttribute('new_column1')->first();
+        // // $collection = \Zento\Kernel\TestModel::where('id', 2)->withSingleDynamicAttribute('new_column')->first();
         // // echo '<pre>';
-        // DynaColumnFactory::single($collection, 'new_column')->new('OKOK');
-        // DynaColumnFactory::option($collection, 'new_column1')->new('this is a test');
-        // DynaColumnFactory::option($collection, 'new_column1')->setValues(['this is a test', 'newvalue']);
+        // DanamicAttributeFactory::single($collection, 'new_column')->new('OKOK');
+        // DanamicAttributeFactory::option($collection, 'new_column1')->new('this is a test');
+        // DanamicAttributeFactory::option($collection, 'new_column1')->setValues(['this is a test', 'newvalue']);
 
-        // $collection = \Zento\Kernel\TestModel::where('id', 1)->withDynSet()->first();
-        // var_dump($collection->dynacolumnset->dynacolumns);die;
+        // $collection = \Zento\Kernel\TestModel::where('id', 1)->withOptionDynamicAttributeet()->first();
+        // var_dump($collection->attributesets->attributes);die;
     }
     /**
      * Get the config path

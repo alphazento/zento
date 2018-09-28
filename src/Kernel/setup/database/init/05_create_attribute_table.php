@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateDynacolumnSetDynacolumnTable extends Migration
+class CreateAttributeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,19 +12,19 @@ class CreateDynacolumnSetDynacolumnTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('dynacolumn_set_dynacolumns')) {
-            Schema::create('dynacolumn_set_dynacolumns', function (Blueprint $table) {
+        if (!Schema::hasTable('attributes')) {
+            Schema::create('attributes', function (Blueprint $table) {
                 $table->increments('id');
-                $table->integer('dynacolumn_set_id')->unsigned();
-                $table->integer('dynacolumn_id')->unsigned();
+                $table->integer('attribute_set_id')->unsigned();
+                $table->integer('attribute_id')->unsigned();
                 $table->timestamps();
-                $table->foreign('dynacolumn_set_id')
+                $table->foreign('attribute_set_id')
                     ->references('id')
-                    ->on('dynacolumn_sets')
+                    ->on('attribute_sets')
                     ->onDelete('cascade');
-                $table->foreign('dynacolumn_id')
+                $table->foreign('attribute_id')
                     ->references('id')
-                    ->on('model_dynacolumns')
+                    ->on('model_dynamic_attributes')
                     ->onDelete('cascade');
             });
         }
@@ -37,6 +37,6 @@ class CreateDynacolumnSetDynacolumnTable extends Migration
      */
     public function down()
     {
-        Schema::drop('dynacolumn_set_dynacolumns');
+        Schema::drop('attributes');
     }
 }

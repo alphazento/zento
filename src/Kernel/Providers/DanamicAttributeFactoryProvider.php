@@ -10,11 +10,11 @@
 
 namespace Zento\Kernel\Providers;
 
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Factory;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Factory;
 
-class DynaColumnFactoryProvider extends \Illuminate\Support\ServiceProvider {
+class DanamicAttributeFactoryProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
-        $this->app->singleton('DynaColumnFactory', function ($app) {
+        $this->app->singleton('DanamicAttributeFactory', function ($app) {
             return new Factory();
         });
     }

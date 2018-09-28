@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
 use DB;
 use Schema;
@@ -7,9 +7,9 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\ModelDynacolumn;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship\Single as SingleRelationship;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship\Option as OptionRelationship;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship\Single as SingleRelationship;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship\Option as OptionRelationship;
 
 class Factory {
 
@@ -20,74 +20,74 @@ class Factory {
     }
 
     /**
-     * get dynamic column's table's name
+     * get dynamic Attribute's table's name
      *
      * @param Model $hostInstance
-     * @param string $columnName
+     * @param string $attributeName
      * @param boolean $single
      * @return string
      */
-    public function getTable(Model $parent, $columnName, $single = true) {
+    public function getTable(Model $parent, $attributeName, $single = true) {
         return sprintf('%s_%s_%s', 
             $parent->getTable(),
             $single ? 'dyn' : 'dyns',
-            Str::plural($columnName));
+            Str::plural($attributeName));
     }
 
     /**
      * get multiple relation ship
      *
      * @param Model $parent
-     * @param string $columnName
+     * @param string $attributeName
      * @return Relationship
      */
-    public function option(Model $parent, $columnName) {
-        return $this->retrieveRelationship($parent, $columnName, false);
+    public function option(Model $parent, $attributeName) {
+        return $this->retrieveRelationship($parent, $attributeName, false);
     }
 
     /**
      * get single relation ship
      *
      * @param Model $hostInstance
-     * @param string $columnName
+     * @param string $attributeName
      * @return Relationship
      */
-    public function single(Model $parent, $columnName) {
-        return $this->retrieveRelationship($parent, $columnName, true);
+    public function single(Model $parent, $attributeName) {
+        return $this->retrieveRelationship($parent, $attributeName, true);
     }
 
     /**
-     * add a single relation dynamic column to a query builder
+     * add a single relation dynamic Attribute to a query builder
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param string $columnName
-     * @return \Zento\Kernel\Foundation\Eloquent\DynamicColumn\Builder
+     * @param string $attributeName
+     * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
      */
-    public function withDynaColumn(\Illuminate\Database\Eloquent\Builder $builder, $columnName) {
-        return (new Builder($builder))->withDynaColumn($columnName);
+    public function withSingleDynamicAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
+        return (new Builder($builder))->withSingleDynamicAttribute($attributeName);
     }
 
     /**
      * add a option relation column to a query builder
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param string $columnName
-     * @return \Zento\Kernel\Foundation\Eloquent\DynamicColumn\Builder
+     * @param string $attributeName
+     * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
      */
-    public function withDynaColumns(\Illuminate\Database\Eloquent\Builder $builder, $columnName) {
-        return (new Builder($builder))->withDynaColumns($columnName);
+    public function withOptionDynamicAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
+        return (new Builder($builder))->withOptionDynamicAttribute($attributeName);
     }
 
     /**
      * retrieve relation
      *
      * @param Model $hostInstance
-     * @param string $columnName
+     * @param string $attributeName
      * @param string $single
      * @return void
      */
-    protected function retrieveRelationship(Model $parent, $columnName, $single) {
-        $table = $this->getTable($parent, $columnName, $single);
+    protected function retrieveRelationship(Model $parent, $attributeName, $single) {
+        $table = $this->getTable($parent, $attributeName, $single);
         return  ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
         if (!isset($this->cache[$table])) {
             $this->cache[$table] = ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
@@ -96,27 +96,27 @@ class Factory {
     }
 
     /**
-     * create new dynacolumn table
+     * create new dynamic attribute table
      *
      * @param string|\Illuminate\Database\Eloquent\Model $parentClass
-     * @param string $columnName
+     * @param string $attributeName
      * @param array $valueDes  [type, otherParameters], e.g. ['double', 5, 2]
      * @param boolean $single
      * @return void
      */
-    public function createRelationShipORM($parentClassOrModel, $columnName, $valueDes, $single = true, $defaultValue = '') {
+    public function createRelationShipORM($parentClassOrModel, $attributeName, $valueDes, $single = true, $defaultValue = '') {
         if (is_string($parentClassOrModel) && class_exists($parentClassOrModel)) {
             $parent = new $parentClassOrModel();
         } else {
             $parent = $parentClassOrModel;
         }
-        $tableName = $this->getTable($parent, $columnName, $single);
+        $tableName = $this->getTable($parent, $attributeName, $single);
         if (!Schema::hasTable($tableName)) {
             Schema::create($tableName, function (Blueprint $table) use ($parent, $valueDes, $single) {
                 $table->increments('id');
-                $driver = new \Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Schema\Mysql;
+                $driver = new \Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Schema\Mysql;
                 $driver->addParentKeyColumn($parent, $table, $single);
-                $driver->addValueColumne($table, ...$valueDes);
+                $driver->addValueColumn($table, ...$valueDes);
                 if (!$single) {
                     $table->integer('sort')->default(0);
                 }
@@ -126,11 +126,11 @@ class Factory {
                     ->on($parent->getTable());
             });
 
-            if (true || config('dynacolumn_management')) {
-                $modelcolumn = ModelDynacolumn::firstOrNew([
+            if (true || config('dynamicattribute_management')) {
+                $modelcolumn = ModelDynamicAttribute::firstOrNew([
                     'model' => $parent->getTable(),
-                    'dynacolumn' => $columnName,
-                    'col_type' => $valueDes[0],
+                    'attribute' => $attributeName,
+                    'attribute_type' => $valueDes[0],
                     'default_value' => $defaultValue
                 ]);
                 $modelcolumn->single = $single;

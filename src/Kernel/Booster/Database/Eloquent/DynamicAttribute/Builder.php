@@ -1,17 +1,17 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
 use DB;
-use Zento\Kernel\Facades\DynaColumnFactory;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\ModelDynacolumn;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\ORM\DynacolumnSet;
+use Zento\Kernel\Facades\DanamicAttributeFactory;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeSet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $append_columns;
     protected $dyn_eagerLoad;
-    protected $_withDynSet;
+    protected $_withOptionDynamicAttributeet;
 
     public function __construct(\Illuminate\Database\Eloquent\Builder $builder) {
         $this->query = $builder->getQuery();
@@ -19,18 +19,18 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->eagerLoad = $builder->getEagerLoads();
         $this->append_columns = [];
         $this->dyn_eagerLoad = [];
-        $this->_withDynSet = false;
+        $this->_withOptionDynamicAttributeet = false;
     }
 
     /**
-     * direct join single type dynacolumn
+     * direct join single type DynamicAttribute
      *
-     * @param string $columnName
+     * @param string $attributeName
      * @return void
      */
-    public function joinDyn($columnName) {
-        $table = DynaColumnFactory::getTable($this->model, $columnName);
-        $dynColumn = sprintf('%s.value as %s', $table, $columnName);
+    public function joinDyn($attributeName) {
+        $table = DanamicAttributeFactory::getTable($this->model, $attributeName);
+        $dynColumn = sprintf('%s.value as %s', $table, $attributeName);
         $this->leftJoin($table, 
                 sprintf('%s.%s', $this->model->getTable(), $this->model->getKeyName()),
                 '=',
@@ -40,38 +40,38 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     }
 
     /**
-     * with single type dynacolumn
+     * with single type dynamic attribute
      *
-     * @param string $columnName
+     * @param string $attributeName
      * @return $this
      */
-    public function withDyn($columnName) {
+    public function withSingleDynamicAttribute($attributeName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
-        $this->dyn_eagerLoad[$columnName] = 1;      //1 means single
+        $this->dyn_eagerLoad[$attributeName] = 1;      //1 means single
         return $this;
     }
 
     /**
-     * with option type dynacolumn
+     * with option type dynamic attribute
      *
-     * @param string $columnName
+     * @param string $attributeName
      * @return $this
      */
-    public function withDyns($columnName) {
+    public function withOptionDynamicAttribute($attributeName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
-        $this->dyn_eagerLoad[$columnName] = 2;     //2 means options
+        $this->dyn_eagerLoad[$attributeName] = 2;     //2 means options
         return $this;
     }
 
     /**
-     * load dynacolumn set
+     * load dynamicattribute set
      * @return $this
      */
-    public function withDynSet() {
-        $this->_withDynSet = true;
-        $this->with(['dynacolumnset.dynacolumns']);
+    public function withOptionDynamicAttributeet() {
+        $this->_withOptionDynamicAttributeet = true;
+        $this->with(['attributeset.attributes']);
         return $this;
     }
 
@@ -84,16 +84,16 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function eagerLoadRelations(array $models)
     {
-        if ($this->_withDynSet) {
-            $collection = ModelDynacolumn::select('dynacolumn', 'single')
+        if ($this->_withOptionDynamicAttributeet) {
+            $collection = ModelDynamicAttribute::select('attribute', 'single')
                 ->where('model', $this->getModel()->getTable())
                 ->get()
                 ->toArray();
             foreach($collection as $item) {
                 if ($item['single']) {
-                    $this->withDyn($item['dynacolumn']);
+                    $this->withSingleDynamicAttribute($item['attribute']);
                 } else {
-                    $this->withDyns($item['dynacolumn']);
+                    $this->withOptionDynamicAttribute($item['attribute']);
                 }
             }
         }
@@ -130,7 +130,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     }
 
     /**
-     * get dynamic column relation
+     * get dynamic Attribute relation
      *
      * @param string $name
      * @return \Illuminate\Database\Eloquent\Relations\Relation

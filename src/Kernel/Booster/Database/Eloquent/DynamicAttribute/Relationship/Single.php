@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicColumn\Relationship;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ class Single extends Base {
      * find a Model instance by parent's key
      *
      * @param Model $parent
-     * @return Model Dyna Column instance
+     * @return Model Dyna Attribute instance
      */
     protected function findModel($parent = null) {
         $row = DB::connection(($parent ?? $this->parent)->getConnectionName())
@@ -29,9 +29,9 @@ class Single extends Base {
     }
 
     /**
-     * add a new dynacolumn value
+     * add a new dynamic attribute value
      *
-     * @param string $columnName
+     * @param string $value
      * @param Model $parent
      * @return Model
      */
@@ -45,9 +45,9 @@ class Single extends Base {
     }
 
     /**
-     * update a dynacolumn value
+     * update a dynamic attribute value
      *
-     * @param string $columnName
+     * @param string $value
      * @param Model $parent
      * @return void
      */
@@ -60,7 +60,7 @@ class Single extends Base {
     }
 
     /**
-     * delete a dynacolumn value
+     * delete a dynamic attribute value
      *
      * @param Model $parent
      * @return void
