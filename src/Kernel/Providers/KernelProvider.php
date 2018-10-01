@@ -19,6 +19,7 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
         $this->app->register(DanamicAttributeFactoryProvider::class);
         $this->app->register(PackageManagerServiceProvider::class);
         $this->app->register(ConfigServiceProvider::class);
+        class_alias('\Zento\Kernel\Facades\DanamicAttributeFactory', 'DanamicAttributeFactory');
     }
 
     public function boot() {

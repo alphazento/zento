@@ -19,7 +19,7 @@ class PackageManagerServiceProvider extends \Illuminate\Support\ServiceProvider 
             return new PackageManagerService($app);
         });
 
-        $this->app->booted(function ($app) {     
+        $this->app->booted(function ($app) {
             $app['packagemanager']->inject($this)->booted();
             $app->runningInConsole() && (new ArtisanSubscriber())->subscribe();
         });

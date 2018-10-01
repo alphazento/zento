@@ -91,13 +91,13 @@ class UrlGenerator extends \Illuminate\Routing\UrlGenerator {
         return $this->core->assetFrom($root, $path, $secure);
     }
 
-    public function formatScheme($secure)
+    public function formatScheme($secure = NULL)
     {
-        return $this->formatScheme($secure);
+        return $this->core->formatScheme($secure);
     }
 
     public function formatRoot($scheme, $root = null)
     {
-        return $this->formatRoot($scheme, $root);
+        return $this->core->formatRoot($scheme, $root);
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $append_columns;
     protected $dyn_eagerLoad;
-    protected $_withDynamicOptionAttributeet;
+    protected $_withDynamicOptionAttribute;
 
     public function __construct(\Illuminate\Database\Eloquent\Builder $builder) {
         $this->query = $builder->getQuery();
@@ -19,7 +19,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->eagerLoad = $builder->getEagerLoads();
         $this->append_columns = [];
         $this->dyn_eagerLoad = [];
-        $this->_withDynamicOptionAttributeet = false;
+        $this->_withDynamicOptionAttribute = false;
     }
 
     /**
@@ -69,9 +69,9 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * load dynamicattribute set
      * @return $this
      */
-    public function withDynamicOptionAttributeet() {
-        $this->_withDynamicOptionAttributeet = true;
-        $this->with(['attributeset.attributes']);
+    public function withDynamicAttributes() {
+        $this->_withDynamicOptionAttribute = true;
+        $this->with(['attributesets.attributes']);
         return $this;
     }
 
@@ -84,7 +84,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function eagerLoadRelations(array $models)
     {
-        if ($this->_withDynamicOptionAttributeet) {
+        if ($this->_withDynamicOptionAttribute) {
             $collection = ModelDynamicAttribute::select('attribute', 'single')
                 ->where('model', $this->getModel()->getTable())
                 ->get()
