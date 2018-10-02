@@ -71,7 +71,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function withDynamicAttributes() {
         $this->_withDynamicOptionAttribute = true;
-        $this->with(['attributesets.attributes']);
+        $this->with(['attributeset.attributes']);
         return $this;
     }
 
@@ -110,6 +110,17 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     {
         if (count($this->append_columns) > 0) {
             $this->select($this->model->getTable() . '.*', ...$this->append_columns);
+        }
+
+        if ($columns == ['*']) {
+            $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model);
+            foreach($dynaAttrs as $row) {
+                if ($row['single']) {
+                    $this->withDynamicSingleAttribute($row['attribute']);
+                } else {
+                    $this->withDynamicOptionAttribute($row['attribute']);
+                }
+            }
         }
         return parent::get($columns);
     }

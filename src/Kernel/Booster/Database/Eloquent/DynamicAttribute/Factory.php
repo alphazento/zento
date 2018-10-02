@@ -3,6 +3,7 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
 use DB;
 use Schema;
+use Cache;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
@@ -89,10 +90,6 @@ class Factory {
     protected function retrieveRelationship(Model $parent, $attributeName, $single) {
         $table = $this->getTable($parent, $attributeName, $single);
         return  ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
-        if (!isset($this->cache[$table])) {
-            $this->cache[$table] = ($single ? (new SingleRelationship($parent, $table)) : (new OptionRelationship($parent, $table)));
-        }
-        return $this->cache[$table];
     }
 
     /**
@@ -135,7 +132,41 @@ class Factory {
                 ]);
                 $modelcolumn->single = $single;
                 $modelcolumn->save();
+                $cacheKey = static::getDynamicAttributeCacheKey($parent->getTable());
+                Cache::forget($cacheKey);
+                unset($this->cache[$cacheKey]);
             }
         }
+    }
+
+    protected function getDynamicAttributeCacheKey($tableName) {
+        return sprintf('dyn.attr.%s.cache', $tableName);
+    }
+
+    /**
+     * get a model's all dynamic attributes desc
+     *
+     * @param mixed $modelInstanceOrClass
+     * @return array
+     */
+    public function getModelDynamicAttributes($modelInstanceOrClass) {
+        $instance = $modelInstanceOrClass instanceof Model ? $modelInstanceOrClass : (new $modelInstanceOrClass);
+        $tableName = $instance->getTable();
+        $cacheKey = static::getDynamicAttributeCacheKey($tableName);
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        if (Cache::has($cacheKey)) {
+            return Cache::get($cacheKey);
+        }
+        $collection = ModelDynamicAttribute::where('model', $tableName)
+            // ->where('is_active', 1)
+            ->get()
+            ->toArray();
+         
+        Cache::put($cacheKey, $collection);
+        $this->cache[$cacheKey] = $collection;
+        return $collection;
     }
 }

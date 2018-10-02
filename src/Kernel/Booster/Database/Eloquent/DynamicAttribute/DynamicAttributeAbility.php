@@ -39,6 +39,7 @@ trait DynamicAttributeAbility
 
         return $this->newHasOne($instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey);
     }
+
     /**
      * Define a one-to-many relationship.
      *
@@ -62,16 +63,7 @@ trait DynamicAttributeAbility
         );
     }
 
-    /**
-     * list all dynamic Attributes which belongs to this model
-     *
-     * @return array
-     */
-    public static function listDynaAttributes() {
-        (new \Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Schema\Mysql)->listDynaAttributes(new static);
-    }
-
-    public function attributesets() {
+    public function attributeset() {
         return $this->hasOne(AttributeSet::class, 'id', 'attribute_set_id');
     }
 }
