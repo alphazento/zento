@@ -101,7 +101,7 @@ class Factory {
      * @param string $attributeName
      * @param array $valueDes  [type, otherParameters], e.g. ['double', 5, 2]
      * @param boolean $single
-     * @return void
+     * @return string $id
      */
     public function createRelationShipORM($parentClassOrModel, $attributeName, $valueDes, $single = true, $defaultValue = '') {
         if (is_string($parentClassOrModel) && class_exists($parentClassOrModel)) {
@@ -124,8 +124,9 @@ class Factory {
                     ->references($parent->getKeyname())
                     ->on($parent->getTable());
             });
+        }
 
-            if (true || config('dynamicattribute_management')) {
+            // if (config('dynamicattribute_management')) {
                 $modelcolumn = ModelDynamicAttribute::firstOrNew([
                     'model' => $parent->getTable(),
                     'attribute' => $attributeName,
@@ -134,11 +135,13 @@ class Factory {
                 ]);
                 $modelcolumn->single = $single;
                 $modelcolumn->save();
-                $cacheKey = static::getDynamicAttributeCacheKey($parent->getTable());
-                Cache::forget($cacheKey);
-                unset($this->cache[$cacheKey]);
-            }
-        }
+                // $cacheKey = $this->getDynamicAttributeCacheKey($parent->getTable());
+                // Cache::forget($cacheKey);
+                // unset($this->cache[$cacheKey]);
+                $this->cache = [];
+                return $modelcolumn->id;
+            // }
+            // return 0;
     }
 
     protected function getDynamicAttributeCacheKey($tableName, &$attrSetIds) {
@@ -160,9 +163,9 @@ class Factory {
             return $this->cache[$cacheKey];
         }
 
-        if (Cache::has($cacheKey)) {
-            return Cache::get($cacheKey);
-        }
+        // if (Cache::has($cacheKey)) {
+        //     return Cache::get($cacheKey);
+        // }
 
         $collection = ModelDynamicAttribute::where('model', $tableName);
             // ->where('is_active', 1)
@@ -173,7 +176,7 @@ class Factory {
         $collection = $collection->get()
             ->toArray();
          
-        Cache::put($cacheKey, $collection);
+        // Cache::put($cacheKey, $collection);
         $this->cache[$cacheKey] = $collection;
         return $collection;
     }
