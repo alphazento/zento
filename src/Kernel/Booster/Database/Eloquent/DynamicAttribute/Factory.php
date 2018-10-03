@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
+
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeInSet;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship\Single as SingleRelationship;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship\Option as OptionRelationship;
@@ -139,20 +141,21 @@ class Factory {
         }
     }
 
-    protected function getDynamicAttributeCacheKey($tableName) {
-        return sprintf('dyn.attr.%s.cache', $tableName);
+    protected function getDynamicAttributeCacheKey($tableName, &$attrSetIds) {
+        return sprintf('dyn.attr.%s.%s', $tableName, md5(implode('', $attrSetIds)));
     }
 
     /**
      * get a model's all dynamic attributes desc
      *
      * @param mixed $modelInstanceOrClass
+     * @param array $attribute set ids
      * @return array
      */
-    public function getModelDynamicAttributes($modelInstanceOrClass) {
+    public function getModelDynamicAttributes($modelInstanceOrClass, array &$attrSetIds) {
         $instance = $modelInstanceOrClass instanceof Model ? $modelInstanceOrClass : (new $modelInstanceOrClass);
         $tableName = $instance->getTable();
-        $cacheKey = static::getDynamicAttributeCacheKey($tableName);
+        $cacheKey = static::getDynamicAttributeCacheKey($tableName, $attrSetIds);
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -160,9 +163,14 @@ class Factory {
         if (Cache::has($cacheKey)) {
             return Cache::get($cacheKey);
         }
-        $collection = ModelDynamicAttribute::where('model', $tableName)
+
+        $collection = ModelDynamicAttribute::where('model', $tableName);
             // ->where('is_active', 1)
-            ->get()
+        
+        if (count($attrSetIds) > 0) {
+            $collection->whereIn('id', AttributeInSet::whereIn('attribute_set_id', $attrSetIds)->pluck('attribute_id'));
+        }
+        $collection = $collection->get()
             ->toArray();
          
         Cache::put($cacheKey, $collection);

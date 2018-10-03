@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAttributeTable extends Migration
+class CreateAttributeInSetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class CreateAttributeTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('attributes')) {
-            Schema::create('attributes', function (Blueprint $table) {
+        if (!Schema::hasTable('attribute_in_sets')) {
+            Schema::create('attribute_in_sets', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('attribute_set_id')->unsigned();
                 $table->integer('attribute_id')->unsigned();
@@ -37,6 +37,6 @@ class CreateAttributeTable extends Migration
      */
     public function down()
     {
-        Schema::drop('attributes');
+        Schema::drop('attribute_in_sets');
     }
 }

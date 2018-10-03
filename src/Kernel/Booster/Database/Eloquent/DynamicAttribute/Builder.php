@@ -3,6 +3,7 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
 use DB;
 use Zento\Kernel\Facades\DanamicAttributeFactory;
+use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\Attribute;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeSet;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $append_columns;
     protected $dyn_eagerLoad;
-    protected $_withDynamicOptionAttribute;
 
     public function __construct(\Illuminate\Database\Eloquent\Builder $builder) {
         $this->query = $builder->getQuery();
@@ -19,7 +19,6 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->eagerLoad = $builder->getEagerLoads();
         $this->append_columns = [];
         $this->dyn_eagerLoad = [];
-        $this->_withDynamicOptionAttribute = false;
     }
 
     /**
@@ -64,18 +63,29 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->dyn_eagerLoad[$attributeName] = 2;     //2 means options
         return $this;
     }
-
+    
     /**
-     * load dynamicattribute set
-     * @return $this
+     * Gather the keys from an array of related models.
+     *
+     * @param  array  $models
+     * @return array
      */
-    public function withDynamicAttributes() {
-        $this->_withDynamicOptionAttribute = true;
-        $this->with(['attributeset.attributes']);
-        return $this;
+    protected function getEagerModelAttributeSetIds(array $models)
+    {
+        $keys = [];
+
+        // First we need to gather all of the keys from the parent models so we know what
+        // to query for via the eager loading query. We will add them to an array then
+        // execute a "where in" statement to gather up all of those related records.
+        foreach ($models as $model) {
+            if (! is_null($value = $model->attribute_set_id)) {
+                $keys[$value] = 1;
+            }
+        }
+
+        return array_keys($keys);
     }
 
-    
     /**
      * Eager load the relationships for the models.
      *
@@ -84,19 +94,19 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function eagerLoadRelations(array $models)
     {
-        if ($this->_withDynamicOptionAttribute) {
-            $collection = ModelDynamicAttribute::select('attribute', 'single')
-                ->where('model', $this->getModel()->getTable())
-                ->get()
-                ->toArray();
-            foreach($collection as $item) {
-                if ($item['single']) {
-                    $this->withDynamicSingleAttribute($item['attribute']);
+        $attrSetIds = $this->getEagerModelAttributeSetIds($models);
+
+        // if ($columns == ['*']) {
+            $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model, $attrSetIds);
+            foreach($dynaAttrs as $row) {
+                if ($row['single']) {
+                    $this->withDynamicSingleAttribute($row['attribute']);
                 } else {
-                    $this->withDynamicOptionAttribute($item['attribute']);
+                    $this->withDynamicOptionAttribute($row['attribute']);
                 }
             }
-        }
+        // }
+      
         return parent::eagerLoadRelations($models);
     }
 
@@ -112,16 +122,6 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
             $this->select($this->model->getTable() . '.*', ...$this->append_columns);
         }
 
-        if ($columns == ['*']) {
-            $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model);
-            foreach($dynaAttrs as $row) {
-                if ($row['single']) {
-                    $this->withDynamicSingleAttribute($row['attribute']);
-                } else {
-                    $this->withDynamicOptionAttribute($row['attribute']);
-                }
-            }
-        }
         return parent::get($columns);
     }
 
