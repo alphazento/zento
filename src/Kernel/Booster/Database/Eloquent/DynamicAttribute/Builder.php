@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $append_columns;
     protected $dyn_eagerLoad;
+    protected $isGetAllColumn;
 
     public function __construct(\Illuminate\Database\Eloquent\Builder $builder) {
         $this->query = $builder->getQuery();
@@ -96,7 +97,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     {
         $attrSetIds = $this->getEagerModelAttributeSetIds($models);
 
-        // if ($columns == ['*']) {
+        if ($this->isGetAllColumn) {
             $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model, $attrSetIds);
             foreach($dynaAttrs as $row) {
                 if ($row['single']) {
@@ -105,8 +106,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
                     $this->withDynamicOptionAttribute($row['attribute']);
                 }
             }
-        // }
-      
+        }
         return parent::eagerLoadRelations($models);
     }
 
@@ -118,8 +118,17 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function get($columns = ['*'])
     {
+        $this->isGetAllColumn = ($columns == ['*']);
+
         if (count($this->append_columns) > 0) {
             $this->select($this->model->getTable() . '.*', ...$this->append_columns);
+        }
+
+
+        if ($this->isGetAllColumn && property_exists($this->model, 'preload_relations')) {
+            foreach($this->model->preload_relations ?? [] as $relation) {
+                $this->with($relation);
+            }
         }
 
         return parent::get($columns);

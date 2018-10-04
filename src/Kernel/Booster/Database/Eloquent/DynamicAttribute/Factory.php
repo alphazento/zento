@@ -171,7 +171,7 @@ class Factory {
             // ->where('is_active', 1)
         
         if (count($attrSetIds) > 0) {
-            $collection->whereIn('id', AttributeInSet::whereIn('attribute_set_id', $attrSetIds)->pluck('attribute_id'));
+            $collection->whereIn('id', AttributeInSet::whereIn('attribute_set_id', $attrSetIds)->groupBy('attribute_id')->pluck('attribute_id'));
         }
         $collection = $collection->get()
             ->toArray();

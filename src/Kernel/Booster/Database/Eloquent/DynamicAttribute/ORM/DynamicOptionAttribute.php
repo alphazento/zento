@@ -9,4 +9,8 @@ class DynamicOptionAttribute extends \Illuminate\Database\Eloquent\Model {
     public function __toString() {
         return $this->value;
     }
+
+    public function toArray() {
+        return $this->value;
+    }
 }
