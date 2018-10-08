@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder {
-    protected $append_columns;
+    // protected $append_columns;
     protected $dyn_eagerLoad;
     protected $isGetAllColumn;
 
@@ -18,7 +18,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->query = $builder->getQuery();
         $this->model = $builder->getModel();
         $this->eagerLoad = $builder->getEagerLoads();
-        $this->append_columns = [];
+        // $this->append_columns = [];
         $this->dyn_eagerLoad = [];
     }
 
@@ -28,16 +28,16 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @param string $attributeName
      * @return void
      */
-    public function joinDyn($attributeName) {
-        $table = DanamicAttributeFactory::getTable($this->model, $attributeName);
-        $dynColumn = sprintf('%s.value as %s', $table, $attributeName);
-        $this->leftJoin($table, 
-                sprintf('%s.%s', $this->model->getTable(), $this->model->getKeyName()),
-                '=',
-                sprintf('%s.foreignkey', $table));
-        $this->append_columns[] = $dynColumn;
-        return $this;
-    }
+    // public function joinDyn($attributeName) {
+    //     $table = DanamicAttributeFactory::getTable($this->model, $attributeName);
+    //     $dynColumn = sprintf('%s.value as %s', $table, $attributeName);
+    //     $this->leftJoin($table, 
+    //             sprintf('%s.%s', $this->model->getTable(), $this->model->getKeyName()),
+    //             '=',
+    //             sprintf('%s.foreignkey', $table));
+    //     $this->append_columns[] = $dynColumn;
+    //     return $this;
+    // }
 
     /**
      * with single type dynamic attribute
@@ -120,14 +120,20 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     {
         $this->isGetAllColumn = ($columns == ['*']);
 
-        if (count($this->append_columns) > 0) {
-            $this->select($this->model->getTable() . '.*', ...$this->append_columns);
-        }
+        // if (count($this->append_columns) > 0) {
+        //     $this->select($this->model->getTable() . '.*', ...$this->append_columns);
+        // }
 
-
-        if ($this->isGetAllColumn && property_exists($this->model, 'preload_relations')) {
-            foreach($this->model->preload_relations ?? [] as $relation) {
-                $this->with($relation);
+        if ($this->isGetAllColumn) {
+            if (property_exists($this->model, 'preload_relations')) {
+                foreach($this->model->preload_relations ?? [] as $relation) {
+                    $this->with($relation);
+                }
+            }
+            if (property_exists($this->model, 'preload_relation_withcounts')) {
+                foreach($this->model->preload_relation_withcounts ?? [] as $relation) {
+                    $this->withCount($relation);
+                }
             }
         }
 
