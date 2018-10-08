@@ -111,6 +111,19 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     }
 
     /**
+     * Get the hydrated models without eager loading.
+     *
+     * @param  array  $columns
+     * @return \Illuminate\Database\Eloquent\Model[]
+     */
+    public function getModels($columns = ['*'])
+    {
+        $this->isGetAllColumn = ($columns == ['*']);
+        $this->preloadRelation();
+        return parent::getModels($columns);
+    }
+
+    /**
      * Execute the query as a "select" statement.
      *
      * @param  array  $columns
@@ -124,20 +137,37 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         //     $this->select($this->model->getTable() . '.*', ...$this->append_columns);
         // }
 
+        $this->preloadRelation();
+
+        return parent::get($columns);
+    }
+
+    /**
+     * model must define "public static $preload_relations"
+     * [
+        'relation1' =>[
+            'mutator_attr1', 'mutator_attr2', 
+        ],
+        'relation2',
+        'withcount' => ['relation1']
+    ];
+     *
+     * @return void
+     */
+    protected function preloadRelation() {
         if ($this->isGetAllColumn) {
             if (property_exists($this->model, 'preload_relations')) {
-                foreach($this->model->preload_relations ?? [] as $relation) {
-                    $this->with($relation);
-                }
-            }
-            if (property_exists($this->model, 'preload_relation_withcounts')) {
-                foreach($this->model->preload_relation_withcounts ?? [] as $relation) {
-                    $this->withCount($relation);
+                foreach($this->model::$preload_relations ?? [] as $relation => $extra) {
+                    if ($relation === 'withcount') {
+                        foreach($extra as $relation) {
+                            $this->withCount($relation);
+                        }
+                    } else {
+                        $this->with(is_numeric($relation) && is_string($extra) ? $extra : $relation );
+                    }
                 }
             }
         }
-
-        return parent::get($columns);
     }
 
     /**
