@@ -9,6 +9,11 @@ use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\Attribute;
 
 trait DynamicAttributeAbility
 {
+    protected $dyn_relations;
+    public function setDynRelations(&$dyns) {
+        $this->dyn_relations = $dyns;
+    }
+
     /**
      * Get a new query builder for the model's table.
      *
@@ -65,5 +70,34 @@ trait DynamicAttributeAbility
 
     public function attributeset() {
         return $this->hasOne(AttributeSet::class, 'id', 'attribute_set_id');
+    }
+
+     /**
+     * Set a given attribute on the model.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @return mixed
+     */
+    public function setAttribute($key, $value)
+    {
+        if (array_key_exists($key, $this->dyn_relations)) {
+            $instance = $this->relations[$key];
+            if ($instance === null) {
+                if ($value !== null) {
+                    $this->relations[$key] = DanamicAttributeFactory::single($this, $key)->new($value, false);
+                }
+            } else {
+                if (is_array($instance)) {
+                    // $instance->setValues($value);
+                    //mutiple
+                } else {
+                    $instance->value = $value;
+                }
+            }
+            return $this;
+        }
+        
+        return parent::setAttribute($key, $value);
     }
 }

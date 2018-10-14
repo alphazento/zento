@@ -29,10 +29,10 @@ class Base {
      * @param Model $parent
      * @return Model Dyna Attribute instance
      */
-    protected function makeModel($parent = null) {
-        $model = $this->isSingle() ? (new DynamicSingleAttribute()) : (new DynamicOptionAttribute());
-        $model->setConnection(($parent ?? $this->parent)->getConnectionName());
-        $model->setTable($this->table);
-        return $model;
+    protected function makeModel() {
+        $this->model = $this->isSingle() ? (new DynamicSingleAttribute()) : (new DynamicOptionAttribute());
+        $this->model->setConnection($this->parent->getConnectionName());
+        $this->model->setTable($this->table);
+        return $this->model;
     }
 }

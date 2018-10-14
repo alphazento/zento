@@ -107,7 +107,13 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
                 }
             }
         }
-        return parent::eagerLoadRelations($models);
+        $models = parent::eagerLoadRelations($models);
+        if ($this->isGetAllColumn) {
+            foreach($models as $model) {
+                $model->setDynRelations($this->dyn_eagerLoad);
+            }
+        }
+        return $models;
     }
 
     /**

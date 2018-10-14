@@ -9,20 +9,22 @@ class Single extends Base {
     /**
      * find a Model instance by parent's key
      *
-     * @param Model $parent
      * @return Model Dyna Attribute instance
      */
-    protected function findModel($parent = null) {
-        $row = DB::connection(($parent ?? $this->parent)->getConnectionName())
+    protected function findModel() {
+        if ($this->model) {
+            return $this->model;
+        }
+        $row = DB::connection($this->parent->getConnectionName())
             ->table($this->table)
-            ->where('foreignkey', ($parent ?? $this->parent)->getKey())
+            ->where('foreignkey', $this->parent->getKey())
             ->first();
         
         if ($row) {
-            $model = $this->makeModel($parent);
-            $model->setRawAttributes((array)$row, true);
-            $model->exists = true;
-            return $model;
+            $this->model = $this->makeModel();
+            $this->model->setRawAttributes((array)$row, true);
+            $this->model->exists = true;
+            return $this->model;
         } else {
             return null;
         }
@@ -32,49 +34,57 @@ class Single extends Base {
      * add a new dynamic attribute value
      *
      * @param string $value
-     * @param Model $parent
+     * @param boolean $pesistInstant
      * @return Model
      */
-    public function new($value, $parent = null) {
+    public function new($value, $pesistInstant = true) {
         // $model = $this->makeModel();
         // $model->foreignkey = ($parent ?? $this->parent)->getKey();
         // $model->value = $value;
         // $model->save();
         // return $model;
-        return $this->update($value, $parent);
+        return $this->update($value, $pesistInstant);
     }
 
     /**
      * update a dynamic attribute value
      *
      * @param string $value
-     * @param Model $parent
+     * @param boolean $pesistInstant
      * @return void
      */
-    public function update($value, $parent = null) {
-        $model = $this->findModel($parent) ?? $this->makeModel();
-        $model->foreignkey = ($parent ?? $this->parent)->getKey();
-        $model->value = $value;
-        $model->save();
-        return $model;
+    public function update($value, $pesistInstant = true) {
+        if ($model = $this->findModel() ?? $this->makeModel()) {
+            $model->foreignkey = $this->parent->getKey();
+            $model->value = $value;
+            if($pesistInstant) {
+                $model->save();
+            }
+            return $model;
+        }
     }
 
     /**
      * delete a dynamic attribute value
      *
-     * @param Model $parent
      * @return void
      */
-    public function delete($parent = null) {
-        if ($model = $this->findModel($parent)) {
+    public function delete() {
+        if ($model = $this->findModel()) {
             $model->delete();
         }
     }
 
-    public function getValue($parent = null) {
-        if ($model = $this->findModel($parent)) {
+    public function getValue() {
+        if ($model = $this->findModel()) {
             return $model->value;
         }
         return null;
+    }
+
+    public function save() {
+        if ($model = $this->findModel()) {
+            $model->save();
+        }
     }
 }
