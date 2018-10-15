@@ -5,6 +5,9 @@ use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
 
+/**
+ * Normally only use for assign new dynamic attribute
+ */
 class Single extends Base {
     /**
      * find a Model instance by parent's key
@@ -37,7 +40,7 @@ class Single extends Base {
      * @param boolean $pesistInstant
      * @return Model
      */
-    public function new($value, $pesistInstant = true) {
+    public function newValue($value, $pesistInstant = true) {
         // $model = $this->makeModel();
         // $model->foreignkey = ($parent ?? $this->parent)->getKey();
         // $model->value = $value;
@@ -53,7 +56,7 @@ class Single extends Base {
      * @param boolean $pesistInstant
      * @return void
      */
-    public function update($value, $pesistInstant = true) {
+    public function updateValue($value, $pesistInstant = true) {
         if ($model = $this->findModel() ?? $this->makeModel()) {
             $model->foreignkey = $this->parent->getKey();
             $model->value = $value;
@@ -69,7 +72,7 @@ class Single extends Base {
      *
      * @return void
      */
-    public function delete() {
+    public function deleteValue() {
         if ($model = $this->findModel()) {
             $model->delete();
         }

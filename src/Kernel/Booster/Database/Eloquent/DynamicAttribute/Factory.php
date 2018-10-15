@@ -126,22 +126,22 @@ class Factory {
             });
         }
 
-            // if (config('dynamicattribute_management')) {
-                $modelcolumn = ModelDynamicAttribute::firstOrNew([
-                    'model' => $parent->getTable(),
-                    'attribute' => $attributeName,
-                    'attribute_type' => $valueDes[0],
-                    'default_value' => $defaultValue
-                ]);
-                $modelcolumn->single = $single;
-                $modelcolumn->save();
-                // $cacheKey = $this->getDynamicAttributeCacheKey($parent->getTable());
-                // Cache::forget($cacheKey);
-                // unset($this->cache[$cacheKey]);
-                $this->cache = [];
-                return $modelcolumn->id;
-            // }
-            // return 0;
+        // if (config('dynamicattribute_management')) {
+            $modelcolumn = ModelDynamicAttribute::firstOrNew([
+                'model' => $parent->getTable(),
+                'attribute' => $attributeName,
+                'attribute_type' => $valueDes[0],
+                'default_value' => $defaultValue
+            ]);
+            $modelcolumn->single = $single;
+            $modelcolumn->save();
+            // $cacheKey = $this->getDynamicAttributeCacheKey($parent->getTable());
+            // Cache::forget($cacheKey);
+            // unset($this->cache[$cacheKey]);
+            $this->cache = [];
+            return $modelcolumn->id;
+        // }
+        // return 0;
     }
 
     protected function getDynamicAttributeCacheKey($tableName, &$attrSetIds) {

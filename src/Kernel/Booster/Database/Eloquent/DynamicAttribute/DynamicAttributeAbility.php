@@ -85,12 +85,22 @@ trait DynamicAttributeAbility
             $instance = $this->relations[$key];
             if ($instance === null) {
                 if ($value !== null) {
-                    $this->relations[$key] = DanamicAttributeFactory::single($this, $key)->new($value, false);
+                    if ($this->dyn_relations[$key] == 1) { //single
+                        $this->relations[$key] = DanamicAttributeFactory::single($this, $key)->newValue($value);
+                    } else {
+                        if (is_array($value)) {
+                            $this->relations[$key] = DanamicAttributeFactory::option($this, $key)->setValues($value);
+                        } else {
+                            $this->relations[$key] = DanamicAttributeFactory::option($this, $key)->newValue($value);
+                        }
+                    }
                 }
             } else {
                 if (is_array($instance)) {
-                    // $instance->setValues($value);
-                    //mutiple
+                    $dynOptionRelation = new Relationship\Option($this, $key, $instance);
+                    if (is_array($value)) {
+                        $dynOptionRelation->new($value);
+                    }
                 } else {
                     $instance->value = $value;
                 }

@@ -3,20 +3,31 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\DynamicOptionAttribute;
-
+/**
+ * Normally only use for assign new dynamic attribute
+ */
 class Option extends Base {
+    /**
+     * @var \Illuminate\Database\Eloquent\Collection
+     */
     protected $items;
 
     /**
      * @param Model $parent
      * @param string $model
+     * @param array|Collection|null $items
      */
-    public function __construct($parent, $table) {
+    public function __construct($parent, $table, Collection $items = null) {
         $this->parent = $parent;
         $this->table = $table;
-        $this->loadItems();
+        if ($items === null) {
+            $this->loadItems();
+        } else {
+            $this->items = $items;
+        }
     }
 
     public function isSingle() {
@@ -33,14 +44,15 @@ class Option extends Base {
             ->table($this->table)
             ->where('foreignkey', $this->parent->getKey())
             ->get();
-        $this->items = [];
+        $items = [];
         foreach($all as $row) {
             $key = md5(strtolower($row->value));
             $model = new DynamicOptionAttribute();
             $model->setRawAttributes((array)$row, true);
             $model->exists = true;
-            $this->items[$key] = $model;
+            $items[$key] = $model;
         }
+        $this->items = new Collection($items);
         return $this;
     }
 
@@ -51,7 +63,7 @@ class Option extends Base {
      */
     protected function findModel($value = null) {
         $key = md5(strtolower($value));
-        return isset($this->items[$key]) ? $this->items[$key] : null;
+        return $this->items->get($key, null);
     }
 
     /**
@@ -60,13 +72,13 @@ class Option extends Base {
      * @param string $value
      * @return Model
      */
-    public function new($value) {
+    public function newValue($value) {
         $model = $this->findModel($value) ?? $this->makeModel();
         $model->foreignkey = $this->parent->getKey();
         $model->value = $value;
         $model->save();
         $key = md5(strtolower($value));
-        $this->items[$key] = $model;
+        $this->items->offsetSet($key, $model);
         return $model;
     }
 
@@ -76,7 +88,7 @@ class Option extends Base {
      * @param string $value
      * @return void
      */
-    public function update($oldValue, $newValue) {
+    public function updateValue($oldValue, $newValue) {
         $model = $this->findModel($oldValue) ?? $this->makeModel();
         $model->foreignkey = $this->parent->getKey();
         $model->value = $newValue;
@@ -84,11 +96,11 @@ class Option extends Base {
 
         //unset old model
         $key = md5(strtolower($oldValue));
-        unset($this->items[$key]);
+        $this->items->offsetUnset($key);
 
         //set new model
         $key = md5(strtolower($newValue));
-        $this->items[$key] = $model;
+        $this->items->offsetSet($key, $model);
         return $model;
     }
 
@@ -98,11 +110,11 @@ class Option extends Base {
      * @param Model $parent
      * @return void
      */
-    public function delete($oldValue) {
+    public function deleteValue($oldValue) {
         if ($model = $this->findModel($oldValue)) {
             $model->delete();
             $key = md5(strtolower($oldValue));
-            unset($this->items[$key]);
+            $this->items->offsetUnset($key);
         }
     }
 
@@ -117,7 +129,7 @@ class Option extends Base {
             ->table($this->table)
             ->where('foreignkey', $this->parent->getKey())
             ->delete();
-        $this->items = [];
+        $this->items = new Collection([]);
         return $this;
     }
 
@@ -147,18 +159,19 @@ class Option extends Base {
             $valueMap[md5(strtolower($v))] = $v;
         }
         $keys = array_keys($valueMap);
-        $existKeys = array_keys($this->items);
+        $existKeys = $this->items->modelKeys();
         $needtodeletes = array_diff($existKeys, $keys);
         $needtodadds = array_diff($keys, $existKeys);
         foreach($needtodeletes as $key) {
             if ($model = $this->items[$key]) {
-                $model->delete();
-                unset($this->items[$key]);
+                $model->deleteValue();
+                $this->items->forget([$key]);
             }
         }
         foreach($needtodadds as $key) {
-            $this->new($valueMap[$key]);
+            $this->newValue($valueMap[$key]);
         }
+        return $this;
     }
 
     /**
@@ -169,7 +182,7 @@ class Option extends Base {
      */
     public function updateValues($values) {
         foreach($values as $old => $new) {
-            $this->update($old, $new);
+            $this->updateValue($old, $new);
         }
     }
 }
