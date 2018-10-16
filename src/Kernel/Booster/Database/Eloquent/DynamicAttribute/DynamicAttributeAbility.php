@@ -81,7 +81,7 @@ trait DynamicAttributeAbility
      */
     public function setAttribute($key, $value)
     {
-        if (array_key_exists($key, $this->dyn_relations)) {
+        if ($this->dyn_relations && array_key_exists($key, $this->dyn_relations)) {
             $instance = $this->relations[$key];
             if ($instance === null) {
                 if ($value !== null) {
