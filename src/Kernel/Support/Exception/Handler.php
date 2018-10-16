@@ -27,10 +27,7 @@ class Handler extends ExceptionHandler {
 
         if ($e instanceof TokenMismatchException) {
             if ($request->ajax()) {
-                $protocol = new ProtocolMessage();
-                return new Response($protocol->fail()
-                    ->setRedirecturl(route('login'))
-                    ->addError('Session Expired'));
+                return new Response(json_encode(['status'=>false, 'message' => 'token not match']), 500);
             } else {
                 return redirect()->route('login');
             }
