@@ -1,6 +1,6 @@
 <?php
 
-namespace Zento\Zento\Model\ORM\Traits;
+namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
 /**
  * a trait to handle product price
@@ -16,6 +16,77 @@ namespace Zento\Zento\Model\ORM\Traits;
     ];
  */
 trait TraitRealationMutatorHelper {
+    protected $mutator_of_relation = false;
+
+    protected function hasMutatorInRelations($key) {
+        static $cache;
+        if (!$cache) {
+            $cache = [];
+            foreach(static::$preload_relations as $relation => $items) {
+                if ($relation !== 'withcount') {
+                    if (is_numeric($relation) && is_string($items)) {
+                        continue;
+                    }
+                    if (is_array($items)) {
+                        foreach($items as $mutator) {
+                            $cache[$mutator] = $relation;
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->mutator_of_relation = isset($cache[$key]) ? $cache[$key] : false;
+        return $this->mutator_of_relation;
+    }
+
+    /**
+     * @override
+     */
+    public function hasGetMutator($key)
+    {
+        return parent::hasGetMutator($key) || $this->hasMutatorInRelations($key);
+    }
+
+    /**
+     * @override
+     */
+    protected function mutateAttribute($key, $value)
+    {
+        if ($this->mutator_of_relation) {
+            $relation = $this->relations[$this->mutator_of_relation];
+            return $relation ? $relation->{$key} : null;
+        } else {
+            return parent::mutateAttribute($key, $value);
+        }
+    }
+
+    /**
+     * @override
+     */
+    public function hasSetMutator($key)
+    {
+        return parent::hasSetMutator($key) || $this->hasMutatorInRelations($key);
+    }
+
+    /**
+     * @override
+     */
+    protected function setMutatedAttributeValue($key, $value)
+    {
+        if ($this->mutator_of_relation) {
+            $relation = $this->relations[$this->mutator_of_relation];
+            if (!$relation) {
+                $relation = $this->{$this->mutator_of_relation}()->getQuery()->getModel()->newInstance();
+                $this->relations[$this->mutator_of_relation] = $relation;
+            }
+            $this->relations[$this->mutator_of_relation]->{$key} = $value;
+            return $this;
+        } else {
+            return parent::setMutatedAttributeValue($key, $value);
+        }
+    }
+
     public function toArray() {
         $origin = parent::toArray();
         foreach(static::$preload_relations as $relation => $items) {
