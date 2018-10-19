@@ -9,6 +9,8 @@ use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\Attribute;
 
 trait DynamicAttributeAbility
 {
+    abstract public static function getPreloadRelations();
+
     protected $dyn_relations;
     public function setDynRelations(&$dyns) {
         $this->dyn_relations = $dyns;

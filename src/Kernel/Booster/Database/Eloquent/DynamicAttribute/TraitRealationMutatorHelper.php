@@ -5,24 +5,27 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 /**
  * a trait to handle product price
  * This trait turn relationship's properties to direct attributes of the host class by override function "toArray"
- * to use this trait, host class must define a static property: $preload_relations
- *  e.g. public static $preload_relations" =
-     * [
-        'relation1' =>[
-            'mutator_attr1', 'mutator_attr2', 
-        ],
-        'relation2',
-        'withcount' => ['relation1']
-    ];
+ * to use this trait, host class must define a function getPreloadRelations()
+ *  e.g. 
+ *  public function getPreloadRelations() {
+ *       return [
+ *         'relation1' =>[
+ *             'mutator_attr1', 'mutator_attr2', 
+ *          ],
+ *          'relation2',
+ *          'withcount' => ['relation1']
+ *      ];
+ *   }
  */
 trait TraitRealationMutatorHelper {
-    protected $mutator_of_relation = false;
+    abstract public static function getPreloadRelations();
 
+    protected $mutator_of_relation = false;
     protected function hasMutatorInRelations($key) {
         static $cache;
         if (!$cache) {
             $cache = [];
-            foreach(static::$preload_relations as $relation => $items) {
+            foreach($this->getPreloadRelations() as $relation => $items) {
                 if ($relation !== 'withcount') {
                     if (is_numeric($relation) && is_string($items)) {
                         continue;
@@ -89,7 +92,7 @@ trait TraitRealationMutatorHelper {
 
     public function toArray() {
         $origin = parent::toArray();
-        foreach(static::$preload_relations as $relation => $items) {
+        foreach($this->getPreloadRelations() as $relation => $items) {
             if ($relation !== 'withcount') {
                 if (is_numeric($relation) && is_string($items)) {
                     continue;

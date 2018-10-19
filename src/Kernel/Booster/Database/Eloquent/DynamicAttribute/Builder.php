@@ -149,28 +149,18 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     }
 
     /**
-     * model must define "public static $preload_relations"
-     * [
-        'relation1' =>[
-            'mutator_attr1', 'mutator_attr2', 
-        ],
-        'relation2',
-        'withcount' => ['relation1']
-    ];
      *
      * @return void
      */
     protected function preloadRelation() {
         if ($this->isGetAllColumn) {
-            if (property_exists($this->model, 'preload_relations')) {
-                foreach($this->model::$preload_relations ?? [] as $relation => $extra) {
-                    if ($relation === 'withcount') {
-                        foreach($extra as $relation) {
-                            $this->withCount($relation);
-                        }
-                    } else {
-                        $this->with(is_numeric($relation) && is_string($extra) ? $extra : $relation );
+            foreach($this->model->getPreloadRelations() ?? [] as $relation => $extra) {
+                if ($relation === 'withcount') {
+                    foreach($extra as $relation) {
+                        $this->withCount($relation);
                     }
+                } else {
+                    $this->with(is_numeric($relation) && is_string($extra) ? $extra : $relation );
                 }
             }
         }
