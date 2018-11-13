@@ -18,6 +18,8 @@ class BaseEvent
 
     protected $channelName;
 
+    protected $errors = [];
+
     /**
      * set channel if going to use channel to broadcast
      *
@@ -41,6 +43,14 @@ class BaseEvent
             $this->xRays[] = $listener;
         }
         return $this;
+    }
+
+    public function addError($errorMessage) {
+        $this->errors[] = $errorMessage;
+    }
+
+    public function getErrors() {
+        return $this->errors;
     }
 
     /**
