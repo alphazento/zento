@@ -13,7 +13,10 @@ namespace Zento\Kernel\Providers;
 use Zento\Kernel\Facades\DanamicAttributeFactory;
 use DB;
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
+    protected $bootedCallbacks = [];
+
     public function register() {
+        $this->app->singleton('ZentoKernel', function($app) { return $this; });
         $this->app->register(DebuggerServiceProvider::class);
         $this->app->register(EventsServiceProvider::class);
         $this->app->register(DanamicAttributeFactoryProvider::class);
@@ -23,8 +26,15 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
     }
 
     public function boot() {
-        $configPath = __DIR__ . '/../../../config/zento.php';
-        $this->publishes([$configPath => $this->getConfigPath()], 'config');
+        // $this->app->register(EventsServiceProvider::class);
+        if (!$this->app->runningInConsole()) {
+            $configPath = __DIR__ . '/../../../config/zento.php';
+            $this->publishes([$configPath => $this->getConfigPath()], 'config');
+        }
+
+        foreach ($this->bootedCallbacks as $callback) {
+            call_user_func($callback, $this->app);
+        }
 
         // DanamicAttributeFactory::createRelationShipORM(\Zento\Kernel\Booster\Config\ConfigInDB\ORMModel\ConfigItem::class, 
         //     'tcol', ['char', 32], true);
@@ -63,5 +73,9 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
                 return [$field->Field, $type];
             }
         }
+    }
+
+    public function registerBoot(\Closure $func) {
+        $this->bootedCallbacks[] = $func;
     }
 }

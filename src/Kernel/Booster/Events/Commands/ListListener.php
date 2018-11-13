@@ -32,7 +32,7 @@ class ListListener extends \Zento\Kernel\PackageManager\Console\Commands\Base
         $this->info('Here are events and listeners you defined in the "listeners" items of your modules composer.json');
         $this->warn('Event: sort => listeners' . PHP_EOL); 
         $listeners = EventsManager::getRawListeners();
-        foreach($listeners as $key => $listeners) {
+        foreach($listeners ?? [] as $key => $listeners) {
             $this->warn(str_pad($key, 45, ' '));
             sort($listeners);
             foreach($listeners as $v) {

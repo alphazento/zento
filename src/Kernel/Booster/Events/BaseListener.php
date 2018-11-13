@@ -16,7 +16,7 @@ class BaseListener
         }
     }
 
-    public function run() {
+    protected function run($event) {
         throw new ListenerLogicNotDefine('Listener Logic Not Defined');
     }
 }

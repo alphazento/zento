@@ -6,12 +6,12 @@ use Cache;
 use Zento\Kernel\Consts;
 
 class EventsManager {
-    protected $eventListeners;
+    protected $rawEventListeners;
     protected $parsedEventListeners;
     protected $cached = false;
 
     public function __construct() {
-        $this->eventListeners = [];
+        $this->rawEventListeners = $this->getRawListeners();
         if (Cache::has(Consts::CACHE_KEY_EVENTS_LISTENERS)) {
             $this->parsedEventListeners = Cache::get(Consts::CACHE_KEY_EVENTS_LISTENERS, null);
             $this->cached = !empty($this->parsedEventListeners);
@@ -25,25 +25,25 @@ class EventsManager {
     /**
      * add evnets listeners
      *
-     * @param array $eventListeners  [key(int)=>value(class name)]
+     * @param array $rawEventListeners  [key(int)=>value(class name)]
      * @return void
      */
-    public function addEventListeners(array $eventListeners) {
-        foreach($eventListeners as $key => $values) {
+    public function addEventListeners(array $rawEventListeners) {
+        foreach($rawEventListeners as $key => $values) {
             foreach($values as $sort => $value) {
                 $sort_value = sprintf('%s:::%s', str_pad($sort, 5, "0", STR_PAD_LEFT), $value);
-                $elements = isset($this->eventListeners[$key]) ? $this->eventListeners[$key] : [];
+                $elements = isset($this->rawEventListeners[$key]) ? $this->rawEventListeners[$key] : [];
                 $elements[] = $sort_value;;
-                $this->eventListeners[$key] = $elements;
+                $this->rawEventListeners[$key] = $elements;
             }
         }
-        Cache::forever(Consts::CACHE_KEY_RAW_EVENTS_LISTENERS, $this->eventListeners);
+        Cache::forever(Consts::CACHE_KEY_RAW_EVENTS_LISTENERS, $this->rawEventListeners);
     }
 
     public function prepareEventListeners() {
         if (!$this->cached) {
             $this->parsedEventListeners = [];
-            foreach($this->eventListeners as $key => $listeners) {
+            foreach($this->rawEventListeners ?? [] as $key => $listeners) {
                 sort($listeners);
                 $this->parsedEventListeners[$key] = array_map(function($v) {
                     $parts = explode(':::', $v);
@@ -56,6 +56,6 @@ class EventsManager {
     }
 
     public function getRawListeners() {
-        return Cache::get(Consts::CACHE_KEY_RAW_EVENTS_LISTENERS);
+        return Cache::get(Consts::CACHE_KEY_RAW_EVENTS_LISTENERS, []);
     }
 }
