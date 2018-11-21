@@ -142,24 +142,22 @@ class PackageManagerService extends MyPackageDiscover {
         //register routes
         if (!$this->app->runningInConsole()) {
              //register middleware
-            if (isset($assembly['middlewares'])) {
-                foreach ($assembly['middlewares'] as $middleware => $classOrClasses) {
-                    if (is_array($classOrClasses) && count($classOrClasses)) {
-                        if (isset($classOrClasses['main']) && count($classOrClasses['main'])) {
-                            $app['router']->middlewareGroup($middleware, $classOrClasses['main']);
-                        }
-                        if (isset($classOrClasses['pre']) && count($classOrClasses['pre'])) {
-                            foreach($classOrClasses['pre'] as $class) {
-                                $this->app['router']->prependMiddlewareToGroup($middleware, $class);
-                            }
-                        }
-                        if (isset($classOrClasses['post']) && count($classOrClasses['post'])) {
-                            foreach($classOrClasses['post'] as $class) {
-                                $this->app['router']->pushMiddlewareToGroup($middleware, $class);
-                            }
-                        }
-                    } elseif (is_string($classOrClasses)) {
-                        $this->app['router']->aliasMiddleware($middleware, $classOrClasses);
+            foreach ($assembly['middlewares'] ?? [] as $name => $class) {
+                $this->app['router']->aliasMiddleware($name, $class);
+            }
+
+            foreach ($assembly['middlewaregroup'] ?? [] as $groupName => $classes) {
+                if (isset($classes['main']) && count($classes['main'])) {
+                    $this->app['router']->middlewareGroup($groupName, $classes['main']);
+                }
+                if (isset($classes['pre']) && count($classes['pre'])) {
+                    foreach($classes['pre'] as $class) {
+                        $this->app['router']->prependMiddlewareToGroup($groupName, $class);
+                    }
+                }
+                if (isset($classes['post']) && count($classes['post'])) {
+                    foreach($classes['post'] as $class) {
+                        $this->app['router']->pushMiddlewareToGroup($groupName, $class);
                     }
                 }
             }
