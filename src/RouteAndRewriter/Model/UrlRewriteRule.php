@@ -1,6 +1,6 @@
 <?php
 
-namespace Zento\UrlRewriter\Model;
+namespace Zento\RouteAndRewriter\Model;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Zento\Foundation\Contract\Cart\Action;

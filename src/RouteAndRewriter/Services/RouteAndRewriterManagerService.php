@@ -1,19 +1,19 @@
 <?php
 
-namespace Zento\UrlRewriter\Services;
+namespace Zento\RouteAndRewriter\Services;
 
 use Illuminate\Support\Str;
-use Zento\UrlRewriter\Model\UrlRewriteRule;
-use Zento\UrlRewriter\Illuminate\Routing\RouteCollection;
+use Zento\RouteAndRewriter\Model\UrlRewriteRule;
+use Zento\RouteAndRewriter\Illuminate\Routing\RouteCollection;
 
-class UrlRewriterManagerService
+class RouteAndRewriterManagerService
 {
     protected $routeCollection;
     public function __construct($app) {
+        //replace default RouteCollection
         if($app->bound('router')) {
             $this->routeCollection = new RouteCollection($app['router']->getRoutes());
             $app['router']->setRoutes($this->routeCollection);
-            
         }
     }
 
@@ -26,6 +26,16 @@ class UrlRewriterManagerService
     public function appendRewriteEngine(\Closure $engine) {
         $this->routeCollection->appendRequestHandlers($engine);
         return $this;
+    }
+
+    /**
+     * 
+     *
+     * @param \Zento\Kernel\RouteRule $routeRule
+     * @return void
+     */
+    public function appendRouteRule(\Zento\Kernel\RouteRule $routeRule) {
+        $this->routeCollection->appendRouteRule($engine);
     }
 
     /**

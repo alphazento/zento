@@ -1,6 +1,6 @@
 <?php
 
-namespace Zento\UrlRewriter\Illuminate\Http;
+namespace Zento\RouteAndRewriter\Illuminate\Http;
 
 class RewriteRequest extends \Illuminate\Http\Request {
     protected $rewriteTo;

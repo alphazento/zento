@@ -1,13 +1,13 @@
 <?php
 
-namespace Zento\UrlRewriter\Providers;
+namespace Zento\RouteAndRewriter\Providers;
 
 use Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
-use Zento\UrlRewriter\Services\UrlRewriterManagerService;
+use Zento\RouteAndRewriter\Services\UrlRewriterManagerService;
 
-class UrlRewriterServiceProvider extends ServiceProvider
+class RouteAndRewriterServiceProvider extends ServiceProvider
 {
     public function register()
     {
@@ -18,7 +18,7 @@ class UrlRewriterServiceProvider extends ServiceProvider
     public function boot() {
         if(!$this->app->runningInConsole()) {
             $this->app['urlrewriter']->appendRewriteEngine(function($request) {
-                $engine = new \Zento\UrlRewriter\Engine\UrlRewriteEngine();
+                $engine = new \Zento\RouteAndRewriter\Engine\UrlRewriteEngine();
                 $engine->execute($request);
             });
         }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Zento\UrlRewriter\Http\Controllers;
+namespace Zento\RouteAndRewriter\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Zento\UrlRewriter\Model\UrlRewriteRule;
+use Zento\RouteAndRewriter\Model\UrlRewriteRule;
 
 class RedirectController extends Controller
 {

@@ -1,7 +1,7 @@
 <?php
 Route::group(
     [
-        'namespace' => '\Zento\UrlRewriter\Http\Controllers',
+        'namespace' => '\Zento\RouteAndRewriter\Http\Controllers',
         'middleware' => ['web']
     ], function () {
     Route::get('/redirect', 
