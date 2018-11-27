@@ -17,6 +17,7 @@ use Zento\Kernel\PackageManager\Model\ORM\PackageConfig;
 use Zento\Kernel\PackageManager\Model\PackageMigrator;
 use Zento\Kernel\PackageManager\Foundation\MyPackageDiscover;
 use Zento\Kernel\Facades\EventsManager;
+use Illuminate\Support\Facades\Route;
 
 class PackageManagerService extends MyPackageDiscover {
     use \Zento\Kernel\Support\Traits\TraitLogger;
@@ -24,6 +25,7 @@ class PackageManagerService extends MyPackageDiscover {
     protected $kernelEnabled = false;
     protected $bootedCallbacks = [];
     protected $packageConfigs;
+    protected $routesFolders = [];
 
     public function __construct($app) {
         parent::__construct($app);
@@ -123,7 +125,7 @@ class PackageManagerService extends MyPackageDiscover {
         if (isset($assembly['aliases'])) {
             foreach ($assembly['aliases'] as $alias => $class) {
                 if (!class_exists($alias)) {
-                    class_alias($class, $alias);
+                    $this->app->alias($class, $alias);
                 }
             }
         }
@@ -161,11 +163,6 @@ class PackageManagerService extends MyPackageDiscover {
                     }
                 }
             }
-            
-            $routesFile = $this->packagePath($packageName, Consts::PACKAGE_ROUTE_FILE);
-            if (file_exists($routesFile)) {
-                require_once $routesFile;
-            }
         } else {
             //register package's commands
             if (isset($assembly['commands'])) {
@@ -182,6 +179,33 @@ class PackageManagerService extends MyPackageDiscover {
                         $publicPath => public_path(strtolower($packageName))
                     ]
                 );
+            }
+        }
+
+        if (!$this->app->routesAreCached()) {
+            if ($routesFolder = $this->packagePath($packageName, Consts::PACKAGE_ROUTES_FOLDER)) {
+                if (file_exists($routesFolder)) {
+                    $this->routesFolders[] = $routesFolder;
+                }
+            }
+        }
+    }
+
+    /**
+     * map all routes
+     *
+     * @return void
+     */
+    protected function mapRoutes() {
+        if (!$this->app->routesAreCached()) {
+            $routes = ['api.php', 'web.php', 'admin_api.php', 'admin_web.php'];
+            foreach($this->routesFolders as $folder) {
+                foreach($routes as $route) {
+                    $file = $folder . '/' . $route;
+                    if (file_exists($file)) {
+                        require($file);
+                    }
+                }
             }
         }
     }
@@ -270,7 +294,6 @@ class PackageManagerService extends MyPackageDiscover {
         return $this;
     }
 
-
     /**
      * register a callback, and it will be called after app booted
      * if callback is null, it will fire all callbacks
@@ -287,6 +310,7 @@ class PackageManagerService extends MyPackageDiscover {
         foreach ($this->bootedCallbacks as $callback) {
             call_user_func($callback, $this->app);
         }
+        $this->mapRoutes();
     }
 
     /**

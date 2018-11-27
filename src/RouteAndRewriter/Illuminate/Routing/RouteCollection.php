@@ -14,12 +14,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class RouteCollection extends \Illuminate\Routing\RouteCollection {
     protected $origin;
     protected $requestHandlers;
-    protected $routeRules;
 
     public function __construct($originRouteCollection) {
         $this->origin = $originRouteCollection;
         $this->requestHandlers = [];
-        $this->routeRules = [];
     }
 
     /**
@@ -30,24 +28,9 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     }
 
     /**
-     * @param \Zento\Kernel\RouteRule $routeRule
-     * @return void
-     */
-    public function appendRouteRule(\Zento\Kernel\RouteRule $routeRule) {
-        $this->routeRules[] = $routeRule;
-    }
-
-    protected function registerRouteRules() {
-        foreach($this->routeRules ?? [] as $routeRule) {
-            $routeRule->registerFrontAPIRoutes();
-        }
-    }
-
-    /**
     * It will call run customise request handlers first, then run default match function
     */
     public function match(Request $request) {
-        $this->registerRouteRules();
         foreach($this->requestHandlers as $func) {
             $req = $func($request);
             if ($req) {

@@ -32,6 +32,7 @@ class EnablePackage extends Base
      */
     public function handle()
     {
+        $this->call('route:clear');
         $packageName = $this->argument('name');
         $assembly = PackageManager::rebuildPackages()->assembly($packageName);
         if (!$assembly) {

@@ -20,7 +20,7 @@ class ThemeManagerServiceProvider extends \Illuminate\Support\ServiceProvider {
             $this->app->singleton('theme.manager', function ($app) {
                 return new \Zento\ThemeManager\Services\ThemeManager($app);
             });
-            class_alias('\Zento\ThemeManager\Providers\Facades\ThemeManager', 'ThemeManager');
+            $this->app->alias('\Zento\ThemeManager\Providers\Facades\ThemeManager', 'ThemeManager');
         }
     }
 

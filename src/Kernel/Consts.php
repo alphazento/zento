@@ -12,7 +12,7 @@ class Consts  {
     const PACKAGE_ASSETS_FOLDER = 'resources' . DIRECTORY_SEPARATOR . 'public';
     const PACKAGE_SETUP_DATABASE_FOLDER = 'setup' . DIRECTORY_SEPARATOR . 'database';
     const PACKAGE_VIEWS_FOLDER = 'resources' . DIRECTORY_SEPARATOR . 'views';
-    const PACKAGE_ROUTE_FILE = 'routes.php';
+    const PACKAGE_ROUTES_FOLDER = 'routes';
 
     const PACKAGE_ASSEMBLY_FILE = 'assembly.php';
     //CACHE KEYS

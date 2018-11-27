@@ -29,16 +29,6 @@ class RouteAndRewriterManagerService
     }
 
     /**
-     * 
-     *
-     * @param \Zento\Kernel\RouteRule $routeRule
-     * @return void
-     */
-    public function appendRouteRule(\Zento\Kernel\RouteRule $routeRule) {
-        $this->routeCollection->appendRouteRule($engine);
-    }
-
-    /**
      * add new rewrite rule
      *
      * @param string $reqUri
