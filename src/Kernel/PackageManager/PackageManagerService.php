@@ -27,6 +27,13 @@ class PackageManagerService extends MyPackageDiscover {
     protected $packageConfigs;
     protected $routesFolders = [];
 
+    /**
+     * some command line will create a new app, use this flag to not class_allias twice
+     *
+     * @var boolean
+     */
+    protected static $injected = false;
+
     public function __construct($app) {
         parent::__construct($app);
     }
@@ -95,6 +102,7 @@ class PackageManagerService extends MyPackageDiscover {
         } else {
             $this->alert(sprintf("You haven't enable package [%s]", Consts::ZENTO_KERNEL_PACKAGE_NAME));
         }
+        self::$injected = true;
         return $this;
     }
 
@@ -124,9 +132,7 @@ class PackageManagerService extends MyPackageDiscover {
         //register aliases
         if (isset($assembly['aliases'])) {
             foreach ($assembly['aliases'] as $alias => $class) {
-                if (!class_exists($alias)) {
-                    $this->app->alias($class, $alias);
-                }
+                $this->class_alias($class, $alias);
             }
         }
 
@@ -196,7 +202,7 @@ class PackageManagerService extends MyPackageDiscover {
      *
      * @return void
      */
-    protected function mapRoutes() {
+    public function mapRoutes() {
         if (!$this->app->routesAreCached()) {
             $routes = ['api.php', 'web.php', 'admin_api.php', 'admin_web.php'];
             foreach($this->routesFolders as $folder) {
@@ -295,25 +301,6 @@ class PackageManagerService extends MyPackageDiscover {
     }
 
     /**
-     * register a callback, and it will be called after app booted
-     * if callback is null, it will fire all callbacks
-     */
-    public function booted($callback=null) {
-        if ($callback) {
-            $this->bootedCallbacks[] = $callback;
-        } else {
-            $this->fireAppCallbacks();
-        }
-    }
-
-    protected function fireAppCallbacks() {
-        foreach ($this->bootedCallbacks as $callback) {
-            call_user_func($callback, $this->app);
-        }
-        $this->mapRoutes();
-    }
-
-    /**
      * find a package from db, if not exist, create new one
      * 
      * @param      string  $packageName  The package name
@@ -360,5 +347,11 @@ class PackageManagerService extends MyPackageDiscover {
             return ucfirst($v);
         }, $parts);
         return $parts;
+    }
+
+    public function class_alias($class_name, $alias) {
+        if (!self::$injected) {
+            \class_alias($class_name, $alias);
+        }
     }
 }

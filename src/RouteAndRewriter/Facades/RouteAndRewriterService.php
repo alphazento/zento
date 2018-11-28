@@ -1,8 +1,8 @@
 <?php
 
-namespace Zento\Kernel\Facades;
+namespace Zento\RouteAndRewriter\Facades;
 
-class DanamicAttributeFactory extends \Illuminate\Support\Facades\Facade
+class RouteAndRewriterService extends \Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -11,6 +11,6 @@ class DanamicAttributeFactory extends \Illuminate\Support\Facades\Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'danamic_attribute_factory';
+        return 'routeandrewriter_svc';
     }
 }

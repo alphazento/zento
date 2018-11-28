@@ -23,22 +23,48 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     /**
      * Append request pre handler
      */
-    public function appendRequestHandlers(Closure $func) {
-        $this->requestHandlers[] = $func;
+    public function appendRequestHandlers(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineInterface $engine) {
+        $this->requestHandlers[] = $engine;
     }
 
     /**
     * It will call run customise request handlers first, then run default match function
     */
     public function match(Request $request) {
-        foreach($this->requestHandlers as $func) {
-            $req = $func($request);
+        $request = $this->matchUrlRewrite($request);
+        return $this->origin->match($request);
+    }
+
+    /**
+     * run extra request handlers
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function matchUrlRewrite(Request $request) {
+        foreach($this->requestHandlers as $engine) {
+            $req = $engine->execute($request);
             if ($req) {
                 $request = $req;
                 break;
             }
         }
-        return $this->origin->match($request);
+        return $request;
+    }
+
+    /**
+     * designed for API
+     *
+     * @param string $uri
+     * @return void
+     */
+    public function findRewriteRule(string $uri) {
+        foreach($this->requestHandlers as $engine) {
+            if ($rule = $engine->findRewriteRule($uri)) {
+                return $rule;
+            }
+        }
+        return false;
     }
 
     /**

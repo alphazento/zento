@@ -11,6 +11,6 @@ class ThemeManager extends \Illuminate\Support\Facades\Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'theme.manager';
+        return 'theme_manager';
     }
 }

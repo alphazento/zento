@@ -7,10 +7,14 @@ use Zento\Kernel\Facades\PackageManager;
 
 class ConfigServiceProvider extends \Illuminate\Support\ServiceProvider 
 {
-    public function register() {
-        $this->app->booted(function ($app) {     
-            $this->replaceConfigService();
-        });
+    // public function register() {
+    //     $this->app->booted(function ($app) {     
+    //         $this->replaceConfigService();
+    //     });
+    // }
+
+    public function boot() {
+        $this->replaceConfigService();
     }
 
     /**

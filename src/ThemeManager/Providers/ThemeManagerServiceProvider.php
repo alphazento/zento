@@ -17,16 +17,16 @@ class ThemeManagerServiceProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
         if (!$this->app->runningInConsole()) {
             $this->registerViewFactory();
-            $this->app->singleton('theme.manager', function ($app) {
+            $this->app->singleton('theme_manager', function ($app) {
                 return new \Zento\ThemeManager\Services\ThemeManager($app);
             });
-            $this->app->alias('\Zento\ThemeManager\Providers\Facades\ThemeManager', 'ThemeManager');
+            PackageManager::class_alias('\Zento\ThemeManager\Providers\Facades\ThemeManager', 'ThemeManager');
         }
     }
 
     public function boot() {
         if (!$this->app->runningInConsole()) {
-            PackageManager::booted(function($app) {
+            // PackageManager::booted(function($app) {
                 $packageConfigs = PackageManager::loadPackagesConfigs();
                 foreach($packageConfigs as $packageConfig) {
                     $viewLocation = PackageManager::packageViewsPath($packageConfig->name);
@@ -35,14 +35,14 @@ class ThemeManagerServiceProvider extends \Illuminate\Support\ServiceProvider {
                             //register package's view locations, only for not theme package.
                             ThemeManager::prependlocation($viewLocation);
                        } else {
-                           $app['view']->addLocation($viewLocation);                
+                           $this->app['view']->addLocation($viewLocation);                
                        }
                     }
                 }
                 if (\Zento\ThemeManager\Services\ThemeManager::debugMode()) {
-                    (new \Zento\ThemeManager\View\Debug\BladeExtender())->inject($app);
+                    (new \Zento\ThemeManager\View\Debug\BladeExtender())->inject($this->app);
                 }
-            });
+            // });
         }
     }
 

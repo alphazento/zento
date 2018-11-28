@@ -54,10 +54,10 @@
                         "\\Zento\\ThemeManager\\Providers\\ThemeManagerServiceProvider"
                     ]
                 },
-                "Zento_UrlRewriter": {
+                "Zento_RouteAndRewriter": {
                     "version" : "0.0.1",
                     "providers" : [
-                        "Zento\\UrlRewriter\\Providers\\UrlRewriterServiceProvider"
+                        "Zento\\RouteAndRewriter\\Providers\\RouteAndRewriterServiceProvider"
                     ]
                 }
             }

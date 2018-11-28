@@ -22,7 +22,7 @@ class ArtisanSubscriber
             function ($event) {
                 if ($event->command === 'package:discover') {
                     (new Commands\PackageDiscoverCommandRunAfter($event->input, $event->output))->discoverMyPackages();
-                }         
+                }
             }
         );
     }

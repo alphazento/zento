@@ -18,11 +18,11 @@ class PackageManagerServiceProvider extends \Illuminate\Support\ServiceProvider 
         $this->app->singleton('packagemanager', function ($app) {
             return new PackageManagerService($app);
         });
+    }
 
-        $this->app->booted(function ($app) {
-            $app['packagemanager']->inject($this)->booted();
-            $app->runningInConsole() && (new ArtisanSubscriber())->subscribe();
-        });
+    public function boot() {
+        $this->app['packagemanager']->inject($this)->mapRoutes();
+        $this->app->runningInConsole() && (new ArtisanSubscriber())->subscribe();
     }
     
     /**

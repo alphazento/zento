@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Zento\RouteAndRewriter\Model\UrlRewriteRule;
 use Zento\RouteAndRewriter\Illuminate\Routing\RouteCollection;
 
-class RouteAndRewriterManagerService
+class RouteAndRewriterService
 {
     protected $routeCollection;
     public function __construct($app) {
@@ -23,7 +23,7 @@ class RouteAndRewriterManagerService
      * @param \Closure $engine
      * @return $this
      */
-    public function appendRewriteEngine(\Closure $engine) {
+    public function appendRewriteEngine(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineInterface $engine) {
         $this->routeCollection->appendRequestHandlers($engine);
         return $this;
     }
@@ -65,5 +65,19 @@ class RouteAndRewriterManagerService
             $field = 'req_hash';
         }
         return UrlRewriteRule::where($field, $value)->delete();
+    }
+
+    /**
+     * check if requesting a API 
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return boolean
+     */
+    public function isRequestsApi(\Illuminate\Http\Request $request) {
+        return $request->segment(1) == config('api_url_prefix');
+    }
+
+    public function findRewriteRule(string $url) {
+        return $this->routeCollection->findRewriteRule($url);
     }
 }

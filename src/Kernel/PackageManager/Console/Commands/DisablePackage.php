@@ -32,9 +32,8 @@ class DisablePackage extends Base
      */
     public function handle()
     {
-        $this->call('route:clear');
         $packageName = $this->argument('name');
-        
+
         $packageConfig = PackageManager::findPackageConfigOrNew($packageName);
         if ($packageConfig) {
             PackageManager::down($packageName);
@@ -42,5 +41,6 @@ class DisablePackage extends Base
         } else {
             $this->error(sprintf("Package [%s] not exist or haven't be enabled.", $packageName));
         }
+        $this->call('route:cache');
     }
 }

@@ -5,22 +5,23 @@ namespace Zento\RouteAndRewriter\Providers;
 use Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\ServiceProvider;
-use Zento\RouteAndRewriter\Services\UrlRewriterManagerService;
+
+use Zento\Kernel\Facades\PackageManager;
+use Zento\RouteAndRewriter\Services\RouteAndRewriterService;
 
 class RouteAndRewriterServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton('urlrewriter', function($app) {
-            return new UrlRewriterManagerService($app);
+        $this->app->singleton('routeandrewriter_svc', function($app) {
+            return new RouteAndRewriterService($app);
         });
+        PackageManager::class_alias('\Zento\RouteAndRewriter\Facades\RouteAndRewriterService', 'RouteAndRewriterService');
     }
+
     public function boot() {
-        if(!$this->app->runningInConsole()) {
-            $this->app['urlrewriter']->appendRewriteEngine(function($request) {
-                $engine = new \Zento\RouteAndRewriter\Engine\UrlRewriteEngine();
-                $engine->execute($request);
-            });
+        if (!$this->app->runningInConsole()) {
+            $this->app['routeandrewriter_svc']->appendRewriteEngine(new \Zento\RouteAndRewriter\Engine\UrlRewriteEngine());
         }
     }
 }
