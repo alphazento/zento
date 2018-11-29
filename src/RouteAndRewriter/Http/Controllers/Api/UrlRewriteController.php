@@ -7,19 +7,22 @@ use Zento\RouteAndRewriter\Facades\RouteAndRewriterService;
 
 class UrlRewriteController extends Controller
 {
-    protected $recursive = 0;
+    protected $recursive_level = 0;
     public function getUrlRewriteTo(\Illuminate\Http\Request $request) {
-        if ($rule = $this->findRewriteRule($request->get('url'))) {
-            if ($rule->statusCode == 301 || $rule->statusCode == 302) {
-
-            }
+        if ($rule = $this->recursiveFindRewriteRule($request->get('url'))) {
             return ['status'=>200, 'data'=>['path' => $rule->to_uri, 'params' => $request->all()]];
         }
         return ['status'=>404, 'data'=>null];
     }
 
-    protected function findRewriteRule($url) {
-        if ($this->recursive > 5) {
+    /**
+     * Undocumented function
+     *
+     * @param string $url
+     * @return RewriteRule|false
+     */
+    protected function recursiveFindRewriteRule(string $url) {
+        if ($this->recursive_level++ > 5) {
             return false;
         }
         if ($rule = RouteAndRewriterService::findRewriteRule($url)) {

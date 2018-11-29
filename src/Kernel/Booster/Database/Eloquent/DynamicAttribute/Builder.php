@@ -124,7 +124,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function getModels($columns = ['*'])
     {
-        $this->isGetAllColumn = ($columns == ['*']);
+        $this->isGetAllColumn = \in_array('*', $columns);
         $this->preloadRelation();
         return parent::getModels($columns);
     }
@@ -137,8 +137,11 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function get($columns = ['*'])
     {
-        $this->isGetAllColumn = ($columns == ['*']);
-
+        $keys = $this->performDynConditions();
+        if ($keys !== null) {
+            $this->whereIn($this->model->getQualifiedKeyName(), $keys);
+        }
+        $this->isGetAllColumn = \in_array('*', $columns);
         // if (count($this->append_columns) > 0) {
         //     $this->select($this->model->getTable() . '.*', ...$this->append_columns);
         // }
@@ -200,4 +203,65 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
             }
         });
     }
+
+    protected $dynConditionBuilders = [];
+    protected function performDynConditions() {
+        $modelIds = null;
+        foreach($this->dynConditionBuilders as $condition) {
+            $ret = $condition[0]->get()->pluck('foreignkey')->toArray();
+            if ($modelIds === null) {
+                $modelIds = $ret;
+            } else {
+                if ($condition[1] == 'and') {
+                    $modelIds = array_intersect($modelIds, $ret);
+                } 
+                if ($condition[1] == 'or') {
+                    $modelIds = array_merge($modelIds, $ret);
+                }
+            }
+        }
+        return $modelIds;
+    }
+    /**
+     * Add a basic where clause to the query.
+     *
+     * @param  string|array|\Closure  $column
+     * @param  mixed   $operator
+     * @param  mixed   $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and')
+    {
+        if (!$this->buildConditionForDyn('where', $column, [$operator, $value], $boolean)) {
+           return parent::where($column, $operator, $value, $boolean);
+        }
+        return $this;
+    }
+
+    protected function buildConditionForDyn($method, $column, $argvs, $boolean = 'and') {
+        if (!is_string($column)) {
+            return false;
+        }
+        $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model, []);
+        foreach($dynaAttrs ?? [] as $dyn) {
+            if ($dyn['attribute'] == $column) {
+                $instance = new ORM\DynamicOptionAttribute();
+                $instance->setConnection($this->model->getConnectionName());
+                $instance->setTable(DanamicAttributeFactory::getTable($this->model, $column, $dyn['single']));
+                $builder = $instance->newQuery()->{$method}('value', ...$argvs)->select(['foreignkey']);
+                $this->dynConditionBuilders[] = [$builder, $boolean];
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function whereIn($column, $values, $boolean = 'and', $not = false) {
+        if (!$this->buildConditionForDyn('whereIn', $column, [$values, $boolean, $not], $boolean)) {
+            return parent::whereIn($column, $values, $boolean, $not); 
+        }
+        return $this;
+    }
+
 }

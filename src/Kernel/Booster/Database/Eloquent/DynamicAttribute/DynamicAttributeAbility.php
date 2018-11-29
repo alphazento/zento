@@ -1,7 +1,7 @@
 <?php
 namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
 
-// use Zento\Kernel\Facades\DanamicAttributeFactory;
+use Zento\Kernel\Facades\DanamicAttributeFactory;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Builder;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
 use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeSet;
