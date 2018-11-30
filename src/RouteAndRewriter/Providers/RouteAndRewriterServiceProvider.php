@@ -21,7 +21,9 @@ class RouteAndRewriterServiceProvider extends ServiceProvider
 
     public function boot() {
         if (!$this->app->runningInConsole()) {
-            $this->app['routeandrewriter_svc']->appendRewriteEngine(new \Zento\RouteAndRewriter\Engine\UrlRewriteEngine());
+            $this->app->booted(function ($app) {
+                $app['routeandrewriter_svc']->appendRewriteEngine(new \Zento\RouteAndRewriter\Engine\UrlRewriteEngine());
+            });
         }
     }
 }
