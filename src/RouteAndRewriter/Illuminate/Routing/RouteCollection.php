@@ -31,7 +31,6 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     * It will call run customise request handlers first, then run default match function
     */
     public function match(Request $request) {
-        dd($this->origin->get($request->getMethod()));die;
         $request = $this->matchUrlRewrite($request);
         return $this->origin->match($request);
     }

@@ -216,45 +216,51 @@ class PackageManagerService extends MyPackageDiscover {
         }
     }
 
+    protected function findDependancyOrder($array)
+    {
+        $metDependencies = array();
+        do {
+            $added=false;
+            foreach($array as $idx=>$entry) {
+                if(count(array_diff($entry[1],$metDependencies))== 0) {
+                    $metDependencies[]=$entry[0];
+                    $added=true;
+                    unset($array[$idx]);
+                    break;
+                }
+            }
+        }
+        while($added);
+        if(count($array)) trigger_error("unable to resolve a dependency",E_USER_ERROR);
+        return $metDependencies;
+    }
+
     /**
      * sort packages base on their dependencies
      * @param  array  &$packages [description]
      * @return [type]           [description]
      */
-    protected function sortPackages(array &$packages) {
-        $depended = [];
-        foreach ($packages as $name => $package) {
-            $assembly = $this->assembly($name);
-            if (isset($assembly['dependency'])) {
-                foreach($assembly['dependency'] as $depend) {
-                    if (!isset($packages[$depend])) {
-                        throw new \Exception(sprintf('Package %s does not exists.', $depend));
-                    }
-                    if (!isset($depended[$depend])) {
-                        $depended[$depend] = [];
-                    }
-                    $depended[$depend][] = $name;
-                    if (isset($depended[$name])) {
-                        $tmp = $depended[$name];
-                        unset($depended[$name]);
-                        $depended[$name] = $tmp;
-                    }
-                }
+    public function resolvePackagDependencies() {
+        $packages = $this->loadPackagesConfigs();
+        $depends = [];
+        foreach($packages as $package) {
+            $packageName = $package->name;
+            if ($packageName == Consts::ZENTO_KERNEL_PACKAGE_NAME) {
+                $depends[] = [$packageName, []];
             } else {
-                $sort[] = $name;
+                $assembly = $this->assembly($packageName);
+                $mydepends = isset($assembly['depends']) ? $assembly['depends'] : [Consts::ZENTO_KERNEL_PACKAGE_NAME];
+                $depends[] = [$packageName, $mydepends];
             }
         }
-        $sort = array_unique($sort);
-
-        foreach($depended as $key => $subs) {
-            if(in_array($key, $sort)) {
-                foreach($subs as $item) {
-                    $sort[] = $item;
-                }
-            }
+        $sorts = $this->findDependancyOrder($depends);
+        $packages = PackageConfig::where('enabled', 1)
+            ->orderByRaw(sprintf("FIELD(`name`,'%s') ASC", implode("','", $sorts)))->get();
+        $sort = 0;
+        foreach($packages as $package) {
+            $package->sort = $sort++;
+            $package->update();
         }
-
-        return $sort;
     }
 
     /**
@@ -280,6 +286,7 @@ class PackageManagerService extends MyPackageDiscover {
         } else {
             $this->warning(sprintf('[%s] stay at current version [%s]', $packageName, $currentVersion));
         }
+        $this->resolvePackagDependencies();
         return $this;
     }
 

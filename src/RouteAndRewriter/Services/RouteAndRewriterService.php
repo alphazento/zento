@@ -11,7 +11,7 @@ class RouteAndRewriterService
     protected $routeCollection;
     public function __construct($app) {
         //replace default RouteCollection
-        if($app->bound('router')) {
+        if ($app->bound('router')) {
             $this->routeCollection = new RouteCollection($app['router']->getRoutes());
             $app['router']->setRoutes($this->routeCollection);
         }

@@ -52,12 +52,18 @@
                     "version" : "0.0.1",
                     "providers" : [
                         "\\Zento\\ThemeManager\\Providers\\ThemeManagerServiceProvider"
+                    ],
+                    "depends":[
+                        "Zento_Kernel"
                     ]
                 },
                 "Zento_RouteAndRewriter": {
                     "version" : "0.0.1",
                     "providers" : [
                         "Zento\\RouteAndRewriter\\Providers\\RouteAndRewriterServiceProvider"
+                    ],
+                    "depends":[
+                        "Zento_Kernel"
                     ]
                 }
             }
