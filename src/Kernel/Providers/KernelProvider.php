@@ -11,10 +11,9 @@
 namespace Zento\Kernel\Providers;
 
 use DB;
+use Illuminate\Support\Facades\Schema;
 
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
-    // protected $bootedCallbacks = [];
-
     public function register() {
         $this->app->register(PackageManagerServiceProvider::class);
         $this->app->register(DebuggerServiceProvider::class);
@@ -22,7 +21,6 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
         $this->app->register(DanamicAttributeFactoryProvider::class);
         $this->app->register(ConfigServiceProvider::class);
     }
-
 
     /**
      * Get the config path
@@ -35,17 +33,10 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
     }
 
     public function boot() {
-        if (!$this->app->runningInConsole()) {
+        if ($this->app->runningInConsole()) {
             $configPath = __DIR__ . '/../../../config/zento.php';
-            $this->publishes([$configPath => $this->getConfigPath()], 'config');
+            $this->publishes([$configPath => $this->getConfigPath()], 'Zento');
+            Schema::defaultStringLength(191);
         }
-
-        // foreach ($this->bootedCallbacks as $callback) {
-        //     call_user_func($callback, $this->app);
-        // }
     }
-
-    // public function registerBoot(\Closure $func) {
-    //     $this->bootedCallbacks[] = $func;
-    // }
 }
