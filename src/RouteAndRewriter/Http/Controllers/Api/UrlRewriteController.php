@@ -26,9 +26,9 @@ class UrlRewriteController extends Controller
             return false;
         }
         if ($rule = RouteAndRewriterService::findRewriteRule($url)) {
-            if ($rule->statusCode == 200) {
+            if ($rule->status_code == 200) {
                 return $rule;
-            } elseif ($rule->statusCode == 301 || $rule->statusCode == 302) {
+            } elseif ($rule->status_code == 301 || $rule->status_code == 302) {
                 return $this->findRewriteRule($rule->to_uri);
             }
         }

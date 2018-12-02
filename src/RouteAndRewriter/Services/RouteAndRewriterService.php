@@ -23,7 +23,7 @@ class RouteAndRewriterService
      * @param \Closure $engine
      * @return $this
      */
-    public function appendRewriteEngine(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineInterface $engine) {
+    public function appendRewriteEngine(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineAbstract $engine) {
         $this->routeCollection->appendRequestHandlers($engine);
         return $this;
     }
@@ -34,10 +34,10 @@ class RouteAndRewriterService
      * @param string $reqUri
      * @param string $toUri
      * @param string $description
-     * @param integer $statusCode
+     * @param integer $status_code
      * @return $this
      */
-    public function addRewriteRule(string $reqUri, string $toUri, string $description = '', $statusCode = 302) {
+    public function addRewriteRule(string $reqUri, string $toUri, string $description = '', $status_code = 302) {
         $md5 = md5(strtolower($reqUri));
         $flight = UrlRewriteRule::updateOrCreate(
             ['req_hash' => $md5],
@@ -45,7 +45,7 @@ class RouteAndRewriterService
                 'req_hash' => $md5, 
                 'req_uri' => $reqUri, 
                 'to_uri' => $to_uri, 
-                'status_code' => $statusCode,
+                'status_code' => $status_code,
                 'description' => $description
             ]
         );

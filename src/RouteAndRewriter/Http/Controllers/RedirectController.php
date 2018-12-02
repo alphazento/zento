@@ -9,6 +9,6 @@ class RedirectController extends Controller
 {
     public function redirect() {
         $rule = (UrlRewriteRule)(Registry::get('urlrewriterule'));
-        return redirect($rule->to_uri, $rule->statusCode);
+        return redirect($rule->to_uri, $rule->status_code);
     }
 }

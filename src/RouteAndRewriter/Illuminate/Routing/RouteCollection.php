@@ -23,7 +23,7 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     /**
      * Append request pre handler
      */
-    public function appendRequestHandlers(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineInterface $engine) {
+    public function appendRequestHandlers(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineAbstract $engine) {
         $this->requestHandlers[] = $engine;
     }
 
@@ -58,12 +58,13 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
      * @return void
      */
     public function findRewriteRule(string $uri) {
+        $rule = false;
         foreach($this->requestHandlers as $engine) {
             if ($rule = $engine->findRewriteRule($uri)) {
-                return $rule;
+                break;
             }
         }
-        return false;
+        return $rule;
     }
 
     /**
