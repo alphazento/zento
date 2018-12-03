@@ -27,12 +27,25 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
         $this->requestHandlers[] = $engine;
     }
 
-    /**
-    * It will call run customise request handlers first, then run default match function
-    */
-    public function match(Request $request) {
-        $request = $this->matchUrlRewrite($request);
-        return $this->origin->match($request);
+    public function match(Request $request)
+    {
+        $routes = $this->origin->get($request->getMethod());
+        $route = $this->matchAgainstRoutes($routes, $request);
+        if (! is_null($route)) {
+            return $route->bind($request);
+        }
+
+        $others = $this->checkForAlternateVerbs($request);
+        if (count($others) > 0) {
+            return $this->getRouteForMethods($request, $others);
+        }
+
+        list($rewrite, $request) = $this->matchUrlRewrite($request);
+        if ($rewrite) {
+            return $this->origin->match($request);
+        } else {
+            throw new NotFoundHttpException;
+        }
     }
 
     /**
@@ -41,14 +54,13 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
      * @param Request $request
      * @return void
      */
-    public function matchUrlRewrite(Request $request) {
+    protected function matchUrlRewrite(Request $request) {
         foreach($this->requestHandlers as $engine) {
             if ($req = $engine->execute($request)) {
-                $request = $req;
-                break;
+                return [true, $req];
             }
         }
-        return $request;
+        return [false, $request];
     }
 
     /**
