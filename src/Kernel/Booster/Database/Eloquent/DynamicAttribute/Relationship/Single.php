@@ -46,7 +46,7 @@ class Single extends Base {
         // $model->value = $value;
         // $model->save();
         // return $model;
-        return $this->update($value, $pesistInstant);
+        return $this->updateValue($value, $pesistInstant);
     }
 
     /**
