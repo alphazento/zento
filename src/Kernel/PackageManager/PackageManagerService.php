@@ -49,6 +49,9 @@ class PackageManagerService extends MyPackageDiscover {
      * @return array $packages \Zento\Kernel\PackageManager\Model\ORM\PackageConfig
      */
     public function loadPackagesConfigs($forceReload = false) {
+        if ($this->app->runningInConsole()) {
+            $forceReload = true;
+        }
         try {
             $packages = null;
             if ($this->app->bound('cache')) {

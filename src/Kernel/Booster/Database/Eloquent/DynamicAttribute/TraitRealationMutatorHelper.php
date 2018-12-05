@@ -77,17 +77,18 @@ trait TraitRealationMutatorHelper {
      */
     protected function setMutatedAttributeValue($key, $value)
     {
-        if ($this->mutator_of_relation) {
+        $key_of_relation = $this->mutator_of_relation;
+        if ($key_of_relation) {
             $relation = null;
-            if (isset($this->relations[$this->mutator_of_relation])) {
-                $relation = $this->relations[$this->mutator_of_relation];
+            if (isset($this->relations[$key_of_relation])) {
+                $relation = $this->relations[$key_of_relation];
             }
             if (!$relation) {
-                $relation = $this->{$this->mutator_of_relation}()->getQuery()->getModel()->newInstance();
+                $relation = $this->{$key_of_relation}()->getQuery()->getModel()->newInstance();
                 $relation->{$relation->getForeignKeyName()} = $this->id;
-                $this->relations[$this->mutator_of_relation] = $relation;
+                $this->relations[$key_of_relation] = $relation;
             }
-            $this->relations[$this->mutator_of_relation]->{$key} = $value;
+            $relation->{$key} = $value;
             return $this;
         } else {
             return parent::setMutatedAttributeValue($key, $value);
