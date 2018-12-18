@@ -28,7 +28,7 @@ abstract class UrlRewriteEngineAbstract
         if ($rule = $this->findRewriteRule(strtolower($request->path()))) {
             switch($rule->status_code) {
                 case 200:
-                    return \Zento\RouteAndRewriter\Model\RewriteRequest::capture()->rewrite($rule->to_uri);
+                    return \Zento\RouteAndRewriter\Model\RewriteRequest::capture()->rewriteToRule($rule);
                 case 301:
                 case 302:
                     Registory::put('urlrewriterule', $rule);

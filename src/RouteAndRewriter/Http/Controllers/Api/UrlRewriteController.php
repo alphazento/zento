@@ -10,7 +10,10 @@ class UrlRewriteController extends Controller
     protected $recursive_level = 0;
     public function getUrlRewriteTo(\Illuminate\Http\Request $request) {
         if ($rule = $this->recursiveFindRewriteRule($request->get('url'))) {
-            return ['status'=>200, 'data'=>['path' => $rule->to_uri, 'params' => $request->all()]];
+            return [
+                'status'=>200, 
+                'data'=>$rule
+            ];
         }
         return ['status'=>404, 'data'=>null];
     }

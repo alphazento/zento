@@ -37,7 +37,13 @@ class RouteAndRewriterService
      * @param integer $status_code
      * @return $this
      */
-    public function addRewriteRule(string $reqUri, string $toUri, string $description = '', $status_code = 302) {
+    public function addRewriteRule(string $reqUri, 
+        string $toUri, 
+        // array $params = [], 
+        // $is_system = 1, 
+        // string $route = '', 
+        string $description = '', 
+        $status_code = 302) {
         $md5 = md5(strtolower($reqUri));
         $flight = UrlRewriteRule::updateOrCreate(
             ['req_hash' => $md5],
@@ -45,6 +51,7 @@ class RouteAndRewriterService
                 'req_hash' => $md5, 
                 'req_uri' => $reqUri, 
                 'to_uri' => $to_uri, 
+                // 'params' => json_encode($params),
                 'status_code' => $status_code,
                 'description' => $description
             ]
