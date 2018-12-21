@@ -263,17 +263,4 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         }
         return $this;
     }
-
-    /**
-     * Force a clone of the underlying query builder when cloning.
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        $this->query = clone $this->query;
-        $this->model = clone $this->model;
-        $this->eagerLoad = clone $this->eagerLoad;
-        $this->dyn_eagerLoad = clone $this->dyn_eagerLoad;
-    }
 }
