@@ -83,12 +83,12 @@ class BaseEvent
         $result = event($this, $payload, $halt);
         $this->debug('event', ['xray' => $this->xRays, 'result' => $result]);
         if ($result === null) {
-            return $this->createFiredResult(ture);
+            return $this->createResult(ture);
         }
         return $result;
     }
 
-    public function createFiredResult($success, array $data=[]) : \Zento\Kernel\Booster\Events\EventFiredResult 
+    public function createResult($success, array $data=[]) : \Zento\Kernel\Booster\Events\EventFiredResult 
     {
         return new \Zento\Kernel\Booster\Events\EventFiredResult($success, $data);
     }
