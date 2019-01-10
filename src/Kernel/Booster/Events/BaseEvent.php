@@ -83,7 +83,7 @@ class BaseEvent
         $result = event($this, $payload, $halt);
         $this->debug('event', ['xray' => $this->xRays, 'result' => $result]);
         if ($result === null) {
-            return $this->createResult(ture);
+            return $this->createResult(ture, ['message'=> 'No listener for the event has a return result']);
         }
         return $result;
     }
