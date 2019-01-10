@@ -68,7 +68,7 @@ class BaseEvent
      * @param array $payload
      * @return void
      */
-    public function fireUntil($payload = []) {
+    public function fireUntil($payload = []) : \Zento\Kernel\Booster\Events\EventFiredResult {
         return $this->fire($payload, true);
     }
 
@@ -78,9 +78,18 @@ class BaseEvent
      * @param array $payload
      * @return void
      */
-    public function fire($payload = [], $halt = false) {
+    public function fire($payload = [], $halt = false) : \Zento\Kernel\Booster\Events\EventFiredResult
+    {
         $result = event($this, $payload, $halt);
         $this->debug('event', ['xray' => $this->xRays, 'result' => $result]);
+        if ($result === null) {
+            return $this->createFiredResult(ture);
+        }
         return $result;
+    }
+
+    public function createFiredResult($success, array $data=[]) : \Zento\Kernel\Booster\Events\EventFiredResult 
+    {
+        return new \Zento\Kernel\Booster\Events\EventFiredResult($success, $data);
     }
 }
