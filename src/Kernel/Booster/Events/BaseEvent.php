@@ -9,16 +9,29 @@ class BaseEvent
     use \Zento\Kernel\Support\Traits\TraitLogger;
     use \Illuminate\Queue\SerializesModels;
 
+    const HAS_ATTRS = [];
+    protected $data = [];
+    protected $channelName;
+
     /**
      * to tell this event has been handled by listeners
      *
      * @var array
      */
-    protected $xRays;
-
-    protected $channelName;
+    protected $xRays = [];
 
     protected $errors = [];
+
+    public function __get($attr) {
+        if (in_array($attr, static::HAS_ATTRS)) {
+            return isset($this->data[$attr]) ? $this->data[$attr] : null;
+        }
+        throw new \Exception(sprintf('%s is not a data item for the event %s', $attr, static::class));
+    }
+
+    public function __set($attr, $value) {
+        throw new \Exception(sprintf('attribute %s is not allow to set directly for event %s', $attr, static::class));
+    }
 
     /**
      * set channel if going to use channel to broadcast
@@ -37,11 +50,7 @@ class BaseEvent
      * @return $this
      */
     public function addXRay($listener) {
-        if ($this->xRays == null) {
-            $this->xRays = [$listener];
-        } else {
-            $this->xRays[] = $listener;
-        }
+        $this->xRays[] = $listener;
         return $this;
     }
 
@@ -83,7 +92,7 @@ class BaseEvent
         $result = event($this, $payload, $halt);
         $this->debug('event', ['xray' => $this->xRays, 'result' => $result]);
         if ($result === null) {
-            return $this->createResult(ture, ['message'=> 'No listener for the event has a return result']);
+            return $this->createResult(true, ['message'=> 'No listener for the event has a return result']);
         }
         return $result;
     }
