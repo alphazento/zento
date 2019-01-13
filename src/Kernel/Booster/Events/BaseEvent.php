@@ -78,7 +78,14 @@ class BaseEvent
      * @return void
      */
     public function fireUntil($payload = []) : \Zento\Kernel\Booster\Events\EventFiredResult {
-        return $this->fire($payload, true);
+       return $this->afterFireUntil($this->fire($payload, true));
+    }
+
+    /**
+     * so we can define after evnet listener all be called, what logic will be call in the function
+     */
+    protected function afterFireUntil(\Zento\Kernel\Booster\Events\EventFiredResult $result) : \Zento\Kernel\Booster\Events\EventFiredResult {
+        return $result;
     }
 
     /**
@@ -93,6 +100,9 @@ class BaseEvent
         $this->debug('event', ['xray' => $this->xRays, 'result' => $result]);
         if ($result === null) {
             return $this->createResult(true, ['message'=> 'No listener for the event has a return result']);
+        }
+        if (!$halt) {
+            return $this->createResult(true, ['message'=> count($result) . ' listeners for the event']);
         }
         return $result;
     }

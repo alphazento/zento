@@ -31,4 +31,8 @@ class EventFiredResult
     public function toArray() {
         return ['success' => $this->success, 'data' => $this->data];
     }
+
+    public function __set($key, $value) {
+        throw new \Exception('read only model');
+    }
 }
