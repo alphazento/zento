@@ -72,11 +72,18 @@ class Option extends Base {
      * @param string $value
      * @return Model
      */
-    public function newValue($value) {
+    public function newValue($value, $disabled = -1, $sort = -1) {
         $model = $this->findModel($value) ?? $this->makeModel();
         $model->foreignkey = $this->parent->getKey();
         $model->value = $value;
+        if ($disabled > -1) {
+            $model->disabled = $disabled;
+        }
+        if ($sort > -1) {
+            $model->sort = $sort;
+        }
         $model->save();
+
         $key = md5(strtolower($value));
         $this->items->offsetSet($key, $model);
         return $model;
@@ -88,10 +95,16 @@ class Option extends Base {
      * @param string $value
      * @return void
      */
-    public function updateValue($oldValue, $newValue) {
+    public function updateValue($oldValue, $newValue, $disabled = -1, $sort = -1) {
         $model = $this->findModel($oldValue) ?? $this->makeModel();
         $model->foreignkey = $this->parent->getKey();
         $model->value = $newValue;
+        if ($disabled > -1) {
+            $model->disabled = $disabled;
+        }
+        if ($sort > -1) {
+            $model->sort = $sort;
+        }
         $model->save();
 
         //unset old model
@@ -133,11 +146,13 @@ class Option extends Base {
         return $this;
     }
 
-    public function getValues() {
+    public function getValues($includesDisabled = true) {
         return DB::connection($this->parent->getConnectionName())
             ->table($this->table)
             ->select('value')
             ->where('foreignkey', $this->parent->getKey())
+            ->orderBy('sort')
+            ->orderBy('id')
             ->get()
             ->toArray();
     }

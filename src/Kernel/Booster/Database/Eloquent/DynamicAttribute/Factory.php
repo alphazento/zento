@@ -118,6 +118,7 @@ class Factory {
                 $driver->addValueColumn($table, ...$valueDes);
                 if (!$single) {
                     $table->integer('sort')->default(0);
+                    $table->tinyInteger('disabled')->default(0);
                 }
                 $table->timestamps();
                 $table->foreign('foreignkey')
