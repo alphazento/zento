@@ -125,8 +125,11 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     public function getModels($columns = ['*'])
     {
         $this->isGetAllColumn = \in_array('*', $columns);
-        $this->preloadRelation();
-        return parent::getModels($columns);
+        $models = parent::getModels($columns);
+        if (count($models)) {
+            $this->preloadRelation();
+        }
+        return $models;
     }
 
     /**
@@ -146,7 +149,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         //     $this->select($this->model->getTable() . '.*', ...$this->append_columns);
         // }
 
-        $this->preloadRelation();
+        // $this->preloadRelation();
 
         return parent::get($columns);
     }
