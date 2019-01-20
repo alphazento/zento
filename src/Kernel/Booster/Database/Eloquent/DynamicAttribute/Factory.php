@@ -168,8 +168,8 @@ class Factory {
         //     return Cache::get($cacheKey);
         // }
 
-        $collection = ModelDynamicAttribute::where('model', $tableName);
-            // ->where('is_active', 1)
+        $collection = ModelDynamicAttribute::where('model', $tableName)
+            ->where('enabled', 1);
         
         if (count($attrSetIds) > 0) {
             $collection->whereIn('id', AttributeInSet::whereIn('attribute_set_id', $attrSetIds)->groupBy('attribute_id')->pluck('attribute_id'));

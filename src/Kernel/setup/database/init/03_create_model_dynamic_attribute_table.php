@@ -20,6 +20,8 @@ class CreateModelDynamicAttributeTable extends Migration
                 $table->string('attribute_type', 255);
                 $table->string('default_value', 255);
                 $table->boolean('single')->default(1);
+                $table->boolean('with_value_map')->default(1);      //if the value is mapping to opiton_values table.
+                $table->boolean('enabled')->default(1);
                 $table->timestamps();
             });
         }
