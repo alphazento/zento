@@ -103,7 +103,12 @@ class Factory {
      * @param boolean $single
      * @return string $id
      */
-    public function createRelationShipORM($parentClassOrModel, $attributeName, $valueDes, $single = true, $defaultValue = '') {
+    public function createRelationShipORM($parentClassOrModel, 
+        $attributeName, 
+        $valueDes, 
+        $single = true, 
+        $withValeMap = false, 
+        $defaultValue = '') {
         if (is_string($parentClassOrModel) && class_exists($parentClassOrModel)) {
             $parent = new $parentClassOrModel();
         } else {
@@ -128,13 +133,17 @@ class Factory {
         }
 
         // if (config('dynamicattribute_management')) {
-            $modelcolumn = ModelDynamicAttribute::firstOrNew([
-                'model' => $parent->getTable(),
-                'attribute' => $attributeName,
-                'attribute_type' => $valueDes[0],
-                'default_value' => $defaultValue
-            ]);
+            $modelcolumn = ModelDynamicAttribute::where('model', $parent->getTable())->where('attribute', $attributeName)->first();
+            if (!$modelcolumn) {
+                $modelcolumn = new ModelDynamicAttribute();
+            }
+         
+            $modelcolumn->model = $parent->getTable();
+            $modelcolumn->attribute = $attributeName;
+            $modelcolumn->attribute_type = $valueDes[0];
             $modelcolumn->single = $single;
+            $modelcolumn->with_value_map = $withValeMap;
+            $modelcolumn->default_value = $defaultValue;
             $modelcolumn->save();
             // $cacheKey = $this->getDynamicAttributeCacheKey($parent->getTable());
             // Cache::forget($cacheKey);
