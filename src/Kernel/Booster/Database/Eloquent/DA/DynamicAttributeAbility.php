@@ -1,11 +1,11 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA;
 
 use Zento\Kernel\Facades\DanamicAttributeFactory;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Builder;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeSet;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\Attribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\Builder;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttributeSet;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\Attribute;
 
 trait DynamicAttributeAbility
 {
@@ -19,7 +19,7 @@ trait DynamicAttributeAbility
     /**
      * Get a new query builder for the model's table.
      *
-     * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
+     * @return \Zento\Kernel\Foundation\Eloquent\DA\Builder
      */
     public function newQuery()
     {
@@ -36,7 +36,7 @@ trait DynamicAttributeAbility
      */
     public function hasOneDyn($attributeName, $foreignKey = 'foreignKey', $localKey = null)
     {
-        $instance = new ORM\DynamicSingleAttribute();
+        $instance = new ORM\SingleDynamicAttribute();
         $instance->setAttrName($attributeName);
         $instance->setConnection($this->getConnectionName());
         $instance->setTable(DanamicAttributeFactory::getTable($this, $attributeName));
@@ -58,7 +58,7 @@ trait DynamicAttributeAbility
      */
     public function hasManyDyns($attributeName, $foreignKey = 'foreignKey', $localKey = null)
     {
-        $instance = new ORM\DynamicOptionAttribute();
+        $instance = new ORM\OptionDynamicAttribute();
         $instance->setAttrName($attributeName);
         $instance->setConnection($this->getConnectionName());
         $instance->setTable(DanamicAttributeFactory::getTable($this, $attributeName, false));
@@ -72,8 +72,8 @@ trait DynamicAttributeAbility
         );
     }
 
-    public function attributeset() {
-        return $this->hasOne(AttributeSet::class, 'id', 'attribute_set_id');
+    public function DynamicAttributeSet() {
+        return $this->hasOne(DynamicAttributeSet::class, 'id', 'attribute_set_id');
     }
 
      /**

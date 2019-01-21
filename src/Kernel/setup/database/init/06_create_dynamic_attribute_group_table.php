@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAttributeGroupTable extends Migration
+class CreateDynamicAttributeGroupTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class CreateAttributeGroupTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('attribute_groups')) {
-            Schema::create('attribute_groups', function (Blueprint $table) {
+        if (!Schema::hasTable('dynamic_attribute_groups')) {
+            Schema::create('dynamic_attribute_groups', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('attribute_group_id')->unsigned();
                 $table->integer('attribute_set_id')->unsigned();
@@ -37,6 +37,6 @@ class CreateAttributeGroupTable extends Migration
      */
     public function down()
     {
-        Schema::drop('attribute_groups');
+        Schema::drop('dynamic_attribute_groups');
     }
 }

@@ -1,7 +1,7 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA\ORM;
 
-class DynamicSingleAttribute extends \Illuminate\Database\Eloquent\Model {
+class SingleDynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     protected $attr_name;
 
     public function setAttrName($attr_name) {

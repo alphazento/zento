@@ -2,7 +2,7 @@
 namespace Zento\Kernel;
 
 class TestModel extends \Illuminate\Database\Eloquent\Model {
-    use \Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\DynamicAttributeAbility;
+    use \Zento\Kernel\Booster\Database\Eloquent\DA\DynamicAttributeAbility;
     // protected $table = 'package_configs';
 
     // public function new_column() {

@@ -11,7 +11,7 @@
 namespace Zento\Kernel\Providers;
 
 use Zento\Kernel\Facades\PackageManager;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Factory;
+use Zento\Kernel\Booster\Database\Eloquent\DA\Factory;
 
 class DanamicAttributeFactoryProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {

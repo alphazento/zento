@@ -1,10 +1,10 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\DynamicSingleAttribute;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\DynamicOptionAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\SingleDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\OptionDynamicAttribute;
 
 class Base {
     protected $model;
@@ -30,7 +30,7 @@ class Base {
      * @return Model Dyna Attribute instance
      */
     protected function makeModel() {
-        $this->model = $this->isSingle() ? (new DynamicSingleAttribute()) : (new DynamicOptionAttribute());
+        $this->model = $this->isSingle() ? (new SingleDynamicAttribute()) : (new OptionDynamicAttribute());
         $this->model->setConnection($this->parent->getConnectionName());
         $this->model->setTable($this->table);
         return $this->model;

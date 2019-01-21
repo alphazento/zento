@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA;
 
 use DB;
 use Schema;
@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
 
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeInSet;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship\Single as SingleRelationship;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship\Option as OptionRelationship;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttributeInSet;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\Relationship\Single as SingleRelationship;
+use Zento\Kernel\Booster\Database\Eloquent\DA\Relationship\Option as OptionRelationship;
 
 class Factory {
 
@@ -64,10 +64,10 @@ class Factory {
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param string $attributeName
-     * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
+     * @return \Zento\Kernel\Foundation\Eloquent\DA\Builder
      */
-    public function withDynamicSingleAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
-        return (new Builder($builder))->withDynamicSingleAttribute($attributeName);
+    public function withSingleDynamicAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
+        return (new Builder($builder))->withSingleDynamicAttribute($attributeName);
     }
 
     /**
@@ -75,10 +75,10 @@ class Factory {
      *
      * @param \Illuminate\Database\Eloquent\Builder $builder
      * @param string $attributeName
-     * @return \Zento\Kernel\Foundation\Eloquent\DynamicAttribute\Builder
+     * @return \Zento\Kernel\Foundation\Eloquent\DA\Builder
      */
-    public function withDynamicOptionAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
-        return (new Builder($builder))->withDynamicOptionAttribute($attributeName);
+    public function withOptionDynamicAttribute(\Illuminate\Database\Eloquent\Builder $builder, $attributeName) {
+        return (new Builder($builder))->withOptionDynamicAttribute($attributeName);
     }
 
     /**
@@ -118,7 +118,7 @@ class Factory {
         if (!Schema::hasTable($tableName)) {
             Schema::create($tableName, function (Blueprint $table) use ($parent, $valueDes, $single) {
                 $table->increments('id');
-                $driver = new \Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Schema\Mysql;
+                $driver = new \Zento\Kernel\Booster\Database\Eloquent\DA\Schema\Mysql;
                 $driver->addParentKeyColumn($parent, $table, $single);
                 $driver->addValueColumn($table, ...$valueDes);
                 if (!$single) {
@@ -133,11 +133,11 @@ class Factory {
         }
 
         // if (config('dynamicattribute_management')) {
-            $modelcolumn = ModelDynamicAttribute::where('model', $parent->getTable())
+            $modelcolumn = DynamicAttribute::where('model', $parent->getTable())
                 ->where('attribute', $attributeName)
                 ->first();
             if (!$modelcolumn) {
-                $modelcolumn = new ModelDynamicAttribute();
+                $modelcolumn = new DynamicAttribute();
             }
          
             $modelcolumn->model = $parent->getTable();
@@ -167,7 +167,7 @@ class Factory {
      * @param array $attribute set ids
      * @return array
      */
-    public function getModelDynamicAttributes($modelInstanceOrClass, array &$attrSetIds) {
+    public function getDynamicAttributes($modelInstanceOrClass, array &$attrSetIds) {
         $instance = $modelInstanceOrClass instanceof Model ? $modelInstanceOrClass : (new $modelInstanceOrClass);
         $tableName = $instance->getTable();
         $cacheKey = static::getDynamicAttributeCacheKey($tableName, $attrSetIds);
@@ -179,12 +179,12 @@ class Factory {
         //     return Cache::get($cacheKey);
         // }
 
-        $collection = ModelDynamicAttribute::with('options')
+        $collection = DynamicAttribute::with('options')
             ->where('model', $tableName)
             ->where('enabled', 1);
         
         if (count($attrSetIds) > 0) {
-            $collection->whereIn('id', AttributeInSet::whereIn('attribute_set_id', $attrSetIds)->groupBy('attribute_id')->pluck('attribute_id'));
+            $collection->whereIn('id', DynamicAttributeInSet::whereIn('attribute_set_id', $attrSetIds)->groupBy('attribute_id')->pluck('attribute_id'));
         }
         $collection = $collection->get()
             ->toArray();

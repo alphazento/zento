@@ -1,6 +1,6 @@
 <?php
 
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA;
 
 /**
  * a trait to handle product price

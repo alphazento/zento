@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Relationship;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;

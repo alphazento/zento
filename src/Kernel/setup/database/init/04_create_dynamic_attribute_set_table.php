@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAttributeSetTable extends Migration
+class CreateDynamicAttributeSetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class CreateAttributeSetTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('attribute_sets')) {
-            Schema::create('attribute_sets', function (Blueprint $table) {
+        if (!Schema::hasTable('dynamic_attribute_sets')) {
+            Schema::create('dynamic_attribute_sets', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name', 255);
                 $table->string('model', 255);  //product,category...
@@ -29,6 +29,6 @@ class CreateAttributeSetTable extends Migration
      */
     public function down()
     {
-        Schema::drop('attribute_sets');
+        Schema::drop('dynamic_attribute_sets');
     }
 }

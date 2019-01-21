@@ -1,11 +1,11 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA;
 
 use DB;
 use Zento\Kernel\Facades\DanamicAttributeFactory;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\Attribute;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\ModelDynamicAttribute;
-use Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\ORM\AttributeSet;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\Attribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttributeSet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -45,7 +45,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @param string $attributeName
      * @return $this
      */
-    public function withDynamicSingleAttribute($attributeName) {
+    public function withSingleDynamicAttribute($attributeName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
         $this->dyn_eagerLoad[$attributeName] = 1;      //1 means single
@@ -58,7 +58,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @param string $attributeName
      * @return $this
      */
-    public function withDynamicOptionAttribute($attributeName) {
+    public function withOptionDynamicAttribute($attributeName) {
         $eagerLoad = $this->parseWithRelations(func_get_args());
         $this->eagerLoad = array_merge($this->eagerLoad, $eagerLoad);
         $this->dyn_eagerLoad[$attributeName] = 2;     //2 means options
@@ -71,7 +71,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @param  array  $models
      * @return array
      */
-    protected function getEagerModelAttributeSetIds(array $models)
+    protected function getEagerModelDynamicAttributeSetIds(array $models)
     {
         $keys = [];
 
@@ -95,15 +95,15 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function eagerLoadRelations(array $models)
     {
-        $attrSetIds = $this->getEagerModelAttributeSetIds($models);
+        $attrSetIds = $this->getEagerModelDynamicAttributeSetIds($models);
 
         if ($this->isGetAllColumn) {
-            $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model, $attrSetIds);
+            $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, $attrSetIds);
             foreach($dynaAttrs as $row) {
                 if ($row['single']) {
-                    $this->withDynamicSingleAttribute($row['attribute']);
+                    $this->withSingleDynamicAttribute($row['attribute']);
                 } else {
-                    $this->withDynamicOptionAttribute($row['attribute']);
+                    $this->withOptionDynamicAttribute($row['attribute']);
                 }
             }
         }
@@ -246,10 +246,10 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         if (!is_string($column)) {
             return false;
         }
-        $dynaAttrs = DanamicAttributeFactory::getModelDynamicAttributes($this->model, []);
+        $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, []);
         foreach($dynaAttrs ?? [] as $dyn) {
             if ($dyn['attribute'] == $column) {
-                $instance = new ORM\DynamicOptionAttribute();
+                $instance = new ORM\OptionDynamicAttribute();
                 $instance->setConnection($this->model->getConnectionName());
                 $instance->setTable(DanamicAttributeFactory::getTable($this->model, $column, $dyn['single']));
                 $builder = $instance->newQuery()->{$method}('value', ...$argvs)->select(['foreignkey']);

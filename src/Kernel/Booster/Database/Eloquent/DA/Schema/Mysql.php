@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute\Schema;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA\Schema;
 
 use DB;
 use Illuminate\Support\Str;

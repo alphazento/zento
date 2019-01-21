@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModelDynamicAttributeTable extends Migration
+class CreateDynamicAttributeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class CreateModelDynamicAttributeTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('model_dynamic_attributes')) {
-            Schema::create('model_dynamic_attributes', function (Blueprint $table) {
+        if (!Schema::hasTable('dynamic_attributes')) {
+            Schema::create('dynamic_attributes', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('model', 255);  //product,category...
                 $table->string('attribute', 255);
@@ -34,6 +34,6 @@ class CreateModelDynamicAttributeTable extends Migration
      */
     public function down()
     {
-        Schema::drop('model_attributes');
+        Schema::drop('dynamic_attributes');
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent\DynamicAttribute;
+namespace Zento\Kernel\Booster\Database\Eloquent\DA;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
@@ -34,7 +34,7 @@ class Relationship {
      * @return Model Dyna Attribute instance
      */
     protected function makeModel($parent = null) {
-        $model = $this->_isSingle ? (new ORM\DynamicSingleAttribute()) : (new ORM\DynamicOptionAttribute());
+        $model = $this->_isSingle ? (new ORM\SingleDynamicAttribute()) : (new ORM\OptionDynamicAttribute());
         $model->setConnection(($parent ?? $this->parent)->getConnectionName());
         $model->setTable($this->table);
         return $model;
