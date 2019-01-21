@@ -133,7 +133,9 @@ class Factory {
         }
 
         // if (config('dynamicattribute_management')) {
-            $modelcolumn = ModelDynamicAttribute::where('model', $parent->getTable())->where('attribute', $attributeName)->first();
+            $modelcolumn = ModelDynamicAttribute::where('model', $parent->getTable())
+                ->where('attribute', $attributeName)
+                ->first();
             if (!$modelcolumn) {
                 $modelcolumn = new ModelDynamicAttribute();
             }
@@ -177,7 +179,8 @@ class Factory {
         //     return Cache::get($cacheKey);
         // }
 
-        $collection = ModelDynamicAttribute::where('model', $tableName)
+        $collection = ModelDynamicAttribute::with('options')
+            ->where('model', $tableName)
             ->where('enabled', 1);
         
         if (count($attrSetIds) > 0) {
