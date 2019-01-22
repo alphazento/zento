@@ -20,11 +20,11 @@ class CreateDynamicAttributeInSetTable extends Migration
                 $table->timestamps();
                 $table->foreign('attribute_set_id')
                     ->references('id')
-                    ->on('attribute_sets')
+                    ->on('dynamic_attribute_sets')
                     ->onDelete('cascade');
                 $table->foreign('attribute_id')
                     ->references('id')
-                    ->on('model_dynamic_attributes')
+                    ->on('dynamic_attributes')
                     ->onDelete('cascade');
             });
         }

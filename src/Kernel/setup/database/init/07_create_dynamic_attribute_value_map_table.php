@@ -12,8 +12,8 @@ class CreateDynamicAttributeValueMapTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('attribute_value_maps')) {
-            Schema::create('attribute_value_maps', function (Blueprint $table) {
+        if (!Schema::hasTable('dynamic_attribute_value_maps')) {
+            Schema::create('dynamic_attribute_value_maps', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('attribute_id')->unsigned();
                 $table->integer('value_id')->unsigned();
@@ -34,6 +34,6 @@ class CreateDynamicAttributeValueMapTable extends Migration
      */
     public function down()
     {
-        Schema::drop('attribute_value_maps');
+        Schema::drop('dynamic_attribute_value_maps');
     }
 }

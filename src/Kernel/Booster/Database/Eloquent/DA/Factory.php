@@ -133,15 +133,16 @@ class Factory {
         }
 
         // if (config('dynamicattribute_management')) {
-            $modelcolumn = DynamicAttribute::where('model', $parent->getTable())
-                ->where('attribute', $attributeName)
+            $modelcolumn = DynamicAttribute::where('parent_table', $parent->getTable())
+                ->where('attribute_name', $attributeName)
                 ->first();
             if (!$modelcolumn) {
                 $modelcolumn = new DynamicAttribute();
             }
          
-            $modelcolumn->model = $parent->getTable();
-            $modelcolumn->attribute = $attributeName;
+            $modelcolumn->parent_table = $parent->getTable();
+            $modelcolumn->attribute_name = $attributeName;
+            $modelcolumn->attribute_table = $tableName;
             $modelcolumn->attribute_type = $valueDes[0];
             $modelcolumn->single = $single;
             $modelcolumn->with_value_map = $withValeMap;
@@ -180,11 +181,13 @@ class Factory {
         // }
 
         $collection = DynamicAttribute::with('options')
-            ->where('model', $tableName)
+            ->where('parent_table', $tableName)
             ->where('enabled', 1);
         
         if (count($attrSetIds) > 0) {
-            $collection->whereIn('id', DynamicAttributeInSet::whereIn('attribute_set_id', $attrSetIds)->groupBy('attribute_id')->pluck('attribute_id'));
+            $collection->whereIn('id', DynamicAttributeInSet::whereIn('attribute_set_id', $attrSetIds)
+                ->groupBy('attribute_id')
+                ->pluck('attribute_id'));
         }
         $collection = $collection->get()
             ->toArray();

@@ -24,7 +24,7 @@ class CreateDynamicAttributeGroupTable extends Migration
                 $table->timestamps();
                 $table->foreign('attribute_set_id')
                     ->references('id')
-                    ->on('attribute_sets')
+                    ->on('dynamic_attribute_sets')
                     ->onDelete('cascade');
             });
         }

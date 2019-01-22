@@ -27,12 +27,12 @@ class OptionDynamicAttribute extends \Illuminate\Database\Eloquent\Model {
      * @param  array  $attributes
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function newModelInstance($attributes = [])
-    {
-        return parent::newModelInstance($attributes)->setAttrName($this->attr_name);
-    }
+    // public function newModelInstance($attributes = [])
+    // {
+    //     return parent::newModelInstance($attributes)->setAttrName($this->attr_name);
+    // }
 
-    public function newFromBuilder($attributes = [], $connection = null) {
-        dd($attributes);
-    }
+    // public function newFromBuilder($attributes = [], $connection = null) {
+    //     dd($attributes);
+    // }
 }
