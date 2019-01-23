@@ -96,7 +96,6 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     public function eagerLoadRelations(array $models)
     {
         $attrSetIds = $this->getEagerModelDynamicAttributeSetIds($models);
-
         if ($this->isGetAllColumn) {
             $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, $attrSetIds);
             foreach($dynaAttrs as $row) {
@@ -249,7 +248,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, []);
         foreach($dynaAttrs ?? [] as $dyn) {
             if ($dyn['attribute_name'] == $column) {
-                $instance = new ORM\OptionDynamicAttribute();
+                $instance = new ORM\DynamicAttribute\Option();
                 $instance->setConnection($this->model->getConnectionName());
                 $instance->setTable(DanamicAttributeFactory::getTable($this->model, $column, $dyn['single']));
                 $builder = $instance->newQuery()->{$method}('value', ...$argvs)->select(['foreignkey']);

@@ -5,7 +5,8 @@ use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Builder as OriginBuilder;
-use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\OptionDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute\Option as OptionDynamicAttribute;
+
 /**
  * Normally only use for assign new dynamic attribute
  */

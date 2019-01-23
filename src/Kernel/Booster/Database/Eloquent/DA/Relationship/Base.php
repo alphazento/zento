@@ -3,8 +3,8 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DA\Relationship;
 
 use DB;
 use Illuminate\Database\Eloquent\Model;
-use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\SingleDynamicAttribute;
-use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\OptionDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute\Single as SingleDynamicAttribute;
+use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute\Option as OptionDynamicAttribute;
 
 class Base {
     protected $model;

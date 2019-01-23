@@ -18,6 +18,7 @@ class CreateDynamicAttributeValueMapTable extends Migration
                 $table->integer('attribute_id')->unsigned();
                 $table->integer('value_id')->unsigned();
                 $table->string('value')->nullable();
+                $table->string('swatch_value')->nullable();
                 $table->timestamps();
                 // $table->foreign('attribute_set_id')
                 //     ->references('id')

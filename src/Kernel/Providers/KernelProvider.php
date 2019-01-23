@@ -12,6 +12,8 @@ namespace Zento\Kernel\Providers;
 
 use DB;
 use Illuminate\Support\Facades\Schema;
+use Zento\Kernel\Support\ShareBucket;
+use Zento\Kernel\Facades\PackageManager;
 
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
@@ -20,6 +22,11 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
         $this->app->register(EventsServiceProvider::class);
         $this->app->register(DanamicAttributeFactoryProvider::class);
         $this->app->register(ConfigServiceProvider::class);
+
+        $this->app->singleton('sharebucket', function ($app) {
+            return new ShareBucket();
+        });
+        PackageManager::class_alias('\Zento\Kernel\Facades\ShareBucket', 'ShareBucket');
     }
 
     /**

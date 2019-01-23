@@ -34,7 +34,7 @@ class Relationship {
      * @return Model Dyna Attribute instance
      */
     protected function makeModel($parent = null) {
-        $model = $this->_isSingle ? (new ORM\SingleDynamicAttribute()) : (new ORM\OptionDynamicAttribute());
+        $model = $this->_isSingle ? (new ORM\DynamicAttribute\Single()) : (new ORM\DynamicAttribute\Option());
         $model->setConnection(($parent ?? $this->parent)->getConnectionName());
         $model->setTable($this->table);
         return $model;
