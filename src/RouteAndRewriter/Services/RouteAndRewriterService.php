@@ -9,12 +9,43 @@ use Zento\RouteAndRewriter\Illuminate\Routing\RouteCollection;
 class RouteAndRewriterService
 {
     protected $routeCollection;
+    /**
+     * @var array \Closure
+     */
+    protected $rewrite_to_uri_builders = [];
+
     public function __construct($app) {
         //replace default RouteCollection
         if ($app->bound('router')) {
             $this->routeCollection = new RouteCollection($app['router']->getRoutes());
             $app['router']->setRoutes($this->routeCollection);
         }
+    }
+
+    /**
+     * set callback as url builder
+     *
+     * @param string $type
+     * @param \Closure $callback
+     * @return void
+     */
+    public function setUriBuilder(string $type, \Closure $callback) {
+        $this->rewrite_to_uri_builders[$type] = $callback;
+    }
+
+    /**
+     * build uri base on type and id
+     *
+     * @param string $type
+     * @param string|number $id
+     * @return void
+     */
+    public function buildToUri(string $type, $id) {
+        if (isset($this->rewrite_to_uri_builders[$type])) {
+            $callback = $this->rewrite_to_uri_builders[$type];
+            return \call_user_func_array($callback, [$id]);
+        }
+        throw new \Exception(sprintf('Uri builder(%s) is not defined.', $type));
     }
 
     /**
