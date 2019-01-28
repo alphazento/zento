@@ -154,6 +154,21 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     }
 
     /**
+     * Get a base query builder instance.
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public function toBase()
+    {
+        $query = $this->applyScopes()->getQuery();
+        $keys = $this->performDynConditions();
+        if ($keys !== null) {
+            $query->whereIn($this->model->getQualifiedKeyName(), $keys);
+        }
+        return $query;
+    }
+
+    /**
      *
      * @return void
      */
@@ -248,9 +263,9 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, []);
         foreach($dynaAttrs ?? [] as $dyn) {
             if ($dyn['attribute_name'] == $column) {
-                $instance = new ORM\DynamicAttribute\Option();
+                $instance = $dyn['single'] ? new ORM\DynamicAttribute\Single() :  new ORM\DynamicAttribute\Option();
                 $instance->setConnection($this->model->getConnectionName());
-                $instance->setTable(DanamicAttributeFactory::getTable($this->model, $column, $dyn['single']));
+                $instance->setTable($dyn['attribute_table']);
                 $builder = $instance->newQuery()->{$method}('value', ...$argvs)->select(['foreignkey']);
                 $this->dynConditionBuilders[] = [$builder, $boolean];
                 return true;
