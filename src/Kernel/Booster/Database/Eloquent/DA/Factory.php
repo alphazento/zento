@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Schema\Blueprint;
 
+use Zento\Kernel\Facades\ShareBucket;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttributeInSet;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
 use Zento\Kernel\Booster\Database\Eloquent\DA\Relationship\Single as SingleRelationship;
@@ -195,5 +196,35 @@ class Factory {
         // Cache::put($cacheKey, $collection);
         $this->cache[$cacheKey] = $collection;
         return $collection;
+    }
+
+    public function getAttributeDesc($tableName) {
+        $key = sprintf('%s.desc', $tableName);
+        if (ShareBucket::has($key)) {
+            return ShareBucket::get($key);
+        }
+
+        if (Cache::has($key)) {
+            $configs = Cache::get($key);
+            ShareBucket::put($key, $configs);
+            return $configs;
+        }
+        
+        $configs = [];
+        if ($desc = DynamicAttribute::where('attribute_table', $tableName)
+                ->first()) {
+            $configs = $desc->toArray();
+            if ($desc->with_value_map) {
+                $rawOptions = $desc->options()->select(['value_id', 'value'])->get();
+                $options = [];
+                foreach($rawOptions as $option) {
+                    $options[$option['value_id']] = $option['value'];
+                }
+                $configs['options'] = (count($options) > 0 ? $options : false);
+            }
+        }
+        Cache::forever($key, $configs);
+        ShareBucket::put($key, $configs);
+        return $configs;
     }
 }
