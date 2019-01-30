@@ -224,7 +224,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $dynConditionBuilders = [];
     protected function performDynConditions() {
         $modelIds = null;
-        foreach($this->dynConditionBuilders as $condition) {
+        foreach($this->dynConditionBuilders as $column => $condition) {
             $ret = $condition[0]->get()->pluck('foreignkey')->toArray();
             if ($modelIds === null) {
                 $modelIds = $ret;
@@ -239,6 +239,10 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         }
         return $modelIds;
     }
+
+    public function depressDynAttrCondition($dynAttr) {
+        unset($this->dynConditionBuilders[$dynAttr]);
+    }
     /**
      * Add a basic where clause to the query.
      *
@@ -250,8 +254,15 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and')
     {
-        if (!$this->buildConditionForDyn('where', $column, [$operator, $value], $boolean)) {
+        if (!$this->buildConditionForDyn('where', $column, [$operator, $value, $boolean], $boolean)) {
            return parent::where($column, $operator, $value, $boolean);
+        }
+        return $this;
+    }
+
+    public function whereIn($column, $values, $boolean = 'and', $not = false) {
+        if (!$this->buildConditionForDyn('whereIn', $column, [$values, $boolean, $not], $boolean)) {
+            return parent::whereIn($column, $values, $boolean, $not); 
         }
         return $this;
     }
@@ -267,17 +278,10 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
                 $instance->setConnection($this->model->getConnectionName());
                 $instance->setTable($dyn['attribute_table']);
                 $builder = $instance->newQuery()->{$method}('value', ...$argvs)->select(['foreignkey']);
-                $this->dynConditionBuilders[] = [$builder, $boolean];
+                $this->dynConditionBuilders[$column] = [$builder, $boolean];
                 return true;
             }
         }
         return false;
-    }
-
-    public function whereIn($column, $values, $boolean = 'and', $not = false) {
-        if (!$this->buildConditionForDyn('whereIn', $column, [$values, $boolean, $not], $boolean)) {
-            return parent::whereIn($column, $values, $boolean, $not); 
-        }
-        return $this;
     }
 }
