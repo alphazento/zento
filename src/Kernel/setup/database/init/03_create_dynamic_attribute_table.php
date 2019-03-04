@@ -18,6 +18,9 @@ class CreateDynamicAttributeTable extends Migration
                 $table->string('parent_table', 255);  //product,category...
                 $table->string('attribute_name', 255);
                 $table->string('label', 255);
+                $table->string('admin_label', 255);
+                $table->string('admin_group', 255);
+                $table->string('admin_component', 255);
                 $table->string('attribute_table', 255);
                 $table->string('attribute_type', 255);
                 $table->string('default_value', 255)->nullable();
