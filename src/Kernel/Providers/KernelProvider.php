@@ -18,6 +18,7 @@ use Zento\Kernel\Facades\PackageManager;
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
         $this->app->register(PackageManagerServiceProvider::class);
+        $this->app->register(ThemeManagerServiceProvider::class);
         $this->app->register(DebuggerServiceProvider::class);
         $this->app->register(EventsServiceProvider::class);
         $this->app->register(DanamicAttributeFactoryProvider::class);

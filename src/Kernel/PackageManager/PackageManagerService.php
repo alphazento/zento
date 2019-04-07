@@ -16,7 +16,11 @@ use Zento\Kernel\Consts;
 use Zento\Kernel\PackageManager\Model\ORM\PackageConfig;
 use Zento\Kernel\PackageManager\Model\PackageMigrator;
 use Zento\Kernel\PackageManager\Foundation\MyPackageDiscover;
+use Zento\Kernel\PackageManager\Model\TopSort;
 use Zento\Kernel\Facades\EventsManager;
+use Zento\Kernel\Facades\ThemeManager;
+
+
 use Illuminate\Support\Facades\Route;
 
 class PackageManagerService extends MyPackageDiscover {
@@ -90,8 +94,6 @@ class PackageManagerService extends MyPackageDiscover {
      */
     public function inject(\Illuminate\Support\ServiceProvider $serviceProvider) {
         $this->packageConfigs = $this->loadPackagesConfigs();
-        $this->registerSelf($serviceProvider);
-
         if (count($this->packageConfigs ?? [])) {
             foreach($this->packageConfigs as $packageConfig) {
                 $assembly = $this->assembly($packageConfig->name);
@@ -103,6 +105,7 @@ class PackageManagerService extends MyPackageDiscover {
             }
             $this->packageConfigs = null; 
         } else {
+            $this->registerSelf($serviceProvider);
             $this->alert(sprintf("You haven't enable package [%s]", Consts::ZENTO_KERNEL_PACKAGE_NAME));
         }
         self::$injected = true;
@@ -116,6 +119,7 @@ class PackageManagerService extends MyPackageDiscover {
                     '\Zento\Kernel\PackageManager\Console\Commands\MakePackage',
                     '\Zento\Kernel\PackageManager\Console\Commands\EnablePackage',
                     '\Zento\Kernel\PackageManager\Console\Commands\DisablePackage',
+                    '\Zento\Kernel\ThemeManager\Console\Commands\ListTheme',
                     '\Zento\Kernel\Booster\Events\Commands\ListListener'
                 ]
             ],
@@ -149,10 +153,8 @@ class PackageManagerService extends MyPackageDiscover {
         if (isset($assembly['listeners']) && !EventsManager::isCached()) {
             EventsManager::addEventListeners($assembly['listeners']);
         }
-
-        //register routes
+        //register routes, middleware, views
         if (!$this->app->runningInConsole()) {
-             //register middleware
             foreach ($assembly['middlewares'] ?? [] as $name => $class) {
                 $this->app['router']->aliasMiddleware($name, $class);
             }
@@ -172,9 +174,19 @@ class PackageManagerService extends MyPackageDiscover {
                     }
                 }
             }
+
+            $viewLocation = $this->packageViewsPath($packageName);
+            if (file_exists($viewLocation)) {
+                if (!empty($assembly['theme'])) {
+                    ThemeManager::prependlocation($viewLocation);
+                } else {
+                    ThemeManager::addLocation($viewLocation);                
+                }
+            }
         } else {
             //register package's commands
             if (isset($assembly['commands'])) {
+                // print_r($assembly['commands']);
                 foreach ($assembly['commands'] as $command) {
                     call_user_func_array([$command, 'register'], [$serviceProvider]);
                 }
@@ -219,23 +231,13 @@ class PackageManagerService extends MyPackageDiscover {
         }
     }
 
-    protected function findDependancyOrder($array)
+    protected function sortDependancyOrder($array)
     {
-        $metDependencies = array();
-        do {
-            $added=false;
-            foreach($array as $idx=>$entry) {
-                if(count(array_diff($entry[1],$metDependencies))== 0) {
-                    $metDependencies[]=$entry[0];
-                    $added=true;
-                    unset($array[$idx]);
-                    break;
-                }
-            }
+        $topSort = new TopSort();
+        foreach($array as $item) {
+            $topSort->add($item[0], $item[1]);
         }
-        while($added);
-        if(count($array)) trigger_error("unable to resolve a dependency",E_USER_ERROR);
-        return $metDependencies;
+        return $topSort->sort();
     }
 
     /**
@@ -253,10 +255,14 @@ class PackageManagerService extends MyPackageDiscover {
             } else {
                 $assembly = $this->assembly($packageName);
                 $mydepends = isset($assembly['depends']) ? $assembly['depends'] : [Consts::ZENTO_KERNEL_PACKAGE_NAME];
+                if (!empty($package->theme) && !is_numeric($package->theme) 
+                    && $package->theme !== true && $package->theme !== false) {
+                    $mydepends = array_merge($mydepends, explode(',', $package->theme));
+                }
                 $depends[] = [$packageName, $mydepends];
             }
         }
-        $sorts = $this->findDependancyOrder($depends);
+        $sorts = $this->sortDependancyOrder($depends);
         $packages = PackageConfig::where('enabled', 1)
             ->orderByRaw(sprintf("FIELD(`name`,'%s') ASC", implode("','", $sorts)))->get();
         $sort = 0;

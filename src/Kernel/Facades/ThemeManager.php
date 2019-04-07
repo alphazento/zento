@@ -1,6 +1,6 @@
 <?php
 
-namespace Zento\ThemeManager\Providers\Facades;
+namespace Zento\Kernel\Facades;
 
 class ThemeManager extends \Illuminate\Support\Facades\Facade
 {
