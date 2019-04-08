@@ -18,9 +18,11 @@ class Single extends \Illuminate\Database\Eloquent\Model {
     }
 
     protected function getMappedValue() {
-        if ($configs = DanamicAttributeFactory::getAttributeDesc($this->getTable())) {
-            if (($configs['with_value_map'] ?? false) && ($configs['options'] ?? false)) {
-                return $configs['options'][$this->value];
+        if (DanamicAttributeFactory::isWithMappedValue()) {
+            if ($configs = DanamicAttributeFactory::getAttributeDesc($this->getTable())) {
+                if (($configs['with_value_map'] ?? false) && ($configs['options'] ?? false)) {
+                    return $configs['options'][$this->value];
+                }
             }
         }
         return $this->value;

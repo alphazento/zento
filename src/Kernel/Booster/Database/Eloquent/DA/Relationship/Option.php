@@ -178,9 +178,11 @@ class Option extends Base {
         $existKeys = $this->items->modelKeys();
         $needtodeletes = array_diff($existKeys, $keys);
         $needtodadds = array_diff($keys, $existKeys);
-        foreach($needtodeletes as $key) {
+        foreach($needtodeletes as $key => $id) {
             if ($model = $this->items[$key]) {
-                $model->deleteValue();
+                $model->setConnection($this->parent->getConnectionName())
+                    ->setTable($this->table)
+                    ->delete();
                 $this->items->forget([$key]);
             }
         }

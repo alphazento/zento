@@ -98,11 +98,13 @@ trait DynamicAttributeAbility
                     }
                 }
             } else {
-                if (is_array($instance)) {
-                    $dynOptionRelation = new Relationship\Option($this, $key, $instance);
-                    if (is_array($value)) {
-                        $dynOptionRelation->new($value);
-                    }
+                if ($instance instanceof \Illuminate\Database\Eloquent\Collection || is_array($instance)) {
+                    DanamicAttributeFactory::option($this, $key)->setValues($value);
+                    // $dynOptionRelation = DanamicAttributeFactory::option($this, $key)->setValues($value);
+                    // if (is_array($value)) {
+                    //     $dynOptionRelation->new($value);
+                    //     $instance->add($dynOptionRelation);
+                    // }
                 } else {
                     $instance->value = $value;
                 }

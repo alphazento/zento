@@ -19,8 +19,28 @@ class Factory {
 
     protected $cache;
 
+    /**
+     * @var boolean
+     * some dynamc attributes using value map, if set false, will just return id
+     */
+    protected $_withMappedValue = true;
+
     public function __construct() {
         $this->cache = [];
+    }
+
+    public function withMappedValue() {
+        $this->_withMappedValue = true;
+        return $this;
+    }
+
+    public function withoutMappedValue() {
+        $this->_withMappedValue = false;
+        return $this;
+    }
+
+    public function isWithMappedValue() {
+        return $this->_withMappedValue ;
     }
 
     /**
