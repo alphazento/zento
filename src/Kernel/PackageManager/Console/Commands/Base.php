@@ -27,6 +27,7 @@ class Base extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        \Zento\Kernel\Support\ConsoleOutput::attachCommand($this);
         $method = method_exists($this, 'handle') ? 'handle' : 'fire';
         return $this->laravel->call([$this, $method]);
     }

@@ -12,8 +12,8 @@ class BaseListener
             return $this->run($event);
         } catch (\Exception $e) {
             $event->addError($e);
-            echo $e->getMessage();die;
-            return $e;
+            $this->error($e->getMessage());
+            throw $e;
         }
     }
 

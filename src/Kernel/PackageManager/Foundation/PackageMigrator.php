@@ -67,11 +67,12 @@ class PackageMigrator {
             $dbMigrations[] = $instance;
             try {
                 $instance->up();
-                echo $className . ' up...' . PHP_EOL;
+                $this->info($className . ' up...');
             } catch (\Exception $e) {
-                echo $e->getMessage(). PHP_EOL;
-                echo $className . ' up fail. rollback...' . PHP_EOL;
                 $this->error($e->getMessage());
+                $this->info($e->getTraceAsString());
+                $this->warning($className . ' fail to enable or upgrade');
+                $this->info('Rollback...');
                 foreach($dbMigrations as $instance) {
                     $instance->down();
                 }

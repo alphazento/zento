@@ -281,22 +281,24 @@ class PackageManagerService extends MyPackageDiscover {
         $currentVersion = $packageConfig->version;
         $this->info(sprintf('[%s] current version:%s', $packageName, $packageConfig->version));
         $m = new PackageMigrator();
-        $m->migrate($packageConfig);
-        $packageConfig->enabled = true;
-        $packageConfig->save();
-        $latestVersion = $packageConfig->version;
-
-        if ($currentVersion !== $latestVersion) {
-            $this->info(sprintf('[%s] has been updated from version [%s] -> [%s]', $packageName, $currentVersion, $latestVersion));
-            if ($this->app->bound('cache')) {
-                $cache = $this->app->make('cache');
-                $cache->forget(Consts::CACHE_KEY_ENABLED_PACKAGES);
+        if ($m->migrate($packageConfig)) {
+            $packageConfig->enabled = true;
+            $packageConfig->save();
+            $latestVersion = $packageConfig->version;
+            if ($currentVersion !== $latestVersion) {
+                $this->info(sprintf('[%s] has been updated from version [%s] -> [%s]', $packageName, $currentVersion, $latestVersion));
+                if ($this->app->bound('cache')) {
+                    $cache = $this->app->make('cache');
+                    $cache->forget(Consts::CACHE_KEY_ENABLED_PACKAGES);
+                }
+            } else {
+                $this->warning(sprintf('[%s] stay at current version [%s]', $packageName, $currentVersion));
             }
-        } else {
-            $this->warning(sprintf('[%s] stay at current version [%s]', $packageName, $currentVersion));
+            $this->resolvePackagDependencies();
+            return $currentVersion !== $latestVersion;
         }
-        $this->resolvePackagDependencies();
-        return $this;
+        
+        return false;
     }
 
     /**

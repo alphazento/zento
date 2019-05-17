@@ -39,8 +39,11 @@ class EnablePackage extends Base
             return;
         }
 
-        PackageManager::up($packageName);
-        $this->info(sprintf('Package [%s] is ready.', $packageName));
-        $this->call('route:cache');
+        if (PackageManager::up($packageName)) {
+            $this->info(sprintf('Package [%s] is ready.', $packageName));
+            $this->call('route:cache');
+        } else {
+            $this->warn(sprintf('Package [%s] not able to enable or upgrade.', $packageName));
+        }
     }
 }
