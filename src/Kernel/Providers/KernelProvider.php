@@ -13,6 +13,7 @@ namespace Zento\Kernel\Providers;
 use DB;
 use Illuminate\Support\Facades\Schema;
 use Zento\Kernel\Support\ShareBucket;
+use Zento\Kernel\Support\InnerApiClient;
 use Zento\Kernel\Facades\PackageManager;
 
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
@@ -27,7 +28,11 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
         $this->app->singleton('sharebucket', function ($app) {
             return new ShareBucket();
         });
+        $this->app->singleton('innerapiclient', function ($app) {
+            return new InnerApiClient();
+        });
         PackageManager::class_alias('\Zento\Kernel\Facades\ShareBucket', 'ShareBucket');
+        PackageManager::class_alias('\Zento\Kernel\Facades\InnerApiClient', 'InnerApiClient');
     }
 
     /**
