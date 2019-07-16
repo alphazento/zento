@@ -262,12 +262,15 @@ class PackageManagerService extends MyPackageDiscover {
                 $depends[] = [$packageName, $mydepends];
             }
         }
+
         $sorts = $this->sortDependancyOrder($depends);
         $packages = PackageConfig::where('enabled', 1)
-            ->orderByRaw(sprintf("FIELD(`name`,'%s') ASC", implode("','", $sorts)))->get();
+            // ->orderByRaw(sprintf("FIELD(`name`,'%s') ASC", implode("','", $sorts)))
+            ->get();
         $sort = 0;
+        $sorts = array_map('strtolower', $sorts);
         foreach($packages as $package) {
-            $package->sort = $sort++;
+            $package->sort = array_search(strtolower($package->name), $sorts) ?? 0;
             $package->update();
         }
     }
