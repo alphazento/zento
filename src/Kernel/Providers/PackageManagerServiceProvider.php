@@ -21,8 +21,13 @@ class PackageManagerServiceProvider extends \Illuminate\Support\ServiceProvider 
     }
 
     public function boot() {
-        $this->app['packagemanager']->inject($this)->mapRoutes();
-        $this->app->runningInConsole() && (new ArtisanSubscriber())->subscribe();
+        if ($packageManager = $this->app['packagemanager']) {
+            if (!$this->app->environment('production')) {
+                $packageManager->rebuildPackages();
+            }
+            $packageManager->inject($this)->mapRoutes();
+            $this->app->runningInConsole() && (new ArtisanSubscriber())->subscribe();
+        }
     }
     
     /**

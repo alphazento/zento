@@ -35,7 +35,7 @@ class MyPackageDiscover {
      * @return     Array
      */
     public function assembly($packageName) {
-        return empty($this->manifest[$packageName]) ? null : $this->manifest[$packageName]['assembly'];
+        return empty($this->manifest[$packageName]) ? null : $this->manifest[$packageName];
     }
 
     /**
@@ -63,7 +63,7 @@ class MyPackageDiscover {
      * @return     string  The package path.
      */
     public function packagePath(string $packageName, $subPaths) {
-        $path = empty($this->manifest[$packageName]) ? null : $this->manifest[$packageName]['path'];
+        $path = empty($this->manifest[$packageName]) ? null : $this->manifest[$packageName]['module_path'];
         if (!$path) {
             return null;
         }

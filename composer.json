@@ -3,12 +3,10 @@
     "description": "A zento framework base on Laravel",
     "keywords": ["laravel", "zento"],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Yongcheng.chen",
-            "email": "yongcheng.chen@live.com"
-        }
-    ],
+    "authors": [{
+        "name": "Yongcheng.chen",
+        "email": "yongcheng.chen@live.com"
+    }],
     "require": {
         "php": ">=7.0",
         "illuminate/routing": "5.5.x|5.6.x|5.7.x|5.8.x",
@@ -20,8 +18,7 @@
             "Zento\\": "src/",
             "": ["mypackages/"]
         },
-        "files": [
-        ]
+        "files": []
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -37,27 +34,6 @@
                 "PackageManager": "Zento\\Kernel\\Facades\\PackageManager",
                 "EventsManager": "Zento\\Kernel\\Facades\\EventsManager",
                 "Debugger": "Zento\\Kernel\\Facades\\Debugger"
-            },
-            "zento": {
-                "Zento_Kernel":{
-                    "version" : "0.0.1",
-                    "commands" : [
-                        "\\Zento\\Kernel\\PackageManager\\Console\\Commands\\MakePackage",
-                        "\\Zento\\Kernel\\PackageManager\\Console\\Commands\\EnablePackage",
-                        "\\Zento\\Kernel\\PackageManager\\Console\\Commands\\DisablePackage",
-                        "\\Zento\\Kernel\\ThemeManager\\Console\\Commands\\ListTheme",
-                        "\\Zento\\Kernel\\Booster\\Events\\Commands\\ListListener"
-                    ]
-                },
-                "Zento_RouteAndRewriter": {
-                    "version" : "0.0.1",
-                    "providers" : [
-                        "Zento\\RouteAndRewriter\\Providers\\RouteAndRewriterServiceProvider"
-                    ],
-                    "depends":[
-                        "Zento_Kernel"
-                    ]
-                }
             }
         }
     },
