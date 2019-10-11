@@ -18,6 +18,8 @@ use Zento\Kernel\Facades\PackageManager;
 
 class KernelProvider extends \Illuminate\Support\ServiceProvider {
     public function register() {
+        $this->mixins();
+
         $this->app->register(PackageManagerServiceProvider::class);
         $this->app->register(ThemeManagerServiceProvider::class);
         $this->app->register(DebuggerServiceProvider::class);
@@ -51,5 +53,11 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
             $this->publishes([$configPath => $this->getConfigPath()], 'Zento');
             Schema::defaultStringLength(191);
         }
+    }
+
+    protected function mixins() {
+        \Illuminate\Routing\Route::mixin(new \Zento\Kernel\Booster\Mixins\Routing\Route);
+        \Illuminate\Routing\UrlGenerator::mixin(new \Zento\Kernel\Booster\Mixins\Routing\UrlGenerator);
+        // app('url')->setAssetRoot();
     }
 }
