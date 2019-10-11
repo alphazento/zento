@@ -251,16 +251,15 @@ class PackageManagerService extends MyPackageDiscover {
     public function resolvePackagDependencies() {
         $packages = $this->loadPackagesConfigs();
         $depends = [];
-        foreach($packages as $package) {
-            $packageName = $package->name;
+        foreach($packages as $packageName => $package) {
             if ($packageName == Consts::ZENTO_KERNEL_PACKAGE_NAME) {
                 $depends[] = [$packageName, []];
             } else {
                 $assembly = $this->assembly($packageName);
                 $mydepends = isset($assembly['depends']) ? $assembly['depends'] : [Consts::ZENTO_KERNEL_PACKAGE_NAME];
-                if (!empty($package->theme) && !is_numeric($package->theme) 
-                    && $package->theme !== true && $package->theme !== false) {
-                    $mydepends = array_merge($mydepends, explode(',', $package->theme));
+                if (!empty($assembly['theme']) && !is_numeric($assembly['theme']) 
+                    && $assembly['theme'] !== true && $assembly['theme'] !== false) {
+                    $mydepends = array_merge($mydepends, explode(',', $assembly['theme']));
                 }
                 $depends[] = [$packageName, $mydepends];
             }
