@@ -22,7 +22,7 @@ class PackageDiscoverCommandRunAfter
      */
     public function discoverMyPackages() {
         $allPackageConfigs = PackageManager::rebuildPackages()->assemblies();
-        $enabledPackageConfigs = PackageManager::loadPackagesConfigs();
+        $enabledPackageConfigs = PackageManager::loadPackagesConfigs(true);
         foreach($enabledPackageConfigs ?? [] as $packageConfig) {
             $this->_stdout->success(sprintf('[%s] version=[%s] actived at %s.', $packageConfig->name, $packageConfig->version, $packageConfig->updated_at));
             if (isset($allPackageConfigs[$packageConfig->name])) {

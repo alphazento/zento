@@ -33,6 +33,7 @@ class EnablePackage extends Base
     public function handle()
     {
         $packageName = $this->argument('name');
+        dd(1);
         $assembly = PackageManager::rebuildPackages()->assembly($packageName);
         if (!$assembly) {
             $this->error(sprintf('Package [%s] is not found.', $this->argument('name')));

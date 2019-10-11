@@ -30,7 +30,6 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
         $this->app = $app;
     }
 
-
     /**
      * Build the manifest and write it to disk.
      *
@@ -38,108 +37,55 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
      */
     public function build()
     {
-        $packages = [];
-        $this->preparePackageNamePathMapping()
-            ->buildZentoPackages($packages)
-            ->buildMyPackages($packages)
-            ->write($packages);
+        $this->buildZentoPackages()
+            ->buildMyPackages()
+            ->write(config('zento'));
         $this->manifest = null;
     }
 
     /**
-     * build all zento packages
-     *
-     * @param array $packages
-     * @return void
+     * load all mypackages
      */
-    protected function buildZentoPackages(array &$packages) {
-        $manifest = $this->app[\Illuminate\Foundation\PackageManifest::class]->manifest ?? [];
-        foreach($manifest as $compName => $configs) {
-            foreach($configs['zento'] ?? [] as $packageName => $assembly) {
-                $packages[$packageName] = [
-                    'path' => $this->getZentoPackageRealPath($packageName),
-                    'assembly' => $assembly
-                ];
-            }
-        }
+    protected function buildZentoPackages() {
+        $this->buildPackages('vendor/alphazento/zento');
         return $this;
     }
 
     /**
      * load all mypackages
      */
-    protected function buildMyPackages(array &$packages) {
-        $path = base_path('mypackages');
-        $files = glob(sprintf('%s/**/*/%s', $path, Consts::PACKAGE_COMPOSER_FILE));
-        $len = strlen($path) + 1;
+    protected function buildMyPackages() {
+        $this->buildPackages('mypackages');
+        return $this;
+    }
+
+    protected function buildPackages($basePath) {
+        $path = base_path($basePath);
+        $files = glob(sprintf('%s/**/*/%s', $path, Consts::PACKAGE_ASSEMBLE_FILE));
         foreach($files as $filename) {
-            // $packagePath = substr(substr($filename, $len), 0, -13);
-            $zentoConfigs = $this->getZentoConfigsFromJsonFile($filename);
-            foreach($zentoConfigs as $packageName => $assembly) {
-                $packages[$packageName] = [
-                    'path' => substr($filename, 0, -13), 
-                    'assembly' => $assembly
-                ];
-            }
+            $this->mergeConfigFromAssemble($filename, 'zento');
         }
         return $this;
     }
 
-    /**
-     * from composer/autoload_classmap.php we can find out zento packages real path
-     *
-     * @return $this
-     */
-    protected function preparePackageNamePathMapping() {
-        $this->packageNamePathMapping = [];
-        if ($this->files->exists($path = $this->vendorPath.'/composer/autoload_classmap.php')) {
-            #$path = '/var/www/test/vendor/composer/autoload_classmap.php';
-            $classes = require_once($path);
-            foreach($classes ?? [] as $className => $classPath) {
-                if (mb_strpos($className, "Zento\\") === 0) {
-                    $parts = explode("\\", $className);
-                    $nameParts = [array_shift($parts)]; 
-                    $nameParts[] = array_shift($parts);
-                    $packageName = strtolower(implode('_', $nameParts));
-                    if (empty($this->packageNamePathMapping[$packageName])) {
-                        $pathParts = explode("/", $classPath);
-                        $pathParts = array_slice($pathParts, 0, count($pathParts) - count($parts));
-                        $this->packageNamePathMapping[$packageName] = implode('/', $pathParts);
-                    }
-                    //normally will only support 2 level package name
-                    //but just in case, we still support 3 level package name
-                    $nameParts[] = array_shift($parts);
-                    $packageName = strtolower(implode('_', $nameParts));
-                    if (empty($this->packageNamePathMapping[$packageName])) {
-                        $pathParts = explode("/", $classPath);
-                        $pathParts = array_slice($pathParts, 0, count($pathParts) - count($parts));
-                        $this->packageNamePathMapping[$packageName] = implode('/', $pathParts);
-                    }
-                }
-            }
+    protected function mergeConfigFromAssemble($path, $key)
+    {
+        $moduleConfigs = require $path;
+        $module_name = '';
+        $configs = null;
+        foreach($moduleConfigs as $name => $values) {
+            $module_name = $name;
+            $configs = $values;
+            $configs['module_path'] = str_replace(Consts::PACKAGE_ASSEMBLE_FILE, '', $path);
+            break;
+        }
+        if (!$configs) {
+            echo $path . ' is not available assemble file' . PHP_EOL;
+            return;
         }
 
-        return $this;
-    }
-
-
-    protected function getZentoConfigsFromJsonFile($filename) {
-        if ($this->files->exists($filename)) {
-            $content = $this->files->get($filename);
-            $json = json_decode($content, true);
-            return $json['extra']['laravel']['zento'] ?? [];
-        }
-        return [];
-    }
-
-    /**
-     * get package real path from package name
-     *
-     * @param string $packageName
-     * @return string
-     */
-    protected function getZentoPackageRealPath($packageName) {
-        $packageName = strtolower($packageName);
-        return $this->packageNamePathMapping[$packageName] ?? '';
+        $key = sprintf('%s.%s', $key, $module_name);
+        $config = $this->app['config']->get($key, []);
+        $this->app['config']->set($key, array_merge($configs, $config));
     }
 }

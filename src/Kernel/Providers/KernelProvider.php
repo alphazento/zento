@@ -42,12 +42,12 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
      */
     protected function getConfigPath()
     {
-        return config_path('zento.php');
+        return config_path('zento/Zento_Kernel.php');
     }
 
     public function boot() {
         if ($this->app->runningInConsole()) {
-            $configPath = __DIR__ . '/../../../config/zento.php';
+            $configPath = __DIR__ . '/../config/Zento_Kernel.php';
             $this->publishes([$configPath => $this->getConfigPath()], 'Zento');
             Schema::defaultStringLength(191);
         }
