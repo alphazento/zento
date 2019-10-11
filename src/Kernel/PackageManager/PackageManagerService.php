@@ -46,6 +46,9 @@ class PackageManagerService extends MyPackageDiscover {
         return $this->packageConfigs;
     }
 
+    public function getPackageConfig($packageName) {
+        return $this->packageConfigs[$packageName] ?? [];
+    }
     /**
      * load enabled packages from database configs
      *
@@ -58,14 +61,18 @@ class PackageManagerService extends MyPackageDiscover {
             if ($this->app->bound('cache')) {
                 $cache = $this->app->make('cache');
                 if ($forceReload || !$cache->has(Consts::CACHE_KEY_ENABLED_PACKAGES)) {
-                    $packages = PackageConfig::where('enabled', 1)->orderBy('sort')->get();
+                    $packages = PackageConfig::where('enabled', 1)
+                        ->orderBy('sort')
+                        ->get()
+                        ->keyBy('name')
+                        ->toArray();
                     $cache->forever(Consts::CACHE_KEY_ENABLED_PACKAGES, serialize($packages));
                 } else {
                     $packages = $cache->get(Consts::CACHE_KEY_ENABLED_PACKAGES, null);
                     $packages = unserialize($packages);
                 }
-                foreach($packages as $config) {
-                    if ($config->name == Consts::ZENTO_KERNEL_PACKAGE_NAME) {
+                foreach($packages as $name => $config) {
+                    if ($name == Consts::ZENTO_KERNEL_PACKAGE_NAME) {
                         $this->kernelEnabled = true;
                         break;
                     }
@@ -92,15 +99,14 @@ class PackageManagerService extends MyPackageDiscover {
     public function inject(\Illuminate\Support\ServiceProvider $serviceProvider) {
         $this->packageConfigs = $this->loadPackagesConfigs();
         if (count($this->packageConfigs ?? [])) {
-            foreach($this->packageConfigs as $packageConfig) {
-                $assembly = $this->assembly($packageConfig->name);
+            foreach($this->packageConfigs as $name => $packageConfig) {
+                $assembly = $this->assembly($name);
                 if (!empty($assembly)) {
-                    $this->mountPackage($packageConfig->name, $assembly, $serviceProvider);
+                    $this->mountPackage($name, $assembly, $serviceProvider);
                 } else {
-                    $this->warning(sprintf("Package [%s] has an empty assembly configs.", $packageConfig->name));
+                    $this->warning(sprintf("Package [%s] has an empty assembly configs.", $name));
                 }
             }
-            $this->packageConfigs = null; 
         } else {
             $this->registerSelf($serviceProvider);
             $this->alert(sprintf("You haven't enable package [%s]", Consts::ZENTO_KERNEL_PACKAGE_NAME));

@@ -3,12 +3,12 @@
 namespace Zento\Kernel\Booster\Middleware;
 
 use Cookie;
-use Registry;
+use Zento\Kernel\Facades\ShareBucket;
 
 class VerifyCsrfToken extends \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken
 {
     protected function inExceptArray($request) {
-        if (Registry::has('no-csrf')) {
+        if (ShareBucket::has('ignore-csrf')) {
             return true;
         }
         return parent::inExceptArray($request);
