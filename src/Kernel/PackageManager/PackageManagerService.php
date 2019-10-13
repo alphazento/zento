@@ -180,9 +180,7 @@ class PackageManagerService extends MyPackageDiscover {
 
             $viewLocation = $this->packageViewsPath($packageName);
             if (file_exists($viewLocation)) {
-                if (!empty($assembly['theme'])) {
-                    ThemeManager::prependlocation($viewLocation);
-                } else {
+                if (empty($assembly['theme'])) {
                     ThemeManager::addLocation($viewLocation);                
                 }
             }

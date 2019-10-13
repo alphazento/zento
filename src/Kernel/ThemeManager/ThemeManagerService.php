@@ -48,14 +48,14 @@ class ThemeManagerService {
             Cookie::queue('theme', $themeType);
         }
 
-        $packageName = config(sprintf('app.theme.%s', $themeType), 'Zento_BaseTheme');
+        $packageName = config(sprintf('app.theme.%s', $themeType), 'Zento_BladeTheme');
         if ($packageConfig = PackageManager::getPackageConfig($packageName)) {
             if ($packageConfig['enabled'] ?? false) {
                 if ($assembly = PackageManager::assembly($packageName)) {
                     if ($assembly['theme']) {
                         $viewLocation = PackageManager::packageViewsPath($packageName);
                         if (file_exists($viewLocation)) {
-                            $this->viewFinder->prependLocation($location);
+                            $this->viewFinder->prependLocation($viewLocation);
                         }
                         return $this;
                     }

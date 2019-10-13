@@ -76,7 +76,7 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
         foreach($moduleConfigs as $name => $values) {
             $module_name = $name;
             $configs = $values;
-            $configs['module_path'] = str_replace(Consts::PACKAGE_ASSEMBLE_FILE, '', $path);
+            $configs['module_path'] = rtrim(str_replace(Consts::PACKAGE_ASSEMBLE_FILE, '', $path), '/');
             break;
         }
         if (!$configs) {
