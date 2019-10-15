@@ -48,7 +48,7 @@ class ThemeManagerService {
             Cookie::queue('theme', $themeType);
         }
 
-        $packageName = config(sprintf('app.theme.%s', $themeType), 'Zento_BladeTheme');
+        $packageName = config(sprintf('app.theme.%s', $themeType)) ?? config('app.theme.desktop');
         if ($packageConfig = PackageManager::getPackageConfig($packageName)) {
             if ($packageConfig['enabled'] ?? false) {
                 if ($assembly = PackageManager::assembly($packageName)) {
