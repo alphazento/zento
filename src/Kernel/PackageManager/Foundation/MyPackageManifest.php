@@ -55,13 +55,13 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
      * load all mypackages
      */
     protected function buildMyPackages() {
-        $this->buildPackages('mypackages');
+        $this->buildPackages('packages');
         return $this;
     }
 
     protected function buildPackages($basePath) {
         $path = base_path($basePath);
-        $files = glob(sprintf('%s/**/*/%s', $path, Consts::PACKAGE_ASSEMBLE_FILE));
+        $files = glob(sprintf('%s/**/**/%s', $path, Consts::PACKAGE_ASSEMBLE_FILE));
         foreach($files as $filename) {
             $this->mergeConfigFromAssemble($filename, 'zento');
         }
