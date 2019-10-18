@@ -1,8 +1,10 @@
 <?php
 
 namespace Zento\RouteAndRewriter\Engine;
-use Illuminate\Support\Str;
 
+use RouteAndRewriterService;
+use Illuminate\Support\Str;
+use Zento\RouteAndRewriter\Illuminate\Http\RewriteRequest;
 
 abstract class UrlRewriteEngineAbstract
 {
@@ -28,11 +30,11 @@ abstract class UrlRewriteEngineAbstract
         if ($rule = $this->findRewriteRule(strtolower($request->path()))) {
             switch($rule->status_code) {
                 case 200:
-                    return \Zento\RouteAndRewriter\Model\RewriteRequest::capture()->rewriteToRule($rule);
+                    return RewriteRequest::capture()->rewrite($rule->to_uri);
                 case 301:
                 case 302:
                     Registory::put('urlrewriterule', $rule);
-                    return \Zento\RouteAndRewriter\Model\RewriteRequest::capture()->rewrite('/redirect');
+                    return RewriteRequest::capture()->rewrite('/redirect');
             }
         }
         return false;

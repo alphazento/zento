@@ -24,7 +24,7 @@ class ConfigServiceProvider extends \Illuminate\Support\ServiceProvider
     {
         if ($this->app->bound('config') && $this->app->bound('packagemanager')) {
             if (PackageManager::isKernelEnabled()) {
-                $configs = $this->app->make('config')->get('zento.config_extend');
+                $configs = $this->app->make('config')->get('zento.Zento_Kernel.config_extend');
                 $repositoryClass = $configs['extra_repository'] ?? null;
                 if ($repositoryClass && class_exists($repositoryClass)) {
 
