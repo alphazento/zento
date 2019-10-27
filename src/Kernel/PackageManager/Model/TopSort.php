@@ -63,7 +63,7 @@ class TopSort
                     $newParents = $parents;
                     $this->visit($this->elements[$dependency], $newParents);
                 } else {
-                    throw ElementNotFoundException::create($element->id, $dependency);
+                    throw new \Exception(sprintf("[%s] dependency[%s] not found", $element->id, $dependency));
                 }
             }
             $this->addToList($element);

@@ -30,6 +30,7 @@ class PackageManagerService extends MyPackageDiscover {
     protected $bootedCallbacks = [];
     protected $packageConfigs;
     protected $routesFolders = [];
+    protected $themeRoutesFolders = [];
 
     /**
      * some command line will create a new app, use this flag to not class_allias twice
@@ -203,7 +204,7 @@ class PackageManagerService extends MyPackageDiscover {
                 );
             }
         }
-
+        
         if (!$this->app->routesAreCached()) {
             if ($routesFolder = $this->packagePath($packageName, Consts::PACKAGE_ROUTES_FOLDER)) {
                 if (file_exists($routesFolder)) {
@@ -298,7 +299,7 @@ class PackageManagerService extends MyPackageDiscover {
                 $this->warning(sprintf('[%s] stay at current version [%s]', $packageName, $currentVersion));
             }
             $this->resolvePackagDependencies();
-            return $currentVersion !== $latestVersion;
+            return $currentVersion === $latestVersion;
         }
         
         return false;

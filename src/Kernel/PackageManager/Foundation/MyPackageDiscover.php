@@ -62,7 +62,7 @@ class MyPackageDiscover {
      *
      * @return     string  The package path.
      */
-    public function packagePath(string $packageName, $subPaths) {
+    public function packagePath(string $packageName, $subPaths = []) {
         $path = empty($this->manifest[$packageName]) ? null : $this->manifest[$packageName]['module_path'];
         if (!$path) {
             return null;
@@ -70,6 +70,7 @@ class MyPackageDiscover {
         if (!is_array($subPaths)) {
             $subPaths = [$subPaths];
         }
+       
         array_unshift($subPaths, $path);
         return implode(DIRECTORY_SEPARATOR, $subPaths);
     }
