@@ -139,7 +139,8 @@ class PackageManagerService extends MyPackageDiscover {
      */
     protected function mountPackage(string $packageName,
         array $assembly,
-        \Illuminate\Support\ServiceProvider $serviceProvider) {
+        \Illuminate\Support\ServiceProvider $serviceProvider) 
+    {
         //register aliases
         if (isset($assembly['aliases'])) {
             foreach ($assembly['aliases'] as $alias => $class) {

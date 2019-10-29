@@ -10,6 +10,7 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
 {
     protected $app;
     protected $packageNamePathMapping;
+    protected $myPackagesFolder;
     /**
      * Create a new package manifest instance.
      *
@@ -28,6 +29,7 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
             $origin->basePath, 
             $app->bootstrapPath().'/cache/zentopackages.php');
         $this->app = $app;
+        $this->myPackagesFolder = config('zento.Zento_Kernel.mypackages_folder', 'mypackages');
     }
 
     /**
@@ -55,7 +57,7 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
      * load all mypackages
      */
     protected function buildMyPackages() {
-        $this->buildPackages('packages');
+        $this->buildPackages($this->myPackagesFolder);
         return $this;
     }
 
