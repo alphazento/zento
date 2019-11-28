@@ -6,11 +6,11 @@ use Zento\Kernel\Booster\Database\Eloquent\DA\Builder;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttributeSet;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\Attribute;
+use Zento\Kernel\Consts;
+use Zento\Kernel\Facades\ShareBucket;
 
 trait DynamicAttributeAbility
 {
-    abstract public static function getPreloadRelations();
-
     protected $dyn_relations;
     public function setDynRelations(&$dyns) {
         $this->dyn_relations = $dyns;
@@ -113,5 +113,15 @@ trait DynamicAttributeAbility
         }
         
         return parent::setAttribute($key, $value);
+    }
+
+    public static function richMode() {
+        ShareBucket::put(Consts::MODEL_RICH_MODE, true);
+        return static::query();
+    }
+
+    public function thinMode() {
+        ShareBucket::put(Consts::MODEL_RICH_MODE, false);
+        return static::query();
     }
 }

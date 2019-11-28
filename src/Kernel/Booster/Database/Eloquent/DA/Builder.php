@@ -2,6 +2,8 @@
 namespace Zento\Kernel\Booster\Database\Eloquent\DA;
 
 use DB;
+use Zento\Kernel\Consts;
+use Zento\Kernel\Facades\ShareBucket;
 use Zento\Kernel\Facades\DanamicAttributeFactory;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\Attribute;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
@@ -10,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder {
-    // protected $append_columns;
     protected $dyn_eagerLoad;
     protected $isGetAllColumn;
 
@@ -18,8 +19,11 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         $this->query = $builder->getQuery();
         $this->model = $builder->getModel();
         $this->eagerLoad = $builder->getEagerLoads();
-        // $this->append_columns = [];
         $this->dyn_eagerLoad = [];
+    }
+
+    protected function richDataMode() {
+        return $this->isGetAllColumn && ShareBucket::get(Consts::MODEL_RICH_MODE);
     }
 
     /**
@@ -96,7 +100,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
     public function eagerLoadRelations(array $models)
     {
         $attrSetIds = $this->getEagerModelDynamicAttributeSetIds($models);
-        if ($this->isGetAllColumn) {
+        if ($this->richDataMode()) {
             $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, $attrSetIds);
             foreach($dynaAttrs as $row) {
                 if ($row['single']) {
@@ -107,7 +111,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
             }
         }
         $models = parent::eagerLoadRelations($models);
-        if ($this->isGetAllColumn) {
+        if ($this->richDataMode()) {
             foreach($models as $model) {
                 $model->setDynRelations($this->dyn_eagerLoad);
             }
@@ -144,10 +148,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
             $this->whereIn($this->model->getQualifiedKeyName(), $keys);
         }
         $this->isGetAllColumn = \in_array('*', $columns);
-        // if (count($this->append_columns) > 0) {
-        //     $this->select($this->model->getTable() . '.*', ...$this->append_columns);
-        // }
-
+        
         // $this->preloadRelation();
 
         return parent::get($columns);
@@ -173,15 +174,9 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      * @return void
      */
     protected function preloadRelation() {
-        if ($this->isGetAllColumn) {
-            foreach($this->model->getPreloadRelations() ?? [] as $relation => $extra) {
-                if ($relation === 'withcount') {
-                    foreach($extra as $relation) {
-                        $this->withCount($relation);
-                    }
-                } else {
-                    $this->with(is_numeric($relation) && is_string($extra) ? $extra : $relation );
-                }
+        if ($this->richDataMode()) {
+            if ($this->model->_richData_) {
+                $this->with($this->model->_richData_);
             }
         }
     }
@@ -283,5 +278,19 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
             }
         }
         return false;
+    }
+
+    public function richMode() {
+        ShareBucket::put(Consts::MODEL_RICH_MODE, true);
+        return $this;
+    }
+
+    public function thinMode() {
+        ShareBucket::put(Consts::MODEL_RICH_MODE, false);
+        return $this;
+    }
+
+    public function pureGet($columns = ['*']) {
+        return $this->query->get($columns)->all();
     }
 }

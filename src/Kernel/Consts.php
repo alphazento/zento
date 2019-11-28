@@ -22,4 +22,6 @@ class Consts  {
     const CACHE_KEY_ENABLED_PACKAGES = self::CACHE_KEY_PREFIX . 'packages.enabled';
     const CACHE_KEY_EVENTS_LISTENERS = self::CACHE_KEY_PREFIX . 'events.listeners';
     const CACHE_KEY_RAW_EVENTS_LISTENERS = self::CACHE_KEY_PREFIX . 'events.raw.listeners';
+
+    const MODEL_RICH_MODE = 'MODEL_RICH_MODE';
 }
