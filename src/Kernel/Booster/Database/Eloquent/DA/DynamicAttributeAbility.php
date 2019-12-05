@@ -120,8 +120,12 @@ trait DynamicAttributeAbility
         return static::query();
     }
 
-    public function thinMode() {
+    public static function thinMode() {
         ShareBucket::put(Consts::MODEL_RICH_MODE, false);
         return static::query();
+    }
+
+    public static function isRichMode() {
+        return ShareBucket::get(Consts::MODEL_RICH_MODE);
     }
 }
