@@ -10,6 +10,7 @@ use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttribute;
 use Zento\Kernel\Booster\Database\Eloquent\DA\ORM\DynamicAttributeSet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Pagination\Paginator;
 
 class Builder extends \Illuminate\Database\Eloquent\Builder {
     protected $dyn_eagerLoad;
@@ -292,5 +293,21 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
 
     public function pureGet($columns = ['*']) {
         return $this->query->get($columns)->all();
+    }
+
+    public function distinctPaginate($distinctColumn, $perPage = 15, $columns = ['*'], $pageName = 'page', $page = null) 
+    {
+        $page = $page ?: Paginator::resolveCurrentPage($pageName);
+
+        $perPage = $perPage ?: $this->model->getPerPage();
+
+        $results = ($total = $this->toBase()->getCountForPagination([$distinctColumn]))
+                                    ? $this->forPage($page, $perPage)->get($columns)
+                                    : $this->model->newCollection();
+
+        return $this->paginator($results, $total, $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $pageName,
+        ]);
     }
 }

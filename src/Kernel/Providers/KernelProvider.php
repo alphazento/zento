@@ -58,6 +58,5 @@ class KernelProvider extends \Illuminate\Support\ServiceProvider {
     protected function mixins() {
         \Illuminate\Routing\Route::mixin(new \Zento\Kernel\Booster\Mixins\Routing\Route);
         \Illuminate\Routing\UrlGenerator::mixin(new \Zento\Kernel\Booster\Mixins\Routing\UrlGenerator);
-        // app('url')->setAssetRoot('');
     }
 }
