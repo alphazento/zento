@@ -1,7 +1,9 @@
 <?php
 
 namespace Zento\Kernel\Http\Controllers;
+
 use Zento\Kernel\Http\ApiResponse;
+use Illuminate\Validation\ValidationException;
 
 trait TraitApiResponse
 {
@@ -64,5 +66,14 @@ trait TraitApiResponse
 
   public function getApiResponse() : \Zento\Kernel\Http\ApiResponse {
     return new ApiResponse($this->data);
+  }
+
+  public function wrapValidationExceptionMessage(ValidationException $e) {
+      $data = array_map(function($values) {
+          return implode('<br>', $values);
+      }, $e->errors());
+      $this->data['message'] = implode('<br>', array_values($data));
+      $this->withData($data);
+      return $this;
   }
 }
