@@ -24,4 +24,6 @@ class Consts  {
     const CACHE_KEY_RAW_EVENTS_LISTENERS = self::CACHE_KEY_PREFIX . 'events.raw.listeners';
 
     const MODEL_RICH_MODE = 'MODEL_RICH_MODE';
+
+    const ZENTO_PORTAL = 'ZENTO_PORTAL';
 }

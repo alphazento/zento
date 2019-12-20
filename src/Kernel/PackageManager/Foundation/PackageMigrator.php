@@ -47,7 +47,8 @@ class PackageMigrator {
         if (file_exists($file)) {
             require_once($file);
         }
-        $packageConfig->theme = isset($assembly['theme']) ? $assembly['theme'] === true  : '' ;
+        $packageConfig->theme = isset($assembly['theme']) ? $assembly['theme'] : '' ;
+        $packageConfig->is_theme = !! $packageConfig->theme;
         $packageConfig->version = $version;
         $packageConfig->save();
         return true;

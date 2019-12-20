@@ -52,19 +52,6 @@ class ThemeManagerService {
         }
 
         $packageName = config(sprintf('app.theme.%s', $themeType)) ?? config('app.theme.desktop');
-        // if ($packageConfig = PackageManager::getPackageConfig($packageName)) {
-        //     if ($packageConfig['enabled'] ?? false) {
-        //         if ($assembly = PackageManager::assembly($packageName)) {
-        //             if ($assembly['theme']) {
-        //                 $viewLocation = PackageManager::packageViewsPath($packageName);
-        //                 if (file_exists($viewLocation)) {
-        //                     $this->viewFinder->prependLocation($viewLocation);
-        //                 }
-        //                 return $this;
-        //             }
-        //         }
-        //     }
-        // } 
         if (!$this->attachThemePackage($packageName)) {
             throw new \Exception(sprintf('Theme package[%s] not found or not actived.', $packageName));
         }
