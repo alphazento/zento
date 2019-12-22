@@ -4,25 +4,32 @@ namespace Zento\Kernel\ThemeManager;
 
 use Cookie;
 use Zento\Kernel\Facades\PackageManager;
+use Zento\Kernel\Consts;
 
 class ThemeManagerService {
     protected $app;
-    protected $viewFinder;
     protected $viewFactory;
     protected $whenThemeLoadCallbacks = [];
 
     public function __construct($app) {
         $this->app = $app;
         $this->viewFactory = $app['view'];
-        $this->viewFinder = $this->viewFactory->getFinder();
     }
 
     public function prependLocation($location) {
-        $this->viewFinder->prependLocation($location);
+        $this->viewFactory->getFinder()->prependLocation($location);
     }
 
     public function addLocation($location) {
         $this->viewFactory->addLocation($location);
+    }
+
+    public function getViewPaths() {
+        return $this->viewFactory->getFinder()->getPaths();
+    }
+
+    public function changeViewFactory(\Illuminate\View\Factory $factory) {
+        $this->viewFactory = $factory;
     }
 
     /**
@@ -47,14 +54,20 @@ class ThemeManagerService {
      * use theme for browser
      */
     public function setTheme($themeType) {
-        if (config('app.theme.enable_cookie', false)) {
-            Cookie::queue('theme', $themeType);
-        }
-
-        $packageName = config(sprintf('app.theme.%s', $themeType)) ?? config('app.theme.desktop');
+        Cookie::queue('theme', $themeType);
+        $packageName = config(sprintf(Consts::CACHE_KEY_THEME_BY, $themeType)) ??  config(Consts::CACHE_KEY_DESKTOP_THEME);
         if (!$this->attachThemePackage($packageName)) {
             throw new \Exception(sprintf('Theme package[%s] not found or not actived.', $packageName));
         }
+        return $this;
+    }
+
+    public function setThemePackage($packageName) {
+        $viewLocation = PackageManager::packageViewsPath($packageName);
+        if (file_exists($viewLocation)) {
+            $this->prependLocation($viewLocation);
+        }
+        $this->callWhenSetTheme($packageName);
         return $this;
     }
 
@@ -72,15 +85,11 @@ class ThemeManagerService {
         if ($packageConfig = PackageManager::getPackageConfig($packageName)) {
             if ($packageConfig['enabled'] ?? false) {
                 if ($assembly = PackageManager::assembly($packageName)) {
-                    if ($assembly['theme']) {
+                    if ($assembly['theme'] ?? false) {
                         if (is_string($assembly['theme'])) {
                             $this->attachThemePackage($assembly['theme']);
                         }
-                        $viewLocation = PackageManager::packageViewsPath($packageName);
-                        if (file_exists($viewLocation)) {
-                            $this->viewFinder->prependLocation($viewLocation);
-                        }
-                        $this->callWhenSetTheme($packageName);
+                        $this->setThemePackage($packageName);
                         return true;
                     }
                 }

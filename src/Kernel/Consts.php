@@ -26,4 +26,8 @@ class Consts  {
     const MODEL_RICH_MODE = 'MODEL_RICH_MODE';
 
     const ZENTO_PORTAL = 'ZENTO_PORTAL';
+
+    const CACHE_KEY_DESKTOP_THEME = 'app.theme.desktop';
+    const CACHE_KEY_MOBILE_THEME = 'app.theme.phone';
+    const CACHE_KEY_THEME_BY = 'app.theme.%s';
 }
