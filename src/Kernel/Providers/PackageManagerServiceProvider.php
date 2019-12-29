@@ -22,7 +22,7 @@ class PackageManagerServiceProvider extends \Illuminate\Support\ServiceProvider 
 
     public function boot() {
         if ($packageManager = $this->app['packagemanager']) {
-            if (!$this->app->environment('production')) {
+            if (!$this->app->environment('production') && env('DEBUG_ALLWAYS_REBUILD_PACKAGE_CONFIGS')) {
                 $packageManager->rebuildPackages();
             }
             $packageManager->inject($this)->mapRoutes();
