@@ -21,18 +21,23 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     ];
 
     public function defaultDynAttr($parent_table) {
-        $attrs = [];
-        foreach($this->fillable as $attr) {
-            $attrs[$attr] = null;
-        }
-        $attrs['parent_table'] = $parent_table;
-        $attrs['single'] = true;
-        $attrs['with_value_map'] = false;
-        $attrs['swatch_type'] = false;
-        $attrs['is_search_layer'] = false;
-        $attrs['search_layer_sort'] = 999;
-        $attrs['enabled'] = true;
-        return $attrs;
+        return [
+            'parent_table' => $parent_table, 
+            'attribute_name' => '', 
+            'attribute_table' => '', 
+            'attribute_type' => '', 
+            'label' => '',
+            'admin_label' => '',
+            'default_value' => '',
+            'admin_group' => '',
+            'admin_component' => '',
+            'single' => true,
+            'with_value_map' => false,
+            'swatch_type' => '',
+            'enabled' =>true,
+            'is_search_layer' => false,
+            'search_layer_sort' => 999
+        ];
     }
 
     public function options() {
