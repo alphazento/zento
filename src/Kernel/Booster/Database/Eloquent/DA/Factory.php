@@ -210,7 +210,7 @@ class Factory {
 
         $collection = DynamicAttribute::with('options')
             ->where('parent_table', $tableName)
-            ->where('enabled', 1);
+            ->where('active', 1);
         
         if (count($attrSetIds) > 0) {
             $collection->whereIn('id', DynamicAttributeInSet::whereIn('attribute_set_id', $attrSetIds)

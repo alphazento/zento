@@ -17,7 +17,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
         'swatch_type',
         'is_search_layer',
         'search_layer_sort',
-        'enabled'
+        'active'
     ];
 
     public function defaultDynAttr($parent_table) {
@@ -34,7 +34,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
             'single' => true,
             'with_value_map' => false,
             'swatch_type' => '',
-            'enabled' =>true,
+            'active' =>true,
             'is_search_layer' => false,
             'search_layer_sort' => 999
         ];
