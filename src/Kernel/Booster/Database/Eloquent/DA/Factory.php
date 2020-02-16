@@ -52,8 +52,15 @@ class Factory {
      * @return string
      */
     public function getTable(Model $parent, $attributeName, $single = true) {
-        return sprintf('%s_%s_%s', 
+        return $this->getDATableName(
             $parent->getTable(),
+            $attributeName,
+            $single);
+    }
+
+    protected function getDATableName(string $parent_table, $attributeName, $single = true) {
+        return sprintf('%s_%s_%s', 
+            $parent_table,
             $single ? 'dyn' : 'dyns',
             Str::plural($attributeName));
     }
@@ -173,7 +180,7 @@ class Factory {
             // Cache::forget($cacheKey);
             // unset($this->cache[$cacheKey]);
             $this->cache = [];
-            return $modelcolumn->id;
+            return [$modelcolumn->id, $tableName];
         // }
         // return 0;
     }

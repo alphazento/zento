@@ -16,7 +16,10 @@ class CreateDynamicAttributeSetTable extends Migration
             Schema::create('dynamic_attribute_sets', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('name', 255);
+                $table->string('description', 255);
                 $table->string('model', 255);  //product,category...
+                $table->boolean('active');  //product,category...
+                $table->unique(['model', 'name']);
                 $table->timestamps();
             });
         }
