@@ -83,9 +83,6 @@ trait DynamicAttributeAbility
      */
     public function setAttribute($key, $value)
     {
-        if ($key === 'include_in_menu') {
-            dd($key, $value, $this->dyn_relations);
-        }
         if ($this->dyn_relations && array_key_exists($key, $this->dyn_relations)) {
             $instance = $this->relations[$key];
             if ($instance === null) {
