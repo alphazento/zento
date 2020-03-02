@@ -14,7 +14,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
         'default_value',
         'single',
         'with_value_map',
-        'swatch_type',
+        'swatch',
         'searchable',
         'search_layer_sort',
         'active'
@@ -33,7 +33,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
             'admin_component' => '',
             'single' => true,
             'with_value_map' => false,
-            'swatch_type' => '',
+            'swatch' => 0,
             'active' =>true,
             'searchable' => false,
             'search_layer_sort' => 999

@@ -26,7 +26,7 @@ class CreateDynamicAttributeTable extends Migration
                 $table->string('default_value', 255)->nullable();
                 $table->boolean('single')->default(1);
                 $table->boolean('with_value_map')->default(1);      //if the value is mapping to opiton_values table.
-                $table->smallInteger('swatch_type')->default(0);    //0 means not a swatch attribute
+                $table->boolean('swatch')->default(0);    
                 $table->boolean('searchable')->default(0);
                 $table->smallInteger('search_layer_sort')->default(0);
                 $table->boolean('active')->default(1);
