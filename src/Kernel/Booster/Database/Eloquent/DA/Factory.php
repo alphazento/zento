@@ -162,14 +162,14 @@ class Factory {
 
         // if (config('dynamicattribute_management')) {
             $modelcolumn = DynamicAttribute::where('parent_table', $parent->getTable())
-                ->where('attribute_name', $attributeName)
+                ->where('name', $attributeName)
                 ->first();
             if (!$modelcolumn) {
                 $modelcolumn = new DynamicAttribute();
             }
          
+            $modelcolumn->name = $attributeName;
             $modelcolumn->parent_table = $parent->getTable();
-            $modelcolumn->attribute_name = $attributeName;
             $modelcolumn->attribute_table = $tableName;
             $modelcolumn->attribute_type = $valueDes[0];
             $modelcolumn->single = $single;

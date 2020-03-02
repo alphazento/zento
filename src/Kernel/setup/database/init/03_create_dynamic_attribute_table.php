@@ -16,7 +16,7 @@ class CreateDynamicAttributeTable extends Migration
             Schema::create('dynamic_attributes', function (Blueprint $table) {
                 $table->increments('id');
                 $table->string('parent_table', 255);  //product,category...
-                $table->string('attribute_name', 255);
+                $table->string('name', 255);
                 $table->string('label', 255);
                 $table->string('admin_label', 255);
                 $table->string('admin_group', 255);

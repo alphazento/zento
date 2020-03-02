@@ -105,9 +105,9 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
             $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, $attrSetIds);
             foreach($dynaAttrs as $row) {
                 if ($row['single']) {
-                    $this->withSingleDynamicAttribute($row['attribute_name']);
+                    $this->withSingleDynamicAttribute($row['name']);
                 } else {
-                    $this->withOptionDynamicAttribute($row['attribute_name']);
+                    $this->withOptionDynamicAttribute($row['name']);
                 }
             }
         }
@@ -269,7 +269,7 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         }
         $dynaAttrs = DanamicAttributeFactory::getDynamicAttributes($this->model, []);
         foreach($dynaAttrs ?? [] as $dyn) {
-            if ($dyn['attribute_name'] == $column) {
+            if ($dyn['name'] == $column) {
                 $instance = $dyn['single'] ? new ORM\DynamicAttribute\Single() :  new ORM\DynamicAttribute\Option();
                 $instance->setConnection($this->model->getConnectionName());
                 $instance->setTable($dyn['attribute_table']);

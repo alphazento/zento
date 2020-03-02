@@ -4,7 +4,7 @@ namespace Zento\Kernel\Booster\Database\Eloquent\DA\ORM;
 class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     protected $fillable = [
         'parent_table', 
-        'attribute_name', 
+        'name', 
         'label',
         'admin_label',
         'admin_group',
@@ -23,7 +23,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     public function defaultDynAttr($parent_table) {
         return [
             'parent_table' => $parent_table, 
-            'attribute_name' => '', 
+            'name' => '', 
             'attribute_table' => '', 
             'attribute_type' => '', 
             'label' => '',
