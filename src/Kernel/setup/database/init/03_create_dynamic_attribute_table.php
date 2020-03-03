@@ -17,7 +17,7 @@ class CreateDynamicAttributeTable extends Migration
                 $table->increments('id');
                 $table->string('parent_table', 255);  //product,category...
                 $table->string('name', 255);
-                $table->string('label', 255);
+                $table->string('front_label', 255);
                 $table->string('admin_label', 255);
                 $table->string('admin_group', 255);
                 $table->string('admin_component', 255);
@@ -28,7 +28,7 @@ class CreateDynamicAttributeTable extends Migration
                 $table->boolean('with_value_map')->default(1);      //if the value is mapping to opiton_values table.
                 $table->boolean('swatch')->default(0);    
                 $table->boolean('searchable')->default(0);
-                $table->smallInteger('search_layer_sort')->default(0);
+                $table->smallInteger('sort')->default(0);
                 $table->boolean('active')->default(1);
                 $table->timestamps();
             });

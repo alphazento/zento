@@ -5,7 +5,8 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     protected $fillable = [
         'parent_table', 
         'name', 
-        'label',
+        'front_label',
+        'front_group',
         'admin_label',
         'admin_group',
         'admin_component',
@@ -16,7 +17,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
         'with_value_map',
         'swatch',
         'searchable',
-        'search_layer_sort',
+        'sort',
         'active'
     ];
 
@@ -26,7 +27,8 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
             'name' => '', 
             'attribute_table' => '', 
             'attribute_type' => '', 
-            'label' => '',
+            'front_label' => '',
+            'front_group' => '',
             'admin_label' => '',
             'default_value' => '',
             'admin_group' => '',
@@ -36,7 +38,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
             'swatch' => 0,
             'active' =>true,
             'searchable' => false,
-            'search_layer_sort' => 999
+            'sort' => 999
         ];
     }
 

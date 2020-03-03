@@ -242,10 +242,10 @@ class Factory {
                 ->first()) {
             $configs = $desc->toArray();
             if ($desc->with_value_map) {
-                $rawOptions = $desc->options()->select(['value_id', 'value'])->get();
+                $rawOptions = $desc->options()->select(['id', 'value'])->get();
                 $options = [];
                 foreach($rawOptions as $option) {
-                    $options[$option['value_id']] = $option['value'];
+                    $options[$option['id']] = $option['value'];
                 }
                 $configs['options'] = (count($options) > 0 ? $options : false);
             }

@@ -16,6 +16,10 @@ trait DynamicAttributeAbility
         $this->dyn_relations = $dyns;
     }
 
+    public function getDynRelations() {
+        return $this->dyn_relations;
+    }
+
     /**
      * Get a new query builder for the model's table.
      *
