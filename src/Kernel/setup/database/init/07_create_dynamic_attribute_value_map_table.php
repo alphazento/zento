@@ -16,14 +16,9 @@ class CreateDynamicAttributeValueMapTable extends Migration
             Schema::create('dynamic_attribute_value_maps', function (Blueprint $table) {
                 $table->increments('id');
                 $table->integer('attribute_id')->unsigned();
-                $table->integer('value_id')->unsigned();
                 $table->string('value')->nullable();
                 $table->string('swatch_value')->nullable();
                 $table->timestamps();
-                // $table->foreign('attribute_set_id')
-                //     ->references('id')
-                //     ->on('attribute_sets')
-                //     ->onDelete('cascade');
             });
         }
     }
