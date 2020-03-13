@@ -17,7 +17,7 @@ class CreateDynamicAttributeTable extends Migration
                 $table->increments('id');
                 $table->string('parent_table', 255);  //product,category...
                 $table->string('name', 255);
-                $table->string('front_label', 255);
+                $table->string('front_component', 255);
                 $table->string('admin_label', 255);
                 $table->string('admin_group', 255);
                 $table->string('admin_component', 255);

@@ -5,7 +5,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     protected $fillable = [
         'parent_table', 
         'name', 
-        'front_label',
+        'front_component',
         'front_group',
         'admin_label',
         'admin_group',
@@ -27,7 +27,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
             'name' => '', 
             'attribute_table' => '', 
             'attribute_type' => '', 
-            'front_label' => '',
+            'front_component' => '',
             'front_group' => '',
             'admin_label' => '',
             'default_value' => '',
