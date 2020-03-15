@@ -5,6 +5,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
     protected $fillable = [
         'parent_table', 
         'name', 
+        'front_label',
         'front_component',
         'front_group',
         'admin_label',
@@ -27,6 +28,7 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
             'name' => '', 
             'attribute_table' => '', 
             'attribute_type' => '', 
+            'front_label' => '',
             'front_component' => '',
             'front_group' => '',
             'admin_label' => '',
@@ -44,5 +46,11 @@ class DynamicAttribute extends \Illuminate\Database\Eloquent\Model {
 
     public function options() {
         return $this->hasMany(DynamicAttributeValueMap::class, 'attribute_id', 'id');
+    }
+
+    public function sets() {
+        return $this->HasManyThrough(DynamicAttributeSet::class, 
+            DynamicAttributeInSet::class,
+            'attribute_id', 'id', 'id', 'attribute_set_id');
     }
 }
