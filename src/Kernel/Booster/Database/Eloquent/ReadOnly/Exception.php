@@ -1,7 +1,7 @@
 <?php
-namespace Zento\Kernel\Booster\Database\Eloquent;
+namespace Zento\Kernel\Booster\Database\Eloquent\ReadOnly;
 
-class ReadOnlyException extends \RuntimeException
+class Exception extends \RuntimeException
 {
     public function __construct(string $functionName, string $modelClassName, int $code = 0, \Throwable $previous = null)
     {

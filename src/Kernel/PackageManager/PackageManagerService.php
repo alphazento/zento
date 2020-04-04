@@ -14,7 +14,7 @@ use Cache;
 
 use Zento\Kernel\Consts;
 use Zento\Kernel\PackageManager\Model\ORM\PackageConfig;
-use Zento\Kernel\PackageManager\Model\PackageMigrator;
+use Zento\Kernel\PackageManager\Foundation\PackageMigrator;
 use Zento\Kernel\PackageManager\Foundation\MyPackageDiscover;
 use Zento\Kernel\PackageManager\Model\TopSort;
 use Zento\Kernel\Facades\EventsManager;

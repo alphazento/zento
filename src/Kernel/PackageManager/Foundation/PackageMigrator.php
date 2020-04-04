@@ -1,5 +1,5 @@
 <?php
-namespace Zento\Kernel\PackageManager\Model;
+namespace Zento\Kernel\PackageManager\Foundation;
 
 use Zento\Kernel\PackageManager\Model\ORM\PackageConfig;
 use Zento\Kernel\Consts;

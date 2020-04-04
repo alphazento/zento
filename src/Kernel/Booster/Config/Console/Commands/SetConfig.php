@@ -12,7 +12,7 @@ namespace Zento\Kernel\Booster\Config\Console\Commands;
 
 use Config;
 
-class ConfigSet extends \Zento\Kernel\PackageManager\Console\Commands\Base
+class SetConfig extends \Zento\Kernel\PackageManager\Console\Commands\Base
 {
     /**
      * The name and signature of the console command.
