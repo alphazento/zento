@@ -158,35 +158,37 @@ class PackageManagerService extends MyPackageDiscover {
         if (isset($assembly['listeners']) && !EventsManager::isCached()) {
             EventsManager::addEventListeners($assembly['listeners']);
         }
-        //register routes, middleware, views
-        if (!$this->app->runningInConsole()) {
-            foreach ($assembly['middlewares'] ?? [] as $name => $class) {
-                $this->app['router']->aliasMiddleware($name, $class);
-            }
+        
+        //register middleware
+        foreach ($assembly['middlewares'] ?? [] as $name => $class) {
+            $this->app['router']->aliasMiddleware($name, $class);
+        }
 
-            foreach ($assembly['middlewaregroup'] ?? [] as $groupName => $classes) {
-                if (isset($classes['main']) && count($classes['main'])) {
-                    $this->app['router']->middlewareGroup($groupName, $classes['main']);
-                }
-                if (isset($classes['pre']) && count($classes['pre'])) {
-                    foreach($classes['pre'] as $class) {
-                        $this->app['router']->prependMiddlewareToGroup($groupName, $class);
-                    }
-                }
-                if (isset($classes['post']) && count($classes['post'])) {
-                    foreach($classes['post'] as $class) {
-                        $this->app['router']->pushMiddlewareToGroup($groupName, $class);
-                    }
+        foreach ($assembly['middlewaregroup'] ?? [] as $groupName => $classes) {
+            if (isset($classes['main']) && count($classes['main'])) {
+                $this->app['router']->middlewareGroup($groupName, $classes['main']);
+            }
+            if (isset($classes['pre']) && count($classes['pre'])) {
+                foreach($classes['pre'] as $class) {
+                    $this->app['router']->prependMiddlewareToGroup($groupName, $class);
                 }
             }
+            if (isset($classes['post']) && count($classes['post'])) {
+                foreach($classes['post'] as $class) {
+                    $this->app['router']->pushMiddlewareToGroup($groupName, $class);
+                }
+            }
+        }
 
-            $viewLocation = $this->packageViewsPath($packageName);
-            if (file_exists($viewLocation)) {
-                if (empty($assembly['theme'])) {
-                    ThemeManager::addLocation($viewLocation);                
-                }
-            }
-        } else {
+        //in _assemble.php
+        // "views" => [
+        //     "console" => true,
+        //     "namespaces" => [
+        //         'namespace' => 'relativepath'
+        //     ],
+        // ],
+        $canRegisterViews = true;
+        if ($this->app->runningInConsole()) {
             //register package's commands
             if (isset($assembly['commands'])) {
                 // print_r($assembly['commands']);
@@ -203,6 +205,22 @@ class PackageManagerService extends MyPackageDiscover {
                         $publicPath => public_path(strtolower($packageName))
                     ]
                 );
+            }
+            $canRegisterViews = $assembly['views']['console'] ?? false;
+        }
+
+        if ($canRegisterViews) {
+            $viewLocation = $this->packageViewsPath($packageName);
+            if (file_exists($viewLocation)) {
+                if (empty($assembly['theme'])) {
+                    if ($namespaces = ($assembly['views']['namespaces'] ?? false)) {
+                        foreach($namespaces as $namespace => $relativePath) {
+                            ThemeManager::addNameSpace($namespace, sprintf('%s/%s', $viewLocation, $relativePath));
+                        }
+                    } else {
+                        ThemeManager::addLocation($viewLocation);                
+                    }
+                }
             }
         }
         

@@ -24,6 +24,10 @@ class ThemeManagerService {
         $this->viewFactory->addLocation($location);
     }
 
+    public function addNamespace($namespace, $paths) {
+        $this->viewFactory->addNamespace($namespace, $paths);
+    }
+
     public function getViewPaths() {
         return $this->viewFactory->getFinder()->getPaths();
     }

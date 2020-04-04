@@ -1,7 +1,7 @@
 {
     "name": "alphazento/zento",
-    "description": "A zento framework base on Laravel",
-    "keywords": ["laravel", "zento"],
+    "description": "Alphazento framework support",
+    "keywords": ["alphazento", "laravel", "zento"],
     "license": "MIT",
     "authors": [{
         "name": "Yongcheng.chen",
@@ -15,8 +15,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Zento\\": "src/",
-            "": ["mypackages/"]
+            "Zento\\Kernel": "src/Kernel/",
+            "Zento\\RouteAndRewriter": "src/RouteAndRewriter/"
         },
         "files": []
     },
