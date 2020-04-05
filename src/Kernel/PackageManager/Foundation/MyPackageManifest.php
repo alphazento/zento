@@ -49,7 +49,7 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
      * load all mypackages
      */
     protected function buildZentoPackages() {
-        $this->buildPackages('vendor/alphazento/zento');
+        $this->buildPackages('vendor/alphazento/**');
         return $this;
     }
 

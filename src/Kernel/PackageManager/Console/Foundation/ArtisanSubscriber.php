@@ -26,14 +26,4 @@ class ArtisanSubscriber
             }
         );
     }
-
-    public static function bindAccessor($origin) {
-        $accessor = function ($target, $property_name, $newProperty=null) {
-            if ($newProperty != null) {
-                $target->$property_name = $newProperty;  
-            }
-            return $target->$property_name;
-        };
-        return Closure::bind($accessor, null, get_class($origin));
-    }
 }
