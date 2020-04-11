@@ -9,8 +9,6 @@ use Zento\Kernel\Consts;
 class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
 {
     protected $app;
-    protected $packageNamePathMapping;
-    protected $myPackagesFolder;
     /**
      * Create a new package manifest instance.
      *
@@ -29,7 +27,6 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
             $origin->basePath, 
             $app->bootstrapPath().'/cache/zentopackages.php');
         $this->app = $app;
-        $this->myPackagesFolder = config('zento.Zento_Kernel.mypackages_folder', 'mypackages');
     }
 
     /**
@@ -40,7 +37,7 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
     public function build()
     {
         $this->buildVendorPackages()
-            ->buildMyPackages()
+            ->buildExtraPackages()
             ->write(config('zento'));
         $this->manifest = null;
     }
@@ -65,16 +62,25 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
     }
 
     /**
-     * load all mypackages
+     * load all extra packages
      */
-    protected function buildMyPackages() {
-        $this->buildPackages($this->myPackagesFolder);
+    protected function buildExtraPackages() {
+        if ($folders = config('zento.Zento_Kernel.package_folders', 'packages')) {
+            if (!is_array($folders)) {
+                $folders = [$folders];
+            }
+            foreach($folders as $folder) {
+                $this->buildPackages($folder);
+            }
+        }
+
         return $this;
     }
 
     protected function buildPackages($basePath) {
         $path = base_path($basePath);
-        $files = glob(sprintf('%s/**/**/%s', $path, Consts::PACKAGE_ASSEMBLE_FILE));
+        $files = $this->rglob($path . '/**/' . Consts::PACKAGE_ASSEMBLE_FILE);
+        // $files = glob(sprintf('%s/**/**/%s', $path, Consts::PACKAGE_ASSEMBLE_FILE));
         foreach($files as $filename) {
             $this->mergeConfigFromAssemble($filename, 'zento');
         }
