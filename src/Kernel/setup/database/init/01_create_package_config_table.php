@@ -18,8 +18,9 @@ class CreatePackageConfigTable extends Migration
                 $table->engine = 'InnoDB';
                 $table->string('name', 64)->default('');
                 $table->string('version', 32)->default('0.0.1');
-                $table->string('theme')->default('');
+                $table->boolean('is_theme')->default(0);
                 $table->boolean('enabled')->default(0);
+                $table->string('name', 255)->default('');
                 $table->integer('sort')->default(0);
                 $table->timestamps();
                 $table->unique('name');
