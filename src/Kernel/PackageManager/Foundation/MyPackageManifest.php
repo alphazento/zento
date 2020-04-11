@@ -39,17 +39,28 @@ class MyPackageManifest extends \Illuminate\Foundation\PackageManifest
      */
     public function build()
     {
-        $this->buildZentoPackages()
+        $this->buildVendorPackages()
             ->buildMyPackages()
             ->write(config('zento'));
         $this->manifest = null;
     }
 
+    protected function rglob($pattern, $flags = 0) {
+        $files = glob($pattern, $flags); 
+        foreach (glob(dirname($pattern).'/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
+            $files = array_merge($files, $this->rglob($dir.'/'.basename($pattern), $flags));
+        }
+        return $files;
+    }
+
     /**
-     * load all mypackages
+     * find all vendor packages if contains _zento_assembly.php file
      */
-    protected function buildZentoPackages() {
-        $this->buildPackages('vendor/alphazento/**');
+    protected function buildVendorPackages() {
+        $files = $this->rglob('vendor/**/' . Consts::PACKAGE_ASSEMBLE_FILE);
+        foreach($files as $filename) {
+            $this->mergeConfigFromAssemble($filename, 'zento');
+        }
         return $this;
     }
 

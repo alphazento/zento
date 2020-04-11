@@ -180,7 +180,7 @@ class PackageManagerService extends MyPackageDiscover {
             }
         }
 
-        //in _assemble.php
+        //in _zento_assembly.php
         // "views" => [
         //     "console" => true,
         //     "namespaces" => [

@@ -6,7 +6,7 @@ class Consts  {
     const ZENTO_KERNEL_PACKAGE_NAME = 'Zento_Kernel';
     const MY_PACKAGES_ROOT_FOLDER = 'mypackages';
     const PACKAGE_COMPOSER_FILE = 'composer.json';
-    const PACKAGE_ASSEMBLE_FILE = '_assemble.php';
+    const PACKAGE_ASSEMBLE_FILE = '_zento_assembly.php';
 
     //define a package's folders
     const PACKAGE_CONFIG_FOLDER = 'config';
