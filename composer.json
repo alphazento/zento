@@ -15,8 +15,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Zento\\Kernel": "src/Kernel/",
-            "Zento\\RouteAndRewriter": "src/RouteAndRewriter/"
+            "Zento\\Kernel\\": "src/Kernel/",
+            "Zento\\RouteAndRewriter\\": "src/RouteAndRewriter/"
         },
         "files": []
     },
