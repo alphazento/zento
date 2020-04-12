@@ -20,7 +20,7 @@ class CreatePackageConfigTable extends Migration
                 $table->string('version', 32)->default('0.0.1');
                 $table->boolean('is_theme')->default(0);
                 $table->boolean('enabled')->default(0);
-                $table->string('name', 255)->default('');
+                $table->string('theme')->default('');
                 $table->integer('sort')->default(0);
                 $table->timestamps();
                 $table->unique('name');
