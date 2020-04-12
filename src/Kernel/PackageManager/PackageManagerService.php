@@ -318,7 +318,8 @@ class PackageManagerService extends MyPackageDiscover {
                 $this->warning(sprintf('[%s] stay at current version [%s]', $packageName, $currentVersion));
             }
             $this->resolvePackagDependencies();
-            return $currentVersion === $latestVersion;
+            // return $currentVersion === $latestVersion;
+            return true;
         }
         
         return false;
