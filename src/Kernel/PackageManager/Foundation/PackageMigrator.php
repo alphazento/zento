@@ -43,10 +43,6 @@ class PackageMigrator {
             }
         }
 
-        $file = PackageManager::packagePath($packageName, ['setup', 'up.php']);
-        if (file_exists($file)) {
-            require_once($file);
-        }
         $packageConfig->theme = isset($assembly['theme']) ? $assembly['theme'] : '' ;
         $packageConfig->is_theme = !! $packageConfig->theme;
         $packageConfig->version = $version;
