@@ -11,7 +11,9 @@
         "php": ">=7.0",
         "illuminate/routing": "5.7.x|5.8.x|6.0.x",
         "illuminate/session": "5.7.x|5.8.x|6.0.x",
-        "illuminate/support": "5.7.x|5.8.x|6.0.x"
+        "illuminate/support": "5.7.x|5.8.x|6.0.x",
+	"mobiledetect/mobiledetectlib": "^2.8",
+	"jaybizzle/crawler-detect":"^1.2"
     },
     "autoload": {
         "psr-4": {
