@@ -13,23 +13,29 @@ class ThemeManagerService {
 
     public function __construct($app) {
         $this->app = $app;
-        $this->viewFactory = $app['view'];
+    }
+
+    protected function getViewFactory() {
+        if (!$this->viewFactory) {
+            $this->viewFactory = $this->app['view'];
+        }
+        return $this->viewFactory;
     }
 
     public function prependLocation($location) {
-        $this->viewFactory->getFinder()->prependLocation($location);
+        $this->getViewFactory()->getFinder()->prependLocation($location);
     }
 
     public function addLocation($location) {
-        $this->viewFactory->addLocation($location);
+        $this->getViewFactory()->addLocation($location);
     }
 
     public function addNamespace($namespace, $paths) {
-        $this->viewFactory->addNamespace($namespace, $paths);
+        $this->getViewFactory()->addNamespace($namespace, $paths);
     }
 
     public function getViewPaths() {
-        return $this->viewFactory->getFinder()->getPaths();
+        return $this->getViewFactory()->getFinder()->getPaths();
     }
 
     public function changeViewFactory(\Illuminate\View\Factory $factory) {
