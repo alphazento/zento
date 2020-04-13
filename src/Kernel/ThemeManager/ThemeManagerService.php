@@ -73,7 +73,7 @@ class ThemeManagerService {
     }
 
     public function setThemePackage($packageName) {
-        $viewLocation = PackageManager::packageViewsPath($packageName);
+        $viewLocation = base_path(PackageManager::packageViewsPath($packageName));
         if (file_exists($viewLocation)) {
             $this->prependLocation($viewLocation);
         }
