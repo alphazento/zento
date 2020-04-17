@@ -32,6 +32,8 @@ class PackageManagerService extends MyPackageDiscover {
     protected $routesFolders = [];
     protected $themeRoutesFolders = [];
 
+    protected $runningInConsole = false;
+
     /**
      * some command line will create a new app, use this flag to not class_allias twice
      *
@@ -41,6 +43,7 @@ class PackageManagerService extends MyPackageDiscover {
 
     public function __construct($app) {
         parent::__construct($app);
+        $this->runningInConsole = $app->runningInConsole();
     }
 
     public function getActivePackageConfigs() {
@@ -85,6 +88,11 @@ class PackageManagerService extends MyPackageDiscover {
             $this->kernelEnabled = false;
             return null;
         }
+    }
+
+    public function deletePackageConfig($item_id) {
+        PackageConfig::where('id', $item_id)->delete();
+        return $this;
     }
 
     public function isKernelEnabled() {
@@ -151,7 +159,13 @@ class PackageManagerService extends MyPackageDiscover {
         //register package's providers
         if (isset($assembly['providers'])) {
             foreach ($assembly['providers'] as $provider) {
-                $this->app->register($provider);
+                if (class_exists($provider)) {
+                    $this->app->register($provider);
+                } else {
+                    if ($this->runningInConsole) {
+                        echo sprintf('%s not exist', $provider) . PHP_EOL;
+                    }
+                }
             }
         }
 
@@ -188,7 +202,7 @@ class PackageManagerService extends MyPackageDiscover {
         //     ],
         // ],
         $canRegisterViews = true;
-        if ($this->app->runningInConsole()) {
+        if ($this->runningInConsole) {
             //register package's commands
             if (isset($assembly['commands'])) {
                 // print_r($assembly['commands']);

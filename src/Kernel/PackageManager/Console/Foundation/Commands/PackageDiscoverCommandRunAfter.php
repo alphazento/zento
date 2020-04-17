@@ -24,13 +24,18 @@ class PackageDiscoverCommandRunAfter
         $allPackageConfigs = PackageManager::rebuildPackages()->assemblies();
         $enabledPackageConfigs = PackageManager::loadPackagesConfigs(true);
         foreach($enabledPackageConfigs ?? [] as $name => $packageConfig) {
-            $this->_stdout->success(sprintf('[%s][%s] version=[%s] actived at %s.', 
-                $packageConfig['sort'], 
-                $name, 
-                $packageConfig['version'], 
-                $packageConfig['updated_at']));
             if (isset($allPackageConfigs[$name])) {
-                unset($allPackageConfigs[$name]);
+                $this->_stdout->success(sprintf('[%s][%s] version=[%s] actived at %s.', 
+                    $packageConfig['sort'], 
+                    $name, 
+                    $packageConfig['version'], 
+                    $packageConfig['updated_at']));
+                if (isset($allPackageConfigs[$name])) {
+                    unset($allPackageConfigs[$name]);
+                }
+            } else {
+                $this->_stdout->warning(sprintf('[%s] source code is no longer exists.', $name)); 
+                PackageManager::deletePackageConfig($packageConfig['id']);
             }
         }
         foreach($allPackageConfigs as $name => $v) {

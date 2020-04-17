@@ -1,7 +1,7 @@
 {
     "name": "alphazento/zento",
     "description": "Alphazento framework support",
-    "keywords": ["alphazento", "laravel", "zento"],
+    "keywords": ["alphazento", "laravel", "alphazento"],
     "license": "MIT",
     "authors": [{
         "name": "Yongcheng.chen",
