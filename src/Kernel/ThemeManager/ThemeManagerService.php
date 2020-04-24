@@ -5,14 +5,17 @@ namespace Zento\Kernel\ThemeManager;
 use Cookie;
 use Zento\Kernel\Facades\PackageManager;
 use Zento\Kernel\Consts;
+use Illuminate\Support\Str;
 
 class ThemeManagerService {
     protected $app;
     protected $viewFactory;
     protected $whenThemeLoadCallbacks = [];
+    protected $basePath;
 
     public function __construct($app) {
         $this->app = $app;
+        $this->basePath = base_path();
     }
 
     protected function getViewFactory() {
@@ -73,7 +76,10 @@ class ThemeManagerService {
     }
 
     public function setThemePackage($packageName) {
-        $viewLocation = base_path(PackageManager::packageViewsPath($packageName));
+        $viewLocation = PackageManager::packageViewsPath($packageName);
+        if (!Str::startsWith($viewLocation, $this->basePath)) {
+            $viewLocation = base_path($viewLocation);
+        }
         if (file_exists($viewLocation)) {
             $this->prependLocation($viewLocation);
         }
