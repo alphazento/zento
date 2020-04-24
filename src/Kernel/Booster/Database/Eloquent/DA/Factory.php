@@ -131,9 +131,13 @@ class Factory {
      * @param boolean $single
      * @return string $id
      */
-    public function createRelationShipORM($parentClassOrModel, 
+    public function createRelationShipORM(
+        $parentClassOrModel, 
         $attributeName, 
         $valueDes, 
+        $front_component,
+        $admin_label,
+        $admin_component,
         $single = true, 
         $withValeMap = false, 
         $defaultValue = '') {
@@ -175,6 +179,9 @@ class Factory {
             $modelcolumn->single = $single;
             $modelcolumn->with_value_map = $withValeMap;
             $modelcolumn->default_value = $defaultValue;
+            $modelcolumn->front_component = $front_component;
+            $modelcolumn->front_component = $admin_label;
+            $modelcolumn->admin_component = $admin_component;
             $modelcolumn->save();
             // $cacheKey = $this->getDynamicAttributeCacheKey($parent->getTable());
             // Cache::forget($cacheKey);

@@ -176,8 +176,12 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
      */
     protected function preloadRelation() {
         if ($this->richDataMode()) {
-            if ($this->model->_richData_) {
-                $this->with($this->model->_richData_);
+            if (method_exists($this->model, 'getRichDataDefines')) {
+                if ($withs = $this->model->getRichDataDefines()) {
+                    if (count($withs) > 0) {
+                        $this->with($withs);
+                    }
+                }
             }
         }
     }
