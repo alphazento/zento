@@ -180,7 +180,8 @@ class Factory {
             $modelcolumn->with_value_map = $withValeMap;
             $modelcolumn->default_value = $defaultValue;
             $modelcolumn->front_component = $front_component;
-            $modelcolumn->front_component = $admin_label;
+            $modelcolumn->admin_label = $admin_label;
+            $modelcolumn->admin_group = '';
             $modelcolumn->admin_component = $admin_component;
             $modelcolumn->save();
             // $cacheKey = $this->getDynamicAttributeCacheKey($parent->getTable());

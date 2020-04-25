@@ -90,7 +90,7 @@ class Mysql {
             case 'datetime':
                 return $table->dateTime($columnName);
             case 'varchar':
-                return $table->string($columnName);
+                return $table->string($columnName, 255);
                 break;
             case 'char':
             case 'string':

@@ -5,17 +5,14 @@ namespace Zento\Kernel\ThemeManager;
 use Cookie;
 use Zento\Kernel\Facades\PackageManager;
 use Zento\Kernel\Consts;
-use Illuminate\Support\Str;
 
 class ThemeManagerService {
     protected $app;
     protected $viewFactory;
     protected $whenThemeLoadCallbacks = [];
-    protected $basePath;
 
     public function __construct($app) {
         $this->app = $app;
-        $this->basePath = base_path();
     }
 
     protected function getViewFactory() {
