@@ -295,6 +295,17 @@ class Builder extends \Illuminate\Database\Eloquent\Builder {
         return $this;
     }
 
+    /**
+     * when call this function, it will not run eager model logic. 
+     */
+    public function pureExec($action="all", $columns = ['*']) {
+        $query = $this->query->get($columns);
+        return $query->{$action}();
+    }
+
+    /**
+     * when call this function, it will not run eager model logic. 
+     */
     public function pureGet($columns = ['*']) {
         return $this->query->get($columns)->all();
     }
