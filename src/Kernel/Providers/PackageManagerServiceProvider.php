@@ -25,6 +25,7 @@ class PackageManagerServiceProvider extends \Illuminate\Support\ServiceProvider 
             if (!$this->app->environment('production') && env('DEBUG_ALLWAYS_REBUILD_PACKAGE_CONFIGS')) {
                 $packageManager->rebuildPackages();
             }
+            \class_alias('\Zento\Kernel\Facades\PackageManager', 'packagemanager');
             $packageManager->inject($this)->mapRoutes();
             $this->app->runningInConsole() && (new ArtisanSubscriber())->subscribe();
         }

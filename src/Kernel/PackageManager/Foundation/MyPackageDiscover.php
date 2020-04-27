@@ -15,18 +15,22 @@ use Zento\Kernel\Consts;
 use Zento\Kernel\PackageManager\Model\ORM\Module;
 use Zento\Kernel\PackageManager\Foundation\MyPackageManifest;
 
+use Illuminate\Support\Str;
+
 class MyPackageDiscover {
     use \Zento\Kernel\Support\Traits\TraitLogger;
 
     protected $app;
     protected $myPackageManifest;
     protected $manifest;
+    protected $basePath;
 
     public function __construct($app) {
         $this->app = $app ?: app();
         $this->myPackageManifest = new MyPackageManifest($this->app);
         $this->myPackageManifest->providers();
         $this->manifest = $this->myPackageManifest->manifest;
+        $this->basePath = base_path();
     }
 
     /**
@@ -63,7 +67,7 @@ class MyPackageDiscover {
      * @return     string  The package path.
      */
     public function packagePath(string $packageName, $subPaths = []) {
-        $path = empty($this->manifest[$packageName]) ? null : $this->manifest[$packageName]['module_path'];
+        $path = $this->manifest[$packageName]['module_path'] ?? null;
         if (!$path) {
             return null;
         }
@@ -72,7 +76,11 @@ class MyPackageDiscover {
         }
        
         array_unshift($subPaths, $path);
-        return implode(DIRECTORY_SEPARATOR, $subPaths);
+        $path = implode(DIRECTORY_SEPARATOR, $subPaths);
+        if (!Str::startsWith($path, $this->basePath)) {
+            $path = base_path($path);
+        }
+        return $path;
     }
 
     /**
