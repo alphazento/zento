@@ -31,21 +31,35 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     {
         $routes = $this->origin->get($request->getMethod());
         $route = $this->matchAgainstRoutes($routes, $request);
+        if (is_null($route)) {
+            list($rewrite, $request) = $this->matchUrlRewrite($request);
+            if ($rewrite) {
+                $routes = $this->origin->get($request->getMethod());
+                $route = $this->matchAgainstRoutes($routes, $request);
+            } 
+        }
+        return $this->handleMatchedRoute($request, $route);
+    }
+
+    /**
+     * it's design for laravel 5.x, not necessary for laravel 7
+     */
+    protected function handleMatchedRoute(Request $request, $route)
+    {
         if (! is_null($route)) {
             return $route->bind($request);
         }
 
+        // If no route was found we will now check if a matching route is specified by
+        // another HTTP verb. If it is we will need to throw a MethodNotAllowed and
+        // inform the user agent of which HTTP verb it should use for this route.
         $others = $this->checkForAlternateVerbs($request);
+
         if (count($others) > 0) {
             return $this->getRouteForMethods($request, $others);
         }
 
-        list($rewrite, $request) = $this->matchUrlRewrite($request);
-        if ($rewrite) {
-            return $this->origin->match($request);
-        } else {
-            throw new NotFoundHttpException;
-        }
+        throw new NotFoundHttpException;
     }
 
     /**
