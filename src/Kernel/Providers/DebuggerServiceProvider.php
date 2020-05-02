@@ -14,9 +14,6 @@ class DebuggerServiceProvider extends \Illuminate\Support\ServiceProvider {
     public function register()
     {
         if ($this->isActive()) {
-            $this->app->singleton(ExceptionHandler::class,
-                \Zento\Kernel\Support\Exception\Handler::class);
-            
             $settings = $this->settings();
             $callback = $settings['enable_callback'];
             if ($callback && is_callable($callback)) {
