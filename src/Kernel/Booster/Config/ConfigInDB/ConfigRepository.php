@@ -89,10 +89,14 @@ class ConfigRepository extends AbstractExtraConfigRepository
     protected function getItem(string $key, $groupName = null) {
         $groupName = $groupName ?? $this->groupingProvider->groupName();
         $groups = array_unique([$groupName, GroupingProvider::DEFAULT_GROUP]);
-        return ConfigItem::where('key', $key)
+        try {
+            return ConfigItem::where('key', $key)
                 ->whereIn('group', $groups)
                 ->orderByRaw(sprintf("FIELD(`group`,'%s') ASC", implode("','", $groups)))
                 ->first();
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 
     /**
@@ -101,10 +105,14 @@ class ConfigRepository extends AbstractExtraConfigRepository
     public function getManyLike(string $key, $groupName = null) {
         $groupName = $groupName ?? $this->groupingProvider->groupName();
         $groups = array_unique([$groupName, GroupingProvider::DEFAULT_GROUP]);
-        return ConfigItem::where('key', 'like',  $key . '.%')
+        try {
+            return ConfigItem::where('key', 'like',  $key . '.%')
                 ->whereIn('group', $groups)
                 ->orderByRaw(sprintf("FIELD(`group`, '%s') ASC", implode("','", $groups)))
                 ->select(['key', 'value'])
                 ->get();
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }
