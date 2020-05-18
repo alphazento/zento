@@ -2,20 +2,21 @@
 
 namespace Zento\RouteAndRewriter\Illuminate\Routing;
 
-use Closure;
-use Illuminate\Routing\Route;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * inherit and replace default RouteCollection
  * It will call run customise request handlers first, then run default match function
  */
-class RouteCollection extends \Illuminate\Routing\RouteCollection {
+class RouteCollection extends \Illuminate\Routing\RouteCollection
+{
     protected $origin;
     protected $requestHandlers;
 
-    public function __construct($originRouteCollection) {
+    public function __construct($originRouteCollection)
+    {
         $this->origin = $originRouteCollection;
         $this->requestHandlers = [];
     }
@@ -23,7 +24,8 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     /**
      * Append request pre handler
      */
-    public function appendRequestHandlers(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineAbstract $engine) {
+    public function appendRequestHandlers(\Zento\RouteAndRewriter\Engine\UrlRewriteEngineAbstract $engine)
+    {
         $this->requestHandlers[] = $engine;
     }
 
@@ -36,7 +38,7 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
             if ($rewrite) {
                 $routes = $this->origin->get($request->getMethod());
                 $route = $this->matchAgainstRoutes($routes, $request);
-            } 
+            }
         }
         return $this->handleMatchedRoute($request, $route);
     }
@@ -46,7 +48,7 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
      */
     protected function handleMatchedRoute(Request $request, $route)
     {
-        if (! is_null($route)) {
+        if (!is_null($route)) {
             return $route->bind($request);
         }
 
@@ -68,8 +70,9 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
      * @param Request $request
      * @return void
      */
-    protected function matchUrlRewrite(Request $request) {
-        foreach($this->requestHandlers as $engine) {
+    protected function matchUrlRewrite(Request $request)
+    {
+        foreach ($this->requestHandlers as $engine) {
             if ($req = $engine->execute($request)) {
                 return [true, $req];
             }
@@ -83,9 +86,10 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
      * @param string $uri
      * @return void
      */
-    public function findRewriteRule(string $uri) {
+    public function findRewriteRule(string $uri)
+    {
         $rule = false;
-        foreach($this->requestHandlers as $engine) {
+        foreach ($this->requestHandlers as $engine) {
             if ($rule = $engine->findRewriteRule($uri)) {
                 break;
             }
@@ -94,124 +98,122 @@ class RouteCollection extends \Illuminate\Routing\RouteCollection {
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function add(Route $route)
     {
         return $this->origin->add($route);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     protected function addToCollections($route)
     {
         return $this->origin->addToCollections($route);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     protected function addLookups($route)
     {
         return $this->origin->addLookups($route);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     protected function addToActionList($action, $route)
     {
         return $this->origin->addToActionList($action, $route);
     }
 
-
     /**
-    * @override
-    */
+     * @override
+     */
     public function refreshNameLookups()
     {
         return $this->origin->refreshNameLookups();
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function refreshActionLookups()
     {
         return $this->origin->refreshActionLookups();
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function get($method = null)
     {
         return $this->origin->get($method);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function hasNamedRoute($name)
     {
         return $this->origin->hasNamedRoute($name);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function getByName($name)
     {
         return $this->origin->getByName($name);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function getByAction($action)
     {
         return $this->origin->getByAction($action);
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function getRoutes()
     {
         return $this->origin->getRoutes();
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function getRoutesByMethod()
     {
         return $this->origin->getRoutesByMethod();
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function getRoutesByName()
     {
         return $this->origin->getRoutesByName();
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function getIterator()
     {
         return $this->origin->getIterator();
     }
 
     /**
-    * @override
-    */
+     * @override
+     */
     public function count()
     {
         return $this->origin->count();
     }
 }
-

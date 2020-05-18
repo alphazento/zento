@@ -10,20 +10,17 @@
 
 namespace Zento\Kernel\PackageManager;
 
-use Cache;
-
+use Illuminate\Support\Facades\Route;
 use Zento\Kernel\Consts;
-use Zento\Kernel\PackageManager\Model\ORM\PackageConfig;
-use Zento\Kernel\PackageManager\Foundation\PackageMigrator;
-use Zento\Kernel\PackageManager\Foundation\MyPackageDiscover;
-use Zento\Kernel\PackageManager\Model\TopSort;
 use Zento\Kernel\Facades\EventsManager;
 use Zento\Kernel\Facades\ThemeManager;
+use Zento\Kernel\PackageManager\Foundation\MyPackageDiscover;
+use Zento\Kernel\PackageManager\Foundation\PackageMigrator;
+use Zento\Kernel\PackageManager\Model\ORM\PackageConfig;
+use Zento\Kernel\PackageManager\Model\TopSort;
 
-
-use Illuminate\Support\Facades\Route;
-
-class PackageManagerService extends MyPackageDiscover {
+class PackageManagerService extends MyPackageDiscover
+{
     use \Zento\Kernel\Support\Traits\TraitLogger;
 
     protected $kernelEnabled = false;
@@ -41,16 +38,19 @@ class PackageManagerService extends MyPackageDiscover {
      */
     protected static $injected = false;
 
-    public function __construct($app) {
+    public function __construct($app)
+    {
         parent::__construct($app);
         $this->runningInConsole = $app->runningInConsole();
     }
 
-    public function getActivePackageConfigs() {
+    public function getActivePackageConfigs()
+    {
         return $this->packageConfigs;
     }
 
-    public function getPackageConfig($packageName) {
+    public function getPackageConfig($packageName)
+    {
         return $this->packageConfigs[$packageName] ?? [];
     }
     /**
@@ -59,7 +59,8 @@ class PackageManagerService extends MyPackageDiscover {
      * @param boolean $forceReload
      * @return array $packages \Zento\Kernel\PackageManager\Model\ORM\PackageConfig
      */
-    public function loadPackagesConfigs($forceReload = false) {
+    public function loadPackagesConfigs($forceReload = false)
+    {
         try {
             $packages = null;
             if ($this->app->bound('cache')) {
@@ -75,7 +76,7 @@ class PackageManagerService extends MyPackageDiscover {
                     $packages = $cache->get(Consts::CACHE_KEY_ENABLED_PACKAGES, null);
                     $packages = unserialize($packages);
                 }
-                foreach($packages as $name => $config) {
+                foreach ($packages as $name => $config) {
                     if ($name == Consts::ZENTO_KERNEL_PACKAGE_NAME) {
                         $this->kernelEnabled = true;
                         break;
@@ -90,25 +91,28 @@ class PackageManagerService extends MyPackageDiscover {
         }
     }
 
-    public function deletePackageConfig($item_id) {
+    public function deletePackageConfig($item_id)
+    {
         PackageConfig::where('id', $item_id)->delete();
         return $this;
     }
 
-    public function isKernelEnabled() {
+    public function isKernelEnabled()
+    {
         return $this->kernelEnabled;
     }
 
     /**
      * inject packages to app
-     * 
+     *
      * @param \Illuminate\Support\ServiceProvider $serviceProvider
      * @return $this
      */
-    public function inject(\Illuminate\Support\ServiceProvider $serviceProvider) {
+    public function inject(\Illuminate\Support\ServiceProvider $serviceProvider)
+    {
         $this->packageConfigs = $this->loadPackagesConfigs();
         if (count($this->packageConfigs ?? [])) {
-            foreach($this->packageConfigs as $name => $packageConfig) {
+            foreach ($this->packageConfigs as $name => $packageConfig) {
                 $assembly = $this->assembly($name);
                 if (!empty($assembly)) {
                     $this->mountPackage($name, $assembly, $serviceProvider);
@@ -124,16 +128,17 @@ class PackageManagerService extends MyPackageDiscover {
         return $this;
     }
 
-    protected function registerSelf(\Illuminate\Support\ServiceProvider $serviceProvider) {
-        $this->mountPackage(Consts::ZENTO_KERNEL_PACKAGE_NAME, 
+    protected function registerSelf(\Illuminate\Support\ServiceProvider $serviceProvider)
+    {
+        $this->mountPackage(Consts::ZENTO_KERNEL_PACKAGE_NAME,
             [
                 "commands" => [
                     '\Zento\Kernel\PackageManager\Console\Commands\MakePackage',
                     '\Zento\Kernel\PackageManager\Console\Commands\EnablePackage',
                     '\Zento\Kernel\PackageManager\Console\Commands\DisablePackage',
                     '\Zento\Kernel\ThemeManager\Console\Commands\ListTheme',
-                    '\Zento\Kernel\Booster\Events\Commands\ListListener'
-                ]
+                    '\Zento\Kernel\Booster\Events\Commands\ListListener',
+                ],
             ],
             $serviceProvider);
     }
@@ -147,8 +152,7 @@ class PackageManagerService extends MyPackageDiscover {
      */
     protected function mountPackage(string $packageName,
         array $assembly,
-        \Illuminate\Support\ServiceProvider $serviceProvider) 
-    {
+        \Illuminate\Support\ServiceProvider $serviceProvider) {
         //register aliases
         if (isset($assembly['aliases'])) {
             foreach ($assembly['aliases'] as $alias => $class) {
@@ -172,7 +176,7 @@ class PackageManagerService extends MyPackageDiscover {
         if (isset($assembly['listeners']) && !EventsManager::isCached()) {
             EventsManager::addEventListeners($assembly['listeners']);
         }
-        
+
         //register middleware
         foreach ($assembly['middlewares'] ?? [] as $name => $class) {
             $this->app['router']->aliasMiddleware($name, $class);
@@ -183,12 +187,12 @@ class PackageManagerService extends MyPackageDiscover {
                 $this->app['router']->middlewareGroup($groupName, $classes['main']);
             }
             if (isset($classes['pre']) && count($classes['pre'])) {
-                foreach($classes['pre'] as $class) {
+                foreach ($classes['pre'] as $class) {
                     $this->app['router']->prependMiddlewareToGroup($groupName, $class);
                 }
             }
             if (isset($classes['post']) && count($classes['post'])) {
-                foreach($classes['post'] as $class) {
+                foreach ($classes['post'] as $class) {
                     $this->app['router']->pushMiddlewareToGroup($groupName, $class);
                 }
             }
@@ -216,7 +220,7 @@ class PackageManagerService extends MyPackageDiscover {
             if (file_exists($publicPath)) {
                 $serviceProvider->preparePublishes(
                     [
-                        $publicPath => public_path(strtolower($packageName))
+                        $publicPath => public_path(strtolower($packageName)),
                     ]
                 );
             }
@@ -228,16 +232,16 @@ class PackageManagerService extends MyPackageDiscover {
             if (file_exists($viewLocation)) {
                 if (empty($assembly['theme'])) {
                     if ($namespaces = ($assembly['views']['namespaces'] ?? false)) {
-                        foreach($namespaces as $namespace => $relativePath) {
+                        foreach ($namespaces as $namespace => $relativePath) {
                             ThemeManager::addNameSpace($namespace, sprintf('%s/%s', $viewLocation, $relativePath));
                         }
                     } else {
-                        ThemeManager::addLocation($viewLocation);                
+                        ThemeManager::addLocation($viewLocation);
                     }
                 }
             }
         }
-        
+
         if (!$this->app->routesAreCached()) {
             if ($routesFolder = $this->packagePath($packageName, Consts::PACKAGE_ROUTES_FOLDER)) {
                 if (file_exists($routesFolder)) {
@@ -252,14 +256,15 @@ class PackageManagerService extends MyPackageDiscover {
      *
      * @return void
      */
-    public function mapRoutes() {
+    public function mapRoutes()
+    {
         if (!$this->app->routesAreCached()) {
             $routes = ['api.php', 'web.php', 'admin_api.php', 'admin_web.php'];
-            foreach($this->routesFolders as $folder) {
-                foreach($routes as $route) {
+            foreach ($this->routesFolders as $folder) {
+                foreach ($routes as $route) {
                     $file = $folder . '/' . $route;
                     if (file_exists($file)) {
-                        require($file);
+                        require $file;
                     }
                 }
             }
@@ -269,7 +274,7 @@ class PackageManagerService extends MyPackageDiscover {
     protected function sortDependancyOrder($array)
     {
         $topSort = new TopSort();
-        foreach($array as $item) {
+        foreach ($array as $item) {
             $topSort->add($item[0], $item[1]);
         }
         return $topSort->sort();
@@ -280,16 +285,17 @@ class PackageManagerService extends MyPackageDiscover {
      * @param  array  &$packages [description]
      * @return [type]           [description]
      */
-    public function resolvePackagDependencies() {
+    public function resolvePackagDependencies()
+    {
         $packages = $this->loadPackagesConfigs();
         $depends = [];
-        foreach($packages as $packageName => $package) {
+        foreach ($packages as $packageName => $package) {
             if ($packageName == Consts::ZENTO_KERNEL_PACKAGE_NAME) {
                 $depends[] = [$packageName, []];
             } else {
                 $assembly = $this->assembly($packageName);
                 $mydepends = isset($assembly['depends']) ? $assembly['depends'] : [Consts::ZENTO_KERNEL_PACKAGE_NAME];
-                if (!empty($assembly['theme']) && !is_numeric($assembly['theme']) 
+                if (!empty($assembly['theme']) && !is_numeric($assembly['theme'])
                     && $assembly['theme'] !== true && $assembly['theme'] !== false) {
                     $mydepends = array_merge($mydepends, explode(',', $assembly['theme']));
                 }
@@ -299,21 +305,22 @@ class PackageManagerService extends MyPackageDiscover {
 
         $sorts = $this->sortDependancyOrder($depends);
         $packages = PackageConfig::where('enabled', 1)
-            // ->orderByRaw(sprintf("FIELD(`name`,'%s') ASC", implode("','", $sorts)))
+        // ->orderByRaw(sprintf("FIELD(`name`,'%s') ASC", implode("','", $sorts)))
             ->get();
         $sort = 0;
         $sorts = array_map('strtolower', $sorts);
-        foreach($packages as $package) {
+        foreach ($packages as $package) {
             $package->sort = array_search(strtolower($package->name), $sorts) ?? 0;
             $package->update();
         }
     }
 
     /**
-     * migrate to the latest version which described in config/settings.php (version) 
+     * migrate to the latest version which described in config/settings.php (version)
      * @param string $packageName
      */
-    public function up(string $packageName) {
+    public function up(string $packageName)
+    {
         $packageConfig = $this->findPackageConfigOrNew($packageName, true);
         $currentVersion = $packageConfig->version;
         $this->info(sprintf('[%s] current version:%s', $packageName, $packageConfig->version));
@@ -335,7 +342,7 @@ class PackageManagerService extends MyPackageDiscover {
             // return $currentVersion === $latestVersion;
             return true;
         }
-        
+
         return false;
     }
 
@@ -343,7 +350,8 @@ class PackageManagerService extends MyPackageDiscover {
      * disable the specified package
      * @param string $packageName
      */
-    public function down(string $packageName) {
+    public function down(string $packageName)
+    {
         $packageConfig = $this->findPackageConfigOrNew($packageName);
         if ($packageConfig) {
             $packageConfig->enabled = false;
@@ -358,18 +366,19 @@ class PackageManagerService extends MyPackageDiscover {
 
     /**
      * find a package from db, if not exist, create new one
-     * 
+     *
      * @param      string  $packageName  The package name
      * @param      boolean $new if not exists, will create new empty object
      *
      * @return     \Zento\Kernel\PackageManager\Model\ORM\PackageConfig  The packageconfig object
      */
-    public function findPackageConfigOrNew(string $packageName, $new = false) {
+    public function findPackageConfigOrNew(string $packageName, $new = false)
+    {
         $packageConfig = null;
         try {
             $packageConfig = PackageConfig::where('name', $packageName)->first();
         } catch (\Exception $e) {
-            
+
         }
         if (!$packageConfig && $new) {
             $packageConfig = new PackageConfig();
@@ -381,8 +390,9 @@ class PackageManagerService extends MyPackageDiscover {
     /**
      * get a package's spacename from package name
      */
-    public function getNameSpace($packageName) {
-        return implode('\\', $this->splitPackageName($packageName)); 
+    public function getNameSpace($packageName)
+    {
+        return implode('\\', $this->splitPackageName($packageName));
     }
 
     /**
@@ -394,18 +404,20 @@ class PackageManagerService extends MyPackageDiscover {
      *
      * @return     array[string]   array of package name elements
      */
-    public function splitPackageName($packageName) {
+    public function splitPackageName($packageName)
+    {
         $parts = explode('_', $packageName);
         if (count($parts) < 2) {
             throw new \Exception(sprintf('Package name:[%s] must format as [Vendoer_Package] or [Vendoer_Package_Sub]', $packageName));
         }
-        $parts = array_map(function($v) {
+        $parts = array_map(function ($v) {
             return ucfirst($v);
         }, $parts);
         return $parts;
     }
 
-    public function class_alias($class_name, $alias) {
+    public function class_alias($class_name, $alias)
+    {
         if (!self::$injected) {
             \class_alias($class_name, $alias);
         }
