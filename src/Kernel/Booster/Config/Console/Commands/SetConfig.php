@@ -10,7 +10,7 @@
 
 namespace Zento\Kernel\Booster\Config\Console\Commands;
 
-use Config;
+use StoreConfig;
 
 class SetConfig extends \Zento\Kernel\PackageManager\Console\Commands\Base
 {
@@ -32,7 +32,7 @@ class SetConfig extends \Zento\Kernel\PackageManager\Console\Commands\Base
     {
         $key = $this->argument('key');
         $value = $this->argument('value');
-        Config::save($key, $value);
+        StoreConfig::save($key, $value);
         $this->info(sprintf('config pair added.  %s=%s', $key, config($key)));
     }
 }

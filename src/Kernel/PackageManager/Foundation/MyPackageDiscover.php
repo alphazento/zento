@@ -83,12 +83,24 @@ class MyPackageDiscover
         // if (!Str::startsWith($path, $this->basePath)) {
         //     $path = base_path($path);
         // }
+        return $this->relevantPath($path);
+    }
+
+    public function relevantPath(string $path)
+    {
         if (Str::startsWith($path, $this->basePath)) {
             $path = Str::replaceFirst($this->basePath, '', $path);
         }
         $path = Str::of($path)->ltrim('/');
-
         return (string) $path;
+    }
+
+    public function absolutePath(string $path)
+    {
+        if (!Str::startsWith($path, $this->basePath)) {
+            return base_path($path);
+        }
+        return $path;
     }
 
     /**

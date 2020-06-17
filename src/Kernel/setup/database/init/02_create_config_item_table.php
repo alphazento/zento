@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateConfigItemTable extends Migration
 {
@@ -16,11 +16,11 @@ class CreateConfigItemTable extends Migration
             Schema::create('config_items', function (Blueprint $table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id');
-                $table->string('group', 10)->default('global')->index();
+                $table->integer('store_id')->default(0)->index();
                 $table->string('key', 255)->index();
                 $table->text('value');
                 $table->timestamps();
-                // $table->unique(['group', 'key']);
+                $table->unique(['store_id', 'key']);
             });
         }
     }

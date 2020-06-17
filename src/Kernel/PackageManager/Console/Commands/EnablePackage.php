@@ -10,7 +10,6 @@
 
 namespace Zento\Kernel\PackageManager\Console\Commands;
 
-use Artisan;
 use Zento\Kernel\Facades\PackageManager;
 
 class EnablePackage extends Base
@@ -32,11 +31,11 @@ class EnablePackage extends Base
     public function handle()
     {
         $packageName = $this->argument('name');
-        $refreshRouteCache = ! $this->option('depress-route-cache');
+        $refreshRouteCache = !$this->option('depress-route-cache');
         $assembly = PackageManager::rebuildPackages()->assembly($packageName);
         if (!$assembly) {
             $this->error(sprintf('Package [%s] is not found.', $this->argument('name')));
-            return;
+            return 1;
         }
 
         if (PackageManager::up($packageName)) {
@@ -47,5 +46,6 @@ class EnablePackage extends Base
         } else {
             $this->warn(sprintf('Package [%s] not able to enable or upgrade.', $packageName));
         }
+        return 0;
     }
 }

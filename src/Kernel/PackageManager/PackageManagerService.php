@@ -244,6 +244,7 @@ class PackageManagerService extends MyPackageDiscover
 
         if (!$this->app->routesAreCached()) {
             if ($routesFolder = $this->packagePath($packageName, Consts::PACKAGE_ROUTES_FOLDER)) {
+                $routesFolder = $this->absolutePath($routesFolder);
                 if (file_exists($routesFolder)) {
                     $this->routesFolders[] = $routesFolder;
                 }

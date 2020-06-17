@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateDynamicAttributeValueMapTable extends Migration
 {
@@ -17,7 +17,7 @@ class CreateDynamicAttributeValueMapTable extends Migration
                 $table->increments('id');
                 $table->integer('attribute_id')->unsigned();
                 $table->string('value')->nullable();
-                $table->string('swatch_value')->nullable();
+                $table->string('value_in_container')->nullable();
                 $table->timestamps();
             });
         }

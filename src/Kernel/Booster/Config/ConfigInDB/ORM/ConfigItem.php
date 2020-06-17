@@ -1,7 +1,8 @@
 <?php
-namespace Zento\Kernel\Booster\Config\ConfigInDB\ORMModel;
+namespace Zento\Kernel\Booster\Config\ConfigInDB\ORM;
 
-class ConfigItem extends \Illuminate\Database\Eloquent\Model {
+class ConfigItem extends \Illuminate\Database\Eloquent\Model
+{
     /**
      * unserialize rawvalue
      *
