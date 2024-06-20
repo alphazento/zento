@@ -1,7 +1,8 @@
 <?php
 namespace Zento\Kernel;
 
-class Consts  {
+class Consts
+{
     // const ZENTO_KERNEL_VERSION = 'init';
     const ZENTO_KERNEL_PACKAGE_NAME = 'Zento_Kernel';
     const MY_PACKAGES_ROOT_FOLDER = 'mypackages';

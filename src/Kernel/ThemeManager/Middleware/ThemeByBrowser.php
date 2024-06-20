@@ -2,9 +2,8 @@
 
 namespace Zento\Kernel\ThemeManager\Middleware;
 
-use Cookie;
 use Closure;
-use Zento\Kernel\Facades\ShareBucket;
+use Cookie;
 use Zento\Kernel\Facades\ThemeManager;
 use Zento\Kernel\ThemeManager\BrowserDetector;
 
@@ -26,7 +25,8 @@ class ThemeByBrowser
     /**
      * detect wich theme to use for the browser
      */
-    protected function detectTheme() {
+    protected function detectTheme()
+    {
         if ($theme = Cookie::get('theme')) {
             return $theme;
         }

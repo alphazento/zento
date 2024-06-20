@@ -211,7 +211,10 @@ class PackageManagerService extends MyPackageDiscover
             if (isset($assembly['commands'])) {
                 // print_r($assembly['commands']);
                 foreach ($assembly['commands'] as $command) {
-                    call_user_func_array([$command, 'register'], [$serviceProvider]);
+		    try {
+                    	call_user_func_array([$command, 'register'], [$serviceProvider]);
+		    } catch (\Exception $e) {
+		    }
                 }
             }
 
@@ -319,12 +322,20 @@ class PackageManagerService extends MyPackageDiscover
     /**
      * migrate to the latest version which described in config/settings.php (version)
      * @param string $packageName
+     * @param array $ignoreOptions
      */
-    public function up(string $packageName)
+    public function up(string $packageName, $ignoreOptions = [])
     {
         $packageConfig = $this->findPackageConfigOrNew($packageName, true);
         $currentVersion = $packageConfig->version;
         $this->info(sprintf('[%s] current version:%s', $packageName, $packageConfig->version));
+        if ($ignoreOptions['migration'] ?? false) {
+            $packageConfig->enabled = true;
+            $packageConfig->save();
+            $this->resolvePackagDependencies();
+            return true;
+        }
+
         $m = new PackageMigrator();
         if ($m->migrate($packageConfig)) {
             $packageConfig->enabled = true;
@@ -343,7 +354,6 @@ class PackageManagerService extends MyPackageDiscover
             // return $currentVersion === $latestVersion;
             return true;
         }
-
         return false;
     }
 

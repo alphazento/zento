@@ -3,57 +3,66 @@
 namespace Zento\Kernel\ThemeManager;
 
 use Cookie;
-use Zento\Kernel\Facades\PackageManager;
-use Zento\Kernel\Consts;
 use Illuminate\Support\Str;
+use Zento\Kernel\Consts;
+use Zento\Kernel\Facades\PackageManager;
 
-class ThemeManagerService {
+class ThemeManagerService
+{
     protected $app;
     protected $viewFactory;
     protected $whenThemeLoadCallbacks = [];
     protected $basePath;
 
-    public function __construct($app) {
+    public function __construct($app)
+    {
         $this->app = $app;
         $this->basePath = base_path();
     }
 
-    protected function getViewFactory() {
+    protected function getViewFactory()
+    {
         if (!$this->viewFactory) {
             $this->viewFactory = $this->app['view'];
         }
         return $this->viewFactory;
     }
 
-    public function prependLocation($location) {
+    public function prependLocation($location)
+    {
         $this->getViewFactory()->getFinder()->prependLocation($location);
     }
 
-    public function addLocation($location) {
+    public function addLocation($location)
+    {
         $this->getViewFactory()->addLocation($location);
     }
 
-    public function addNamespace($namespace, $paths) {
+    public function addNamespace($namespace, $paths)
+    {
         $this->getViewFactory()->addNamespace($namespace, $paths);
     }
 
-    public function getViewPaths() {
+    public function getViewPaths()
+    {
         return $this->getViewFactory()->getFinder()->getPaths();
     }
 
-    public function changeViewFactory(\Illuminate\View\Factory $factory) {
+    public function changeViewFactory(\Illuminate\View\Factory $factory)
+    {
         $this->viewFactory = $factory;
     }
 
     /**
      * get all available themes
      */
-    public function availableThemes() {
+    public function availableThemes()
+    {
         static $options;
         if (empty($options)) {
             $packages = PackageManager::loadPackagesConfigs();
             $options = [];
-            foreach($packages ?? [] as $packageConfig) {
+            foreach ($packages ?? [] as $packageConfig) {
                 if ($packageConfig['enabled'] && $packageConfig['theme']) {
                     $options[] = $packageConfig['name'];
                 }
@@ -66,16 +75,18 @@ class ThemeManagerService {
     /**
      * use theme for browser
      */
-    public function setTheme($themeType) {
+    public function setTheme($themeType)
+    {
         Cookie::queue('theme', $themeType);
-        $packageName = config(sprintf(Consts::CACHE_KEY_THEME_BY, $themeType)) ??  config(Consts::CACHE_KEY_DESKTOP_THEME);
+        $packageName = config(sprintf(Consts::CACHE_KEY_THEME_BY, $themeType)) ?? config(Consts::CACHE_KEY_DESKTOP_THEME);
         if (!$this->attachThemePackage($packageName)) {
-            throw new \Exception(sprintf('Theme package[%s] not found or not actived.', $packageName));
+            #throw new \Exception(sprintf('Theme package[%s] not found or not actived.', $packageName));
         }
         return $this;
     }
 
-    public function setThemePackage($packageName) {
+    public function setThemePackage($packageName)
+    {
         $viewLocation = PackageManager::packageViewsPath($packageName);
         if (!Str::startsWith($viewLocation, $this->basePath)) {
             $viewLocation = base_path($viewLocation);
@@ -87,17 +98,20 @@ class ThemeManagerService {
         return $this;
     }
 
-    public function whenSetTheme($themeName, \Closure $callback) {
+    public function whenSetTheme($themeName, \Closure $callback)
+    {
         $this->whenThemeLoadCallbacks[$themeName] = $callback;
     }
 
-    protected function callWhenSetTheme($themeName) {
+    protected function callWhenSetTheme($themeName)
+    {
         if ($callback = ($this->whenThemeLoadCallbacks[$themeName] ?? false)) {
             $callback($this->app);
         }
     }
 
-    protected function attachThemePackage($packageName) {
+    protected function attachThemePackage($packageName)
+    {
         if ($packageConfig = PackageManager::getPackageConfig($packageName)) {
             if ($packageConfig['enabled'] ?? false) {
                 if ($assembly = PackageManager::assembly($packageName)) {

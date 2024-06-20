@@ -19,7 +19,8 @@ class EnablePackage extends Base
      *
      * @var string
      */
-    protected $signature = 'package:enable {name : package name} {--depress-route-cache}';
+    protected $signature = 'package:enable {name : package name} {--depress-route-cache}
+    {--ignore-migration} {--ignore-depends}';
 
     protected $description = 'Register package to the system';
 
@@ -32,13 +33,15 @@ class EnablePackage extends Base
     {
         $packageName = $this->argument('name');
         $refreshRouteCache = !$this->option('depress-route-cache');
+        $ignoreMigration = $this->option('ignore-migration');
+        $ignoreDepends = $this->option('ignore-depends');
         $assembly = PackageManager::rebuildPackages()->assembly($packageName);
         if (!$assembly) {
             $this->error(sprintf('Package [%s] is not found.', $this->argument('name')));
             return 1;
         }
 
-        if (PackageManager::up($packageName)) {
+        if (PackageManager::up($packageName, ['depends' => $ignoreDepends, 'migration' => $ignoreMigration])) {
             $this->info(sprintf('Package [%s] is ready.', $packageName));
             if ($refreshRouteCache) {
                 $this->call('route:cache');
